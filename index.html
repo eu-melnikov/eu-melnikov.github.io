@@ -361,6 +361,35 @@
   .social-btn:hover { border-color: rgba(0,229,255,.4); color: var(--accent); }
   .social-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
+  /* ── filters ── */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .filter-btn:hover { border-color: rgba(0,229,255,.4); color: var(--text); }
+  .filter-btn.active {
+    background: rgba(0,229,255,.1);
+    border-color: rgba(0,229,255,.5);
+    color: var(--accent);
+  }
+  .card[data-cat] { transition: opacity .2s, transform .2s; }
+  .card.hidden { display: none; }
+
   /* ── footer ── */
   footer {
     border-top: 1px solid var(--border);
@@ -420,12 +449,17 @@
       <div class="section-line"></div>
     </div>
 
-    <div class="grid">
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterCards('all', this)">ALL</button>
+        <button class="filter-btn" onclick="filterCards('windows', this)">WINDOWS</button>
+        <button class="filter-btn" onclick="filterCards('maya', this)">MAYA SCRIPTS</button>
+      </div>
+      <div class="grid">
 
       <!-- Card 1 -->
-      <div class="card">
+      <div class="card" data-cat="windows">
         <div class="card-top">
-          <div class="card-icon">🗂️</div>
+          <div class="card-icon" data-inserted="sortmatic">🗂️</div>
           <div class="card-tags">
             <span class="tag tag-accent">v1.0</span>
             <span class="tag">Windows</span>
@@ -436,7 +470,7 @@
           If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.
         </div>
         <div class="card-meta">
-          <span class="meta-item">📦 200 MB</span>
+          <span class="meta-item">📦 340 MB</span>
           <span class="meta-item">2025-03-15</span>
         </div>
         <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.0/SortMatic5000.zip" download>
@@ -448,7 +482,7 @@
       </div>
 
 
-      <div class="card">
+      <div class="card" data-cat="windows">
         <div class="card-top">
           <div class="card-icon">🌳</div>
           <div class="card-tags">
@@ -470,7 +504,7 @@
         </a>
       </div>
 
-      <div class="card">
+      <div class="card" data-cat="maya">
         <div class="card-top">
           <div class="card-icon">🔀</div>
           <div class="card-tags">
@@ -492,7 +526,7 @@
         </a>
       </div>
 
-      <div class="card">
+      <div class="card" data-cat="maya">
         <div class="card-top">
           <div class="card-icon">🎬</div>
           <div class="card-tags">
@@ -514,7 +548,7 @@
         </a>
       </div>
 
-      <div class="card">
+      <div class="card" data-cat="maya">
         <div class="card-top">
           <div class="card-icon">💾</div>
           <div class="card-tags">
@@ -536,7 +570,7 @@
         </a>
       </div>
 
-      <div class="card">
+      <div class="card" data-cat="maya">
         <div class="card-top">
           <div class="card-icon">🎥</div>
           <div class="card-tags">
@@ -558,7 +592,7 @@
         </a>
       </div>
 
-      <div class="card">
+      <div class="card" data-cat="maya">
         <div class="card-top">
           <div class="card-icon">🦴</div>
           <div class="card-tags">
@@ -644,5 +678,18 @@
 
 <script data-goatcounter="https://eu-melnikov.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+<script>
+function filterCards(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.card[data-cat]').forEach(card => {
+    if (cat === 'all' || card.dataset.cat === cat) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+</script>
 </body>
 </html>
