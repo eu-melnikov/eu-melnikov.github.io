@@ -330,6 +330,37 @@
     flex-shrink: 0;
   }
 
+  .about-box { grid-template-columns: 1fr !important; }
+  .about-bio { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  @media (max-width: 640px) { .about-bio { grid-template-columns: 1fr; } }
+
+  .social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .06em;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--bg3);
+    transition: border-color .2s, color .2s;
+  }
+  .social-btn:hover { border-color: rgba(0,229,255,.4); color: var(--accent); }
+  .social-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
   /* ── footer ── */
   footer {
     border-top: 1px solid var(--border);
@@ -366,7 +397,7 @@
     <p class="hero-sub">A collection of free utilities I've written over the years. Download, use, share — no strings attached.</p>
     <div class="hero-stats">
       <div class="stat">
-        <span class="stat-num">3</span>
+        <span class="stat-num">7</span>
         <span class="stat-label">Programs</span>
       </div>
       <div class="stat">
@@ -394,72 +425,154 @@
       <!-- Card 1 -->
       <div class="card">
         <div class="card-top">
-          <div class="card-icon">🛠️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.2</span>
-            <span class="tag">Windows</span>
-          </div>
-        </div>
-        <div class="card-title">Program Name One</div>
-        <div class="card-desc">
-          Short description of what this program does. What problem it solves and why it's useful for the user.
-        </div>
-        <div class="card-meta">
-          <span class="meta-item">📦 2.4 MB</span>
-          <span class="meta-item">2024-03-01</span>
-        </div>
-        <!-- Change href to the actual path of your archive, e.g. "files/program1.zip" -->
-        <a class="btn-dl" href="files/program1.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
-          </svg>
-          DOWNLOAD .ZIP
-        </a>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="card">
-        <div class="card-top">
-          <div class="card-icon">⚡</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v2.0</span>
-            <span class="tag">Windows</span>
-          </div>
-        </div>
-        <div class="card-title">Program Name Two</div>
-        <div class="card-desc">
-          Short description of what this program does. What problem it solves and why it's useful for the user.
-        </div>
-        <div class="card-meta">
-          <span class="meta-item">📦 1.1 MB</span>
-          <span class="meta-item">2024-05-15</span>
-        </div>
-        <a class="btn-dl" href="files/program2.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
-          </svg>
-          DOWNLOAD .ZIP
-        </a>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="card">
-        <div class="card-top">
-          <div class="card-icon">🔧</div>
+          <div class="card-icon">🗂️</div>
           <div class="card-tags">
             <span class="tag tag-accent">v1.0</span>
             <span class="tag">Windows</span>
           </div>
         </div>
-        <div class="card-title">Program Name Three</div>
+        <div class="card-title">SortMatic5000</div>
         <div class="card-desc">
-          Short description of what this program does. What problem it solves and why it's useful for the user.
+          If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.
         </div>
         <div class="card-meta">
-          <span class="meta-item">📦 800 KB</span>
-          <span class="meta-item">2024-09-10</span>
+          <span class="meta-item">📦 200 MB</span>
+          <span class="meta-item">2025-03-15</span>
         </div>
-        <a class="btn-dl" href="files/program3.zip" download>
+        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.0/SortMatic5000.zip" download>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+          </svg>
+          DOWNLOAD .ZIP
+        </a>
+      </div>
+
+
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon">🌳</div>
+          <div class="card-tags">
+            <span class="tag tag-accent">v1.0</span>
+            <span class="tag">Windows</span>
+          </div>
+        </div>
+        <div class="card-title">FolderTree Collector</div>
+        <div class="card-desc">Scans any folder and builds a full directory tree with timestamps. Export the result to a .txt file in one click. Simple, free, source code included.</div>
+        <div class="card-meta">
+          <span class="meta-item">📦 44 MB</span>
+          <span class="meta-item">2025-03-15</span>
+        </div>
+        <a class="btn-dl" href="https://eu-melnikov.github.io/files/tree_collector.zip" download>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+          </svg>
+          DOWNLOAD .ZIP
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon">🔀</div>
+          <div class="card-tags">
+            <span class="tag tag-accent">v1.0</span>
+            <span class="tag">Maya 2019+</span>
+          </div>
+        </div>
+        <div class="card-title">Swap Animation</div>
+        <div class="card-desc">Swaps animation data between two objects on a selected timeline range. Everything outside the range stays untouched. Perfect for fixing mocap mixups, timing experiments or rearranging cycle phases.</div>
+        <div class="card-meta">
+          <span class="meta-item">📦 3 KB</span>
+          <span class="meta-item">2025-03-15</span>
+        </div>
+        <a class="btn-dl" href="https://eu-melnikov.github.io/files/swap_animation.zip" download>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+          </svg>
+          DOWNLOAD .ZIP
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon">🎬</div>
+          <div class="card-tags">
+            <span class="tag tag-accent">v1.0</span>
+            <span class="tag">Maya 2019+</span>
+          </div>
+        </div>
+        <div class="card-title">Scene Review Tool</div>
+        <div class="card-desc">Batch-review Maya scenes (.mb, .ma, .fbx) from a folder without opening each file manually. Pick a folder, choose format, hit Start — then click Next through every file in order. Nothing gets opened twice.</div>
+        <div class="card-meta">
+          <span class="meta-item">📦 16 KB</span>
+          <span class="meta-item">2025-03-15</span>
+        </div>
+        <a class="btn-dl" href="https://eu-melnikov.github.io/files/scene_review_tool.zip" download>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+          </svg>
+          DOWNLOAD .ZIP
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon">💾</div>
+          <div class="card-tags">
+            <span class="tag tag-accent">v1.0</span>
+            <span class="tag">Maya 2019+</span>
+          </div>
+        </div>
+        <div class="card-title">Quick Save to Temp</div>
+        <div class="card-desc">One-click save to a fixed temp folder — no dialogs, no hassle. Adds a _QS suffix and auto-increments versions. Works even on unsaved scenes. Perfect for quick experiments and backups.</div>
+        <div class="card-meta">
+          <span class="meta-item">📦 7 KB</span>
+          <span class="meta-item">2025-03-15</span>
+        </div>
+        <a class="btn-dl" href="https://eu-melnikov.github.io/files/Quick_Save_to_Temp.zip" download>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+          </svg>
+          DOWNLOAD .ZIP
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon">🎥</div>
+          <div class="card-tags">
+            <span class="tag tag-accent">v1.0</span>
+            <span class="tag">Maya 2019+</span>
+          </div>
+        </div>
+        <div class="card-title">Maya Persp Camera History</div>
+        <div class="card-desc">Adds Undo/Redo history for the Persp camera — including moves triggered by scripts, which Maya's built-in [ ] hotkeys can't track. Stores up to 50 positions, runs silently in the background.</div>
+        <div class="card-meta">
+          <span class="meta-item">📦 9 KB</span>
+          <span class="meta-item">2025-03-15</span>
+        </div>
+        <a class="btn-dl" href="https://eu-melnikov.github.io/files/Maya_Persp_Camera_History.zip" download>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+          </svg>
+          DOWNLOAD .ZIP
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <div class="card-icon">🦴</div>
+          <div class="card-tags">
+            <span class="tag tag-accent">v1.0</span>
+            <span class="tag">Maya 2019+</span>
+          </div>
+        </div>
+        <div class="card-title">BoneAnim Combo</div>
+        <div class="card-desc">Merges multiple animation files into a single continuous sequence. Built for working with large animation libraries. Copy to shelf and go.</div>
+        <div class="card-meta">
+          <span class="meta-item">📦 89 KB</span>
+          <span class="meta-item">2025-03-15</span>
+        </div>
+        <a class="btn-dl" href="https://eu-melnikov.github.io/files/BoneAnim-Combo.zip" download>
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
           </svg>
@@ -479,18 +592,45 @@
       <div class="section-line"></div>
     </div>
     <div class="about-box">
-      <div class="about-text">
-        <h3>Hi, I'm <strong style="color:var(--accent)">Your Name</strong></h3>
-        <p>I write small tools that I find useful in everyday work. If they help you too — great.</p>
-        <p>Everything here is free. No registration, no ads, no tracking.</p>
+      <div class="about-bio">
+        <div class="about-text">
+          <h3>Hi, I'm <strong style="color:var(--accent)">Eugene Melnikov</strong></h3>
+          <p>Character animator since 2006. I lead an animation outsource division, mentoring animators and shaping the creative process from brief to final shot.</p>
+          <p>Alongside animation, I write Python scripts to improve pipeline workflows and smooth out collaboration between animation teams. My tools are born out of real production pain — if something is repetitive and boring, I automate it.</p>
+          <p>Building Windows utilities is part hobby, part pragmatism — 50/50. I enjoy thinking up features, optimising processes, and occasionally shipping something useful to the world for free.</p>
+        </div>
+        <div>
+          <ul class="about-list">
+            <li>Lead animator &amp; animation team lead</li>
+            <li>Character animation since 2006</li>
+            <li>Python scripting for animation pipelines</li>
+            <li>Windows utilities for everyday automation</li>
+            <li>All tools here are free, no strings attached</li>
+          </ul>
+        </div>
       </div>
-      <ul class="about-list">
-        <li>All programs are free forever</li>
-        <li>No installation required — just unzip and run</li>
-        <li>No ads, no analytics, no telemetry</li>
-        <li>Compatible with Windows 10 / 11</li>
-        <li>Questions? Write to: <span style="color:var(--accent);font-family:var(--mono)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="463f29333406232b272f2a6825292b">[email&#160;protected]</a></span></li>
-      </ul>
+      <div class="social-links">
+        <a class="social-btn" href="https://www.linkedin.com/in/eugene-melnikov-ab087114a/" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          LINKEDIN
+        </a>
+        <a class="social-btn" href="https://t.me/eov_animation" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0v5.5l3.5-3"/></svg>
+          TELEGRAM
+        </a>
+        <a class="social-btn" href="https://www.youtube.com/c/EugeneMelnikov" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="var(--bg)"/></svg>
+          YOUTUBE
+        </a>
+        <a class="social-btn" href="https://www.artstation.com/emelnikov" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17.5L5.5 21l1.5-2.5L3.5 14 2 17.5zm19.5.5h-1.8L13 5H11L3.5 18h3.8l1.2-2h8l1.2 2h3.8zM10.2 13l2.8-5.5L15.8 13h-5.6z"/></svg>
+          ARTSTATION — ANIMATION
+        </a>
+        <a class="social-btn" href="https://www.artstation.com/eugene527" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17.5L5.5 21l1.5-2.5L3.5 14 2 17.5zm19.5.5h-1.8L13 5H11L3.5 18h3.8l1.2-2h8l1.2 2h3.8zM10.2 13l2.8-5.5L15.8 13h-5.6z"/></svg>
+          ARTSTATION — 3D MODELING
+        </a>
+      </div>
     </div>
   </div>
 </div>
