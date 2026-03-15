@@ -361,6 +361,78 @@
   .social-btn:hover { border-color: rgba(0,229,255,.4); color: var(--accent); }
   .social-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
+  /* ── new release ── */
+  .new-release {
+    margin-bottom: 64px;
+  }
+  .release-card {
+    background: var(--bg2);
+    border: 1px solid rgba(0,229,255,.25);
+    border-radius: 16px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+  }
+  @media (max-width: 680px) { .release-card { grid-template-columns: 1fr; } }
+  .release-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+  }
+  .release-screenshot {
+    overflow: hidden;
+    max-height: 280px;
+    display: flex; align-items: center;
+  }
+  .release-screenshot img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top left;
+    display: block;
+    opacity: .85;
+    transition: opacity .3s;
+  }
+  .release-card:hover .release-screenshot img { opacity: 1; }
+  .release-info {
+    padding: 36px;
+    display: flex; flex-direction: column; gap: 16px; justify-content: center;
+  }
+  .release-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--accent); background: rgba(0,229,255,.08);
+    border: 1px solid rgba(0,229,255,.2);
+    border-radius: 20px; padding: 3px 10px;
+    width: fit-content;
+  }
+  .release-badge::before {
+    content: ''; width: 5px; height: 5px;
+    background: var(--accent); border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .release-title {
+    font-size: 26px; font-weight: 500; line-height: 1.2;
+  }
+  .release-title strong {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .release-desc {
+    font-size: 14px; color: var(--muted); line-height: 1.7;
+  }
+  .release-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .btn-details {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: .06em; padding: 8px 16px; border-radius: 8px;
+    text-decoration: none; transition: all .2s;
+    border: 1px solid var(--border); color: var(--muted); background: var(--bg3);
+  }
+  .btn-details:hover { border-color: rgba(0,229,255,.4); color: var(--accent); }
+  .btn-details svg { width: 12px; height: 12px; }
+
   /* ── filters ── */
   .filters {
     display: flex;
@@ -426,7 +498,7 @@
     <p class="hero-sub">A collection of free utilities I've built along the way. Download, use, share — no strings attached.</p>
     <div class="hero-stats">
       <div class="stat">
-        <span class="stat-num">7</span>
+        <span class="stat-num">8</span>
         <span class="stat-label">Programs</span>
       </div>
       <div class="stat">
@@ -436,6 +508,40 @@
       <div class="stat">
         <span class="stat-num">0</span>
         <span class="stat-label">Ads</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── New Release ── -->
+<div class="wrap">
+  <div class="section new-release" id="new-release">
+    <div class="section-header">
+      <h2>// New release</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="release-card">
+      <div class="release-screenshot">
+        <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI_pict_snap_iIndex_app.jpg" alt="PSI interface">
+      </div>
+      <div class="release-info">
+        <span class="release-badge">Just released</span>
+        <div class="release-title"><strong>PSI</strong> — Pict Snap Index</div>
+        <p class="release-desc">Terabytes of photos across multiple drives? PSI indexes your media folders once and lets you browse the full thumbnail gallery — even when the drives are offline. Index once, explore forever.</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="tag badge-platform" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">v1.23</span>
+          <span class="tag" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">Windows</span>
+        </div>
+        <div class="release-actions">
+          <a class="btn-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI_PictSnapIndex.zip" download style="font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;padding:9px 18px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,rgba(0,229,255,.12),rgba(124,58,237,.12));border:1px solid rgba(0,229,255,.3);color:var(--accent);transition:all .2s;">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          <a class="btn-details" href="psi.html">
+            VIEW DETAILS
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -456,19 +562,42 @@
       </div>
       <div class="grid">
 
-      <!-- Card 1 -->
       <div class="card" data-cat="windows">
         <div class="card-top">
-          <div class="card-icon" data-inserted="sortmatic">🗂️</div>
+          <div class="card-icon">🖼️</div>
+          <div class="card-tags">
+            <span class="tag tag-accent">v1.23</span>
+            <span class="tag">Windows</span>
+          </div>
+        </div>
+        <div class="card-title">PSI — Pict Snap Index</div>
+        <div class="card-desc">Index your media folders once — then browse the full thumbnail gallery at any time, even with the source drives offline. Thousands of photos and videos, always at hand.</div>
+        <div class="card-meta">
+          <span class="meta-item">📦 —</span>
+          <span class="meta-item">2025-03-16</span>
+        </div>
+        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI_PictSnapIndex.zip" download>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+          </svg>
+          DOWNLOAD .ZIP
+        </a>
+        <a class="btn-dl" href="psi.html" style="background:transparent;border-color:var(--border);color:var(--muted);margin-top:4px;">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+          VIEW DETAILS
+        </a>
+      </div>
+
+      <div class="card" data-cat="windows">
+        <div class="card-top">
+          <div class="card-icon">🗂️</div>
           <div class="card-tags">
             <span class="tag tag-accent">v1.0</span>
             <span class="tag">Windows</span>
           </div>
         </div>
         <div class="card-title">SortMatic5000</div>
-        <div class="card-desc">
-          If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.
-        </div>
+        <div class="card-desc">If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.</div>
         <div class="card-meta">
           <span class="meta-item">📦 340 MB</span>
           <span class="meta-item">2025-03-15</span>
@@ -480,7 +609,6 @@
           DOWNLOAD .ZIP
         </a>
       </div>
-
 
       <div class="card" data-cat="windows">
         <div class="card-top">
@@ -614,6 +742,7 @@
         </a>
       </div>
 
+    
     </div>
   </div>
 </div>
