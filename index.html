@@ -558,6 +558,7 @@
     <div class="filters">
         <button class="filter-btn active" onclick="filterCards('all', this)">ALL</button>
         <button class="filter-btn" onclick="filterCards('windows', this)">WINDOWS</button>
+        <button class="filter-btn" onclick="filterCards('macos', this)">macOS</button>
         <button class="filter-btn" onclick="filterCards('maya', this)">MAYA SCRIPTS</button>
       </div>
       <div class="grid">
@@ -588,12 +589,13 @@
         </a>
       </div>
 
-      <div class="card" data-cat="windows">
+      <div class="card" data-cat="windows macos">
         <div class="card-top">
           <div class="card-icon">🖼️</div>
           <div class="card-tags">
             <span class="tag tag-accent">v1.23</span>
             <span class="tag">Windows</span>
+            <span class="tag">macOS</span>
           </div>
         </div>
         <div class="card-title">PSI — Pict Snap Index</div>
@@ -606,7 +608,13 @@
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
           </svg>
-          DOWNLOAD .ZIP
+          DOWNLOAD — WINDOWS
+        </a>
+        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI-macOS.zip" download style="margin-top:4px;">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+          </svg>
+          DOWNLOAD — macOS
         </a>
         <a class="btn-dl" href="psi.html" style="background:transparent;border-color:var(--border);color:var(--muted);margin-top:4px;">
           <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
@@ -838,7 +846,7 @@ function filterCards(cat, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.card[data-cat]').forEach(card => {
-    if (cat === 'all' || card.dataset.cat === cat) {
+    if (cat === 'all' || card.dataset.cat.split(' ').indexOf(cat) !== -1) {
       card.classList.remove('hidden');
     } else {
       card.classList.add('hidden');
