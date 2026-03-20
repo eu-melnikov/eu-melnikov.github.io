@@ -274,6 +274,61 @@
   }
   .spec-value span { color: var(--accent); }
 
+  /* ── story toggle ── */
+  .story-toggle {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: border-color .2s;
+    user-select: none;
+  }
+  .story-toggle:hover { border-color: rgba(0,229,255,.3); }
+  .story-btn-inner {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .story-icon { font-size: 24px; flex-shrink: 0; }
+  .story-btn-title {
+    font-size: 15px; font-weight: 500; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .story-btn-sub {
+    font-size: 13px; color: var(--muted);
+  }
+  .story-chevron {
+    width: 18px; height: 18px; flex-shrink: 0;
+    margin-left: auto; color: var(--muted);
+    transition: transform .3s;
+  }
+  .story-chevron.open { transform: rotate(180deg); }
+
+  .story-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .5s ease;
+  }
+  .story-body.open { max-height: 3000px; }
+
+  .story-content {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 36px;
+  }
+  .story-content h3 {
+    font-size: 15px; font-weight: 500;
+    color: var(--accent); margin: 28px 0 10px;
+    font-family: var(--mono); letter-spacing: .04em;
+  }
+  .story-content h3:first-child { margin-top: 0; }
+  .story-content p {
+    font-size: 15px; color: var(--muted);
+    line-height: 1.8; margin-bottom: 12px;
+  }
+  .story-content strong { color: var(--text); }
+
   /* ── footer ── */
   footer {
     border-top: 1px solid var(--border);
@@ -397,6 +452,55 @@
         <div class="feature-desc">No license, no subscription, no ads. Free for personal and commercial use.</div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ── Behind the scenes ── -->
+  <div class="section" style="padding-top:0">
+    <div class="section-header">
+      <h2>// Behind the scenes</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="story-toggle" onclick="toggleStory()" id="story-btn">
+      <div class="story-btn-inner">
+        <span class="story-icon">📖</span>
+        <div>
+          <div class="story-btn-title">How Feedback Like A Boss was built</div>
+          <div class="story-btn-sub">From a Notepad habit to a full project manager — the story behind the tool</div>
+        </div>
+        <svg class="story-chevron" id="story-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6l4 4 4-4"/>
+        </svg>
+      </div>
+    </div>
+    <div class="story-body" id="story-body">
+      <div class="story-content">
+
+        <h3>Where it all started</h3>
+        <p>I work in animation production for games. At any given time we can have dozens of animation assets in progress — each going through multiple rounds of review and revision with outsource teams. For a long time my workflow was embarrassingly basic: open Notepad, write comments, manually find the right folder, dump in the text along with some screenshots. Multiply that by 80+ weapons and you get pure chaos.</p>
+        <p>At some point I thought: enough, it's time to build a proper tool. That's how Feedback Like A Boss was born.</p>
+        <p>The original idea was dead simple — press a button, a document gets created with the right name in the right folder, ready to edit. I built the first prototype in a day. Already a win.</p>
+
+        <h3>How the program grew</h3>
+        <p>But then the most interesting part started — I began using it in real work and discovering what was still missing. First I added a "Merge All" button. Then feedbacks got their own subfolder. Then came importing external files, screenshots, videos. Then a trash bin with restore functionality.</p>
+        <p>A few days in I already had a full-blown project manager with multiple document types — feedbacks, meeting notes, personal notes, tasks. Each type gets its own color so you can tell at a glance what's what.</p>
+
+        <h3>The timeline — the coolest part</h3>
+        <p>At some point I came up with timeline mode. On the left — a list of animations, on the right — a time axis showing when each feedback was created. Click a marker — open the document. You see the whole picture of the project at once.</p>
+        <p>Then I remembered how the time range slider works in Maya. You can drag the edges to change the playback range. I wanted something like that for navigating through time. We built it. Then added double-click — so the slider snaps to the full range and back. A small thing, but it made working with it so much smoother.</p>
+
+        <h3>The details that matter</h3>
+        <p>When you build a tool for yourself, you start noticing little things that nobody ever bothers fixing in standard software. I removed all confirmation dialogs like "File created — click OK." I can already see that it was created. Why click OK? Gone.</p>
+        <p>Added document preview on hover with Ctrl held down. Hover over a file — you see the first 20–30 words. No need to open the file just to know what's inside. Card pinning — right-click, "Pin" — the card flies to the top. Card grouping, like groups in Telegram. Collapse a group and it's out of the way.</p>
+
+        <h3>Thumbnails and video preview</h3>
+        <p>The last thing I added was thumbnail mode for media files. Instead of a card with a plain icon — an actual preview image. For videos, it's the first frame. And more than that: hover over a video card and the video starts playing right inside the thumbnail. You can scrub through it by moving the mouse left and right, like in a proper media manager. The technically trickiest part — but the end result is genuinely satisfying to use.</p>
+
+        <h3>Two months later</h3>
+        <p>Over roughly two months, the program went from "create a document in a folder" to a full project manager. I originally built it for animation production, but it works for any project where there are tasks, folders with files, and people who need to give notes — VFX, design, 3D modeling, architecture, or anywhere the work revolves around folders and content.</p>
+        <p><strong>Feedback Like A Boss is completely free.</strong> Download it, try it, and let me know what you think.</p>
+
+      </div>
     </div>
   </div>
 
