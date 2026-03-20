@@ -342,6 +342,16 @@
 </head>
 <body>
 
+<script>
+function toggleStory() {
+  var body = document.getElementById('story-body');
+  var chevron = document.getElementById('story-chevron');
+  var btn = document.getElementById('story-btn');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+  btn.style.borderRadius = body.classList.contains('open') ? '12px 12px 0 0' : '12px';
+}
+</script>
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 
