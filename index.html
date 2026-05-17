@@ -58,7 +58,7 @@
   .blob-2 { width: 400px; height: 400px; background: var(--accent);  bottom: -100px; right: -100px; }
 
   /* ── wrapper ── */
-  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .wrap { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
   /* ── nav ── */
   nav {
@@ -186,16 +186,16 @@
   }
 
   /* ── cards grid ── */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
 
   .card {
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 28px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     transition: border-color .2s, transform .2s;
     position: relative;
     overflow: hidden;
@@ -212,19 +212,60 @@
   .card:hover { border-color: rgba(0,229,255,.3); transform: translateY(-2px); }
   .card:hover::before { opacity: 1; }
 
-  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-
-  .card-icon {
-    width: 44px; height: 44px;
-    border-radius: 10px;
-    background: rgba(0,229,255,.08);
-    border: 1px solid rgba(0,229,255,.15);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
+  /* ── card preview image ── */
+  .card-preview {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--bg3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+  }
+  .card:hover .card-preview img { opacity: 1; }
+  .card-preview-placeholder {
+    color: var(--muted);
+    font-size: 32px;
+    opacity: 0.4;
   }
 
-  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .card-title {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  /* ── card meta: tags + size + date ── */
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .card-meta-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
   .tag {
     font-family: var(--mono);
     font-size: 10px;
@@ -241,30 +282,58 @@
     border-color: rgba(0,229,255,.2);
   }
 
-  .card-title {
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--text);
-  }
-  .card-desc {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.65;
-    flex: 1;
-  }
-
-  .card-meta {
+  /* ── card buttons row ── */
+  .card-buttons {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
   }
-  .meta-item { display: flex; align-items: center; gap: 4px; }
+  .btn-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .06em;
+    padding: 7px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all .2s;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-card svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .btn-card-primary {
+    background: linear-gradient(135deg, rgba(0,229,255,.12), rgba(124,58,237,.12));
+    border: 1px solid rgba(0,229,255,.3);
+    color: var(--accent);
+  }
+  .btn-card-primary:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.22), rgba(124,58,237,.22));
+    border-color: rgba(0,229,255,.6);
+  }
+  .btn-card-youtube {
+    background: rgba(255,0,0,.08);
+    border: 1px solid rgba(255,0,0,.25);
+    color: #ff4444;
+  }
+  .btn-card-youtube:hover {
+    background: rgba(255,0,0,.15);
+    border-color: rgba(255,0,0,.4);
+  }
+  .btn-card-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-card-secondary:hover {
+    border-color: rgba(0,229,255,.4);
+    color: var(--accent);
+  }
 
+  /* legacy btn-dl for new-release section */
   .btn-dl {
     display: flex;
     align-items: center;
@@ -295,12 +364,7 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 40px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: center;
   }
-  @media (max-width: 640px) { .about-box { grid-template-columns: 1fr; } }
 
   .about-text h3 {
     font-size: 22px;
@@ -330,7 +394,6 @@
     flex-shrink: 0;
   }
 
-  .about-box { grid-template-columns: 1fr !important; }
   .about-bio { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
   @media (max-width: 640px) { .about-bio { grid-template-columns: 1fr; } }
 
@@ -410,7 +473,6 @@
     background: var(--accent); border-radius: 50%;
     animation: pulse 2s ease-in-out infinite;
   }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
   .release-title {
     font-size: 26px; font-weight: 500; line-height: 1.2;
   }
@@ -570,468 +632,509 @@
 
 
       <div class="card" data-cat="windows maya">
-        <div class="card-top">
-          <div class="card-icon">🎬</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.13</span>
-            
-            <span class="tag">Windows</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander">
+          
         </div>
         <div class="card-title">Frames Commander</div>
         <div class="card-desc">Frames Commander is a specialized video player designed for animators and VFX artists who need precise frame-by-frame control over their references. Features multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software. Free, portable, no installation required.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 216 Mb</span>
-          <span class="meta-item">2026-05-14</span>
+          <span class="tag tag-accent">v1.13</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">216 Mb &nbsp;&bull;&nbsp; 2026-05-14</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/FramesCommander.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        <a class="btn-dl" href="https://youtu.be/SAkuDkx8PXc" target="_blank" style="background:rgba(255,0,0,.08);border-color:rgba(255,0,0,.25);color:#ff4444;margin-top:4px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-          WATCH ON YOUTUBE
-        </a>
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/FramesCommander.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows">
-        <div class="card-top">
-          <div class="card-icon">⚙️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1</span>
-            
-            <span class="tag">Windows</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_scr.jpg" alt="RoadMapper">
+          
         </div>
         <div class="card-title">RoadMapper</div>
         <div class="card-desc">Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking. Free desktop app for Windows — no account required.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 298 Mb</span>
-          <span class="meta-item">2026-04-29</span>
+          <span class="tag tag-accent">v1</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="card-meta-right">298 Mb &nbsp;&bull;&nbsp; 2026-04-29</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        <a class="btn-dl" href="https://youtu.be/PE9tJSEhRE0" target="_blank" style="background:rgba(255,0,0,.08);border-color:rgba(255,0,0,.25);color:#ff4444;margin-top:4px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-          WATCH ON YOUTUBE
-        </a>
-        
-        
-        <a class="btn-dl" href="roadmapper.html" style="background:transparent;border-color:var(--border);color:var(--muted);margin-top:4px;">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-          VIEW DETAILS
-        </a>
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/PE9tJSEhRE0" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+          <a class="btn-card btn-card-secondary" href="roadmapper.html">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+            DETAILS
+          </a>
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows">
-        <div class="card-top">
-          <div class="card-icon">⚙️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Windows</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/YearSprint/YearSprint_pict.jpg" alt="Year Sprint">
+          
         </div>
         <div class="card-title">Year Sprint</div>
         <div class="card-desc">YearSprint — a minimalist year progress tracker that turns abstract time into a visual picture. Each passed day becomes a colored cell in a 365-day grid, creating a beautiful gradient from red to green. Track your year at a glance, add daily wishes you can't edit later (keeping them honest), and export your thoughts at year's end. Full source code included. A single portable EXE — no installation needed.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 46</span>
-          <span class="meta-item">2026-04-22</span>
+          <span class="tag tag-accent">v1.0</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="card-meta-right">46 &nbsp;&bull;&nbsp; 2026-04-22</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/YearSprint/YearSprint_v1.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/YearSprint/YearSprint_v1.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows maya">
-        <div class="card-top">
-          <div class="card-icon">⚙️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v2.1</span>
-            
-            <span class="tag">Windows</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <img src="https://eu-melnikov.github.io/files/camera_shake_tool_poster.jpg" alt="Сamera Shake Tool">
+          
         </div>
         <div class="card-title">Сamera Shake Tool</div>
         <div class="card-desc">Camera Shake Tool for Maya 2019–2026 — a tool that generates realistic camera shake based on any animated object's movement. Three modes: add shake to static cameras, layer it over existing animation, or stabilize overly shaky mocap-driven cameras like a virtual steadicam. Real-time preview, per-axis control, animation layer output. Perfect for adding that hand-held feel or impact vibrations to your shots.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 1.5</span>
-          <span class="meta-item">2026-04-11</span>
+          <span class="tag tag-accent">v2.1</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">1.5 &nbsp;&bull;&nbsp; 2026-04-11</span>
         </div>
-        <a class="btn-dl" href="https://eu-melnikov.github.io/files/camera_shake_tool_lite.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        <a class="btn-dl" href="https://youtu.be/o5KfqscD5AE" target="_blank" style="background:rgba(255,0,0,.08);border-color:rgba(255,0,0,.25);color:#ff4444;margin-top:4px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-          WATCH ON YOUTUBE
-        </a>
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://eu-melnikov.github.io/files/camera_shake_tool_lite.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/o5KfqscD5AE" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows maya">
-        <div class="card-top">
-          <div class="card-icon">⚙️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.4</span>
-            
-            <span class="tag">Windows</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_poster1.jpg" alt="Free Motion Trail 1.4 Public Beta">
+          
         </div>
         <div class="card-title">Free Motion Trail 1.4 Public Beta</div>
         <div class="card-desc">EU FreeMotionTrail v1.4 Public Beta free Maya plugin for visualizing object motion paths. Displays animation trajectory in real-time directly in the viewport with customizable colors, line styles, orientation frets, and velocity-based temperature coloring. Supports Animation Layers. Works in Maya 2019–2026. This is a public beta! Your feedback, bug reports, and feature ideas are very welcome.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 2 Mb</span>
-          <span class="meta-item">2026-04-02</span>
+          <span class="tag tag-accent">v1.4</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">2 Mb &nbsp;&bull;&nbsp; 2026-04-02</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_maya_1_4_2019_2026.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        <a class="btn-dl" href="https://youtu.be/uPMs79yk_5c" target="_blank" style="background:rgba(255,0,0,.08);border-color:rgba(255,0,0,.25);color:#ff4444;margin-top:4px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-          WATCH ON YOUTUBE
-        </a>
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_maya_1_4_2019_2026.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/uPMs79yk_5c" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows maya">
-        <div class="card-top">
-          <div class="card-icon">⚙️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v2.57</span>
-            
-            <span class="tag">Windows</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/eu_curve/eu_anim_curve_tools_poster.jpg" alt="EU Anim Curve Tools">
+          
         </div>
         <div class="card-title">EU Anim Curve Tools</div>
         <div class="card-desc">Updated! EU Anim Curve Tools is a toolkit for manipulating animation curves in Maya. It lets you quickly smooth, scale, time-offset, and ease selected keys using intuitive sliders. Includes 14 tools: Pull/Push, Smooth/Rough, Ease In/Out, Time Offset, Scale, and more. Works with Maya 2019–2026. Currently in open beta — feedback and bug reports are welcome!</div>
         <div class="card-meta">
-          <span class="meta-item">📦 3 Mb</span>
-          <span class="meta-item">2026-04-07</span>
+          <span class="tag tag-accent">v2.57</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">3 Mb &nbsp;&bull;&nbsp; 2026-04-07</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/eu_curve/eu_anim_curve_tools_v2.57_Public_Beta.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        <a class="btn-dl" href="https://youtu.be/wN9r4Zk1cWs" target="_blank" style="background:rgba(255,0,0,.08);border-color:rgba(255,0,0,.25);color:#ff4444;margin-top:4px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-          WATCH ON YOUTUBE
-        </a>
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/eu_curve/eu_anim_curve_tools_v2.57_Public_Beta.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/wN9r4Zk1cWs" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+        </div>
       </div>
 
       <div class="card" data-cat="maya">
-        <div class="card-top">
-          <div class="card-icon">⚙️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <span class="card-preview-placeholder">⚙️</span>
+          
         </div>
         <div class="card-title">Maya Batch Converter</div>
         <div class="card-desc">Batch convert Maya scenes between MA, MB, and FBX formats. Supports recursive folder processing, FPS preservation, and works with Maya 2019–2026.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 1 MB</span>
-          <span class="meta-item">2025-03-28</span>
+          <span class="tag tag-accent">v1.0</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">1 MB &nbsp;&bull;&nbsp; 2025-03-28</span>
         </div>
-        <a class="btn-dl" href="https://eu-melnikov.github.io/files/maya_batch_converter.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        <a class="btn-dl" href="https://youtu.be/lJlrtSLNBH4" target="_blank" style="background:rgba(255,0,0,.08);border-color:rgba(255,0,0,.25);color:#ff4444;margin-top:4px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-          WATCH ON YOUTUBE
-        </a>
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://eu-melnikov.github.io/files/maya_batch_converter.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/lJlrtSLNBH4" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows">
-        <div class="card-top">
-          <div class="card-icon">💬</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v4.62</span>
-            
-            <span class="tag">Windows</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <span class="card-preview-placeholder">💬</span>
+          
         </div>
         <div class="card-title">Feedback Like A Boss</div>
         <div class="card-desc">Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. Born in animation production, built for any field.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 120 MB</span>
-          <span class="meta-item">2025-03-16</span>
+          <span class="tag tag-accent">v4.62</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="card-meta-right">120 MB &nbsp;&bull;&nbsp; 2025-03-16</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FLBS/Feedback_Like_A_Boss.v4.62.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        <a class="btn-dl" href="https://youtu.be/nTZnjrRuiKc" target="_blank" style="background:rgba(255,0,0,.08);border-color:rgba(255,0,0,.25);color:#ff4444;margin-top:4px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-          WATCH ON YOUTUBE
-        </a>
-        
-        
-        <a class="btn-dl" href="flbs.html" style="background:transparent;border-color:var(--border);color:var(--muted);margin-top:4px;">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-          VIEW DETAILS
-        </a>
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FLBS/Feedback_Like_A_Boss.v4.62.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/nTZnjrRuiKc" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+          <a class="btn-card btn-card-secondary" href="flbs.html">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+            DETAILS
+          </a>
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows macos">
-        <div class="card-top">
-          <div class="card-icon">🖼️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.23</span>
-            
-            <span class="tag">Windows</span>
-            
-            <span class="tag">macOS</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <span class="card-preview-placeholder">🖼️</span>
+          
         </div>
         <div class="card-title">PSI — Pict Snap Index</div>
         <div class="card-desc">Index your media folders once — then browse the full thumbnail gallery at any time, even with the source drives offline. Thousands of photos and videos, always at hand.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 121 MB</span>
-          <span class="meta-item">2025-03-16</span>
+          <span class="tag tag-accent">v1.23</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">macOS</span>
+          
+          <span class="card-meta-right">121 MB &nbsp;&bull;&nbsp; 2025-03-16</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI_PictSnapIndex.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD — WINDOWS
-        </a>
-        
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI-macOS.zip" download style="margin-top:4px;">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD — macOS
-        </a>
-        
-        
-        
-        <a class="btn-dl" href="psi.html" style="background:transparent;border-color:var(--border);color:var(--muted);margin-top:4px;">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-          VIEW DETAILS
-        </a>
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI_PictSnapIndex.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI-macOS.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            macOS
+          </a>
+          
+          
+          
+          <a class="btn-card btn-card-secondary" href="psi.html">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+            DETAILS
+          </a>
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows">
-        <div class="card-top">
-          <div class="card-icon">🗂️</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Windows</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/blob/main/files/sort_matic_5000.jpg" alt="SortMatic5000">
+          
         </div>
         <div class="card-title">SortMatic5000</div>
         <div class="card-desc">If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 340 MB</span>
-          <span class="meta-item">2025-03-15</span>
+          <span class="tag tag-accent">v1.0</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="card-meta-right">340 MB &nbsp;&bull;&nbsp; 2025-03-15</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.0/SortMatic5000.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.0/SortMatic5000.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/klBmDmjOjJ8" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+        </div>
       </div>
 
       <div class="card" data-cat="windows">
-        <div class="card-top">
-          <div class="card-icon">🌳</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Windows</span>
-            
-          </div>
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/blob/main/files/tree_collect.jpg" alt="FolderTree Collector">
+          
         </div>
         <div class="card-title">FolderTree Collector</div>
         <div class="card-desc">Scans any folder and builds a full directory tree with timestamps. Export the result to a .txt file in one click. Simple, free, source code included.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 44 MB</span>
-          <span class="meta-item">2025-03-15</span>
+          <span class="tag tag-accent">v1.0</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="card-meta-right">44 MB &nbsp;&bull;&nbsp; 2025-03-15</span>
         </div>
-        <a class="btn-dl" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.1/tree_collector.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.1/tree_collector.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          
+        </div>
       </div>
 
-      <div class="card" data-cat="maya">
-        <div class="card-top">
-          <div class="card-icon">🔀</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+      <div class="card" data-cat="windows maya">
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/blob/main/files/swap_anim.jpg" alt="Swap Animation">
+          
         </div>
         <div class="card-title">Swap Animation</div>
         <div class="card-desc">Swaps animation data between two objects on a selected timeline range. Everything outside the range stays untouched. Perfect for fixing mocap mixups, timing experiments or rearranging cycle phases.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 3 KB</span>
-          <span class="meta-item">2025-03-15</span>
+          <span class="tag tag-accent">v1.0</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">3 KB &nbsp;&bull;&nbsp; 2025-03-15</span>
         </div>
-        <a class="btn-dl" href="https://eu-melnikov.github.io/files/swap_animation.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://eu-melnikov.github.io/files/swap_animation.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          
+        </div>
       </div>
 
-      <div class="card" data-cat="maya">
-        <div class="card-top">
-          <div class="card-icon">🎬</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+      <div class="card" data-cat="windows maya">
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/blob/main/files/scene_review_tool.jpg" alt="Scene Review Tool">
+          
         </div>
         <div class="card-title">Scene Review Tool</div>
         <div class="card-desc">Batch-review Maya scenes (.mb, .ma, .fbx) from a folder without opening each file manually. Pick a folder, choose format, hit Start — then click Next through every file in order. Nothing gets opened twice.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 16 KB</span>
-          <span class="meta-item">2025-03-15</span>
+          <span class="tag tag-accent">v1.0</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">16 KB &nbsp;&bull;&nbsp; 2025-03-15</span>
         </div>
-        <a class="btn-dl" href="https://eu-melnikov.github.io/files/scene_review_tool.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://eu-melnikov.github.io/files/scene_review_tool.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/tMx9ndjgFnA" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+        </div>
       </div>
 
-      <div class="card" data-cat="maya">
-        <div class="card-top">
-          <div class="card-icon">💾</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+      <div class="card" data-cat="windows maya">
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/blob/main/files/quick_save.jpg" alt="Quick Save to Temp">
+          
         </div>
         <div class="card-title">Quick Save to Temp</div>
         <div class="card-desc">One-click save to a fixed temp folder — no dialogs, no hassle. Adds a _QS suffix and auto-increments versions. Works even on unsaved scenes. Perfect for quick experiments and backups.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 7 KB</span>
-          <span class="meta-item">2025-03-15</span>
+          <span class="tag tag-accent">v1.0</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">7 KB &nbsp;&bull;&nbsp; 2025-03-15</span>
         </div>
-        <a class="btn-dl" href="https://eu-melnikov.github.io/files/Quick_Save_to_Temp.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://eu-melnikov.github.io/files/Quick_Save_to_Temp.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          
+        </div>
       </div>
 
-      <div class="card" data-cat="maya">
-        <div class="card-top">
-          <div class="card-icon">🎥</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+      <div class="card" data-cat="windows maya">
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/blob/main/files/persp_cam_hyst.jpg" alt="Maya Persp Camera History">
+          
         </div>
         <div class="card-title">Maya Persp Camera History</div>
         <div class="card-desc">Adds Undo/Redo history for the Persp camera — including moves triggered by scripts, which Maya's built-in [ ] hotkeys can't track. Stores up to 50 positions, runs silently in the background.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 9 KB</span>
-          <span class="meta-item">2025-03-15</span>
+          <span class="tag tag-accent">v1.0</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">9 KB &nbsp;&bull;&nbsp; 2025-03-15</span>
         </div>
-        <a class="btn-dl" href="https://eu-melnikov.github.io/files/Maya_Persp_Camera_History.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://eu-melnikov.github.io/files/Maya_Persp_Camera_History.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          
+        </div>
       </div>
 
-      <div class="card" data-cat="maya">
-        <div class="card-top">
-          <div class="card-icon">🦴</div>
-          <div class="card-tags">
-            <span class="tag tag-accent">v1.0</span>
-            
-            <span class="tag">Maya 2019+</span>
-            
-          </div>
+      <div class="card" data-cat="windows maya">
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/blob/main/files/boneanim_combo1.jpg" alt="BoneAnim Combo">
+          
         </div>
         <div class="card-title">BoneAnim Combo</div>
         <div class="card-desc">Merges multiple animation files into a single continuous sequence. Built for working with large animation libraries. Copy to shelf and go.</div>
         <div class="card-meta">
-          <span class="meta-item">📦 89 KB</span>
-          <span class="meta-item">2025-03-15</span>
+          <span class="tag tag-accent">v1.2</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">89 KB &nbsp;&bull;&nbsp; 2025-03-15</span>
         </div>
-        <a class="btn-dl" href="https://eu-melnikov.github.io/files/BoneAnim-Combo.zip" download>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-          DOWNLOAD .ZIP
-        </a>
-        
-        
-        
+        <div class="card-buttons">
+          <a class="btn-card btn-card-primary" href="https://eu-melnikov.github.io/files/BoneAnim-Combo.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          <a class="btn-card btn-card-youtube" href="https://youtu.be/7ddA2nk3jq4" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+            TUTORIAL
+          </a>
+          
+          
+        </div>
       </div>
 
 
