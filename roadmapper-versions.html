@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoadMapper — Downloads | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0d0f14;
+    --bg2:       #13161e;
+    --bg3:       #1a1d28;
+    --border:    #252836;
+    --accent:    #00e5ff;
+    --accent2:   #7c3aed;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --green:     #10b981;
+    --mono:      'JetBrains Mono', monospace;
+    --sans:      'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: .15;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--accent2); top: -150px; right: -150px; }
+  .blob-2 { width: 350px; height: 350px; background: var(--accent); bottom: -100px; left: -100px; }
+
+  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* nav */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.8);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap {
+    display: flex; align-items: center;
+    justify-content: space-between; height: 56px;
+  }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* hero - release card style */
+  .hero { padding: 64px 0 48px; }
+  .hero-card {
+    background: var(--bg2);
+    border: 1px solid rgba(0,229,255,.25);
+    border-radius: 16px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+  }
+  @media (max-width: 700px) {
+    .hero-card { grid-template-columns: 1fr; }
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+  }
+
+  .hero-image {
+    overflow: hidden;
+    max-height: 300px;
+    display: flex;
+    align-items: center;
+  }
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+    display: block;
+    opacity: .85;
+    transition: opacity .3s;
+  }
+  .hero-card:hover .hero-image img { opacity: 1; }
+
+  .hero-info {
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .hero-meta {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+    padding: 4px 12px; border-radius: 20px;
+  }
+  .badge-version {
+    color: var(--accent);
+    background: rgba(0,229,255,.08);
+    border: 1px solid rgba(0,229,255,.2);
+  }
+  .badge-platform {
+    color: var(--muted);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+  }
+  .badge-free {
+    color: var(--green);
+    background: rgba(16,185,129,.08);
+    border: 1px solid rgba(16,185,129,.25);
+  }
+
+  h1 {
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 300; line-height: 1.2;
+    letter-spacing: -.02em;
+  }
+  h1 strong {
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    font-size: 14px; color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-youtube {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,0,0,.1);
+    border: 1px solid rgba(255,0,0,.3);
+    color: #ff4444;
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: .06em; padding: 9px 16px; border-radius: 8px;
+    text-decoration: none;
+    transition: background .2s, border-color .2s, transform .15s;
+  }
+  .btn-youtube:hover {
+    background: rgba(255,0,0,.2);
+    border-color: rgba(255,0,0,.5);
+    transform: translateY(-2px);
+  }
+  .btn-youtube svg { width: 14px; height: 14px; }
+
+  /* section */
+  .section { padding: 48px 0; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+  }
+  .section-header h2 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+    white-space: nowrap;
+  }
+  .section-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  /* versions list */
+  .versions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .version-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    transition: border-color .2s;
+  }
+  .version-card:hover {
+    border-color: rgba(0,229,255,.25);
+  }
+  @media (max-width: 600px) {
+    .version-card {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+
+  .version-meta {
+    text-align: center;
+    min-width: 80px;
+  }
+  .version-number {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .version-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .05em;
+  }
+
+  .version-desc {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .btn-download {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, rgba(0,229,255,.12), rgba(124,58,237,.12));
+    border: 1px solid rgba(0,229,255,.35);
+    color: var(--accent);
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: .06em; padding: 10px 18px; border-radius: 6px;
+    text-decoration: none;
+    transition: background .2s, border-color .2s, transform .15s;
+    white-space: nowrap;
+  }
+  .btn-download:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.22), rgba(124,58,237,.22));
+    border-color: rgba(0,229,255,.6);
+    transform: translateY(-2px);
+  }
+  .btn-download svg { width: 14px; height: 14px; }
+
+  .version-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .version-size {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* latest badge */
+  .version-card.latest {
+    border-color: rgba(0,229,255,.3);
+    background: linear-gradient(135deg, rgba(0,229,255,.03), rgba(124,58,237,.03));
+  }
+  .version-card.latest .version-number::after {
+    content: 'LATEST';
+    display: block;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--green);
+    letter-spacing: .1em;
+    margin-top: 4px;
+  }
+
+  /* footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0; text-align: center;
+    font-size: 13px; color: var(--muted);
+    font-family: var(--mono);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <a href="index.html" class="nav-back">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 3L5 8l5 5"/>
+      </svg>
+      Back to all software
+    </a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-card">
+      
+      <div class="hero-image">
+        <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_scr.jpg" alt="RoadMapper">
+      </div>
+      
+      <div class="hero-info">
+        <div class="hero-meta">
+          <span class="badge badge-version">v2.0</span>
+          <span class="badge badge-platform">Windows</span>
+          <span class="badge badge-free">Free</span>
+        </div>
+        <h1><strong>RoadMapper</strong></h1>
+        <p class="hero-desc">Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking. Free desktop app for Windows — no account required.</p>
+        
+        <div class="hero-actions">
+          <a class="btn-youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="var(--bg)"/></svg>
+            WATCH ON YOUTUBE
+          </a>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Versions -->
+  <div class="section" style="padding-top: 0;">
+    <div class="section-header">
+      <h2>// All Versions</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="versions-list">
+      
+      <div class="version-card latest">
+        <div class="version-meta">
+          <div class="version-number">v2.0</div>
+          <div class="version-date">2026-05-30</div>
+        </div>
+        <div class="version-desc">
+          Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.
+        </div>
+        <div class="version-actions">
+          <a class="btn-download" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_v2.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+            </svg>
+            DOWNLOAD
+          </a>
+          <span class="version-size">286 Mb</span>
+        </div>
+      </div>
+      
+      <div class="version-card">
+        <div class="version-meta">
+          <div class="version-number">v1.0</div>
+          <div class="version-date">2026-04-22</div>
+        </div>
+        <div class="version-desc">
+          Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.
+        </div>
+        <div class="version-actions">
+          <a class="btn-download" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
+            </svg>
+            DOWNLOAD
+          </a>
+          <span class="version-size">285 Mb</span>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap">
+    <a href="index.html">e.melnikov.dev</a> — free software, no catch
+  </div>
+</footer>
+
+</body>
+</html>
