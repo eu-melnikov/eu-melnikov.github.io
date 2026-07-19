@@ -96,7 +96,7 @@
   .nav-links a.nav-news:hover { color: #5eefff; }
 
   /* "All News" CTA button under the New Release card */
-  .all-news-cta { display: flex; justify-content: center; margin-top: 28px; }
+  .all-news-cta { display: flex; justify-content: center; margin-top: 10px; }
   .btn-all-news {
     display: inline-flex; align-items: center; gap: 10px;
     background: linear-gradient(135deg, rgba(0,229,255,.14), rgba(124,58,237,.14));
@@ -115,6 +115,38 @@
   .btn-all-news svg { flex-shrink: 0; }
   .btn-all-news svg:first-child { width: 16px; height: 16px; }
   .btn-all-news svg:last-child { width: 14px; height: 14px; }
+
+  /* ── update news (above new release) ── */
+  .update-news { padding-bottom: 0; margin-bottom: 0; }
+  .updates-list { display: flex; flex-direction: column; gap: 10px; }
+  .update-row {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-decoration: none; color: var(--text);
+    transition: border-color .2s, transform .2s;
+  }
+  .update-row:hover { border-color: rgba(124,58,237,.45); transform: translateX(3px); }
+  .update-date {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    white-space: nowrap; width: 86px; flex-shrink: 0; letter-spacing: .04em;
+  }
+  .update-icon { font-size: 20px; line-height: 1; flex-shrink: 0; }
+  .update-main { display: flex; flex-direction: column; min-width: 0; flex: 1; gap: 2px; }
+  .update-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .update-title .ver { font-family: var(--mono); font-size: 11px; color: var(--accent); margin-left: 6px; }
+  .update-desc {
+    font-size: 13px; color: var(--muted); line-height: 1.5;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .update-arrow { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; }
+  .update-row:hover .update-arrow { color: var(--accent2); }
+  @media (max-width: 560px) {
+    .update-date { width: auto; }
+    .update-desc { white-space: normal; }
+  }
 
   /* ── hero ── */
   .hero { padding: 100px 0 80px; text-align: center; }
@@ -450,6 +482,7 @@
   /* ── new release ── */
   .new-release {
     margin-bottom: 64px;
+    padding-top: 32px;
   }
   .release-card {
     background: var(--bg2);
@@ -600,6 +633,98 @@
 </div>
 
 
+<!-- ── Update News ── -->
+<div class="wrap">
+  <div class="section update-news" id="updates">
+    <div class="section-header">
+      <h2>// Update news</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="updates-list">
+      
+      
+      
+      
+        
+        
+      
+      <a class="update-row" href="roadmapper-versions.html">
+        <span class="update-date">2026-07-01</span>
+        <span class="update-icon">⚙️</span>
+        <span class="update-main">
+          <span class="update-title">RoadMapper<span class="ver">v2.2</span></span>
+          <span class="update-desc">Optimization. Minor fix.</span>
+        </span>
+        <svg class="update-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+      
+      
+      
+      
+        
+        
+      
+      <a class="update-row" href="frames_commander-versions.html">
+        <span class="update-date">2026-06-27</span>
+        <span class="update-icon">🎬</span>
+        <span class="update-main">
+          <span class="update-title">Frames Commander<span class="ver">v1.18</span></span>
+          <span class="update-desc">Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing "magic" ink. Offset for Maya. Correct VFR playback. Smooth multi-video.</span>
+        </span>
+        <svg class="update-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+      
+      
+      
+      
+        
+        
+      
+      <a class="update-row" href="frames_commander-versions.html">
+        <span class="update-date">2026-06-21</span>
+        <span class="update-icon">🎬</span>
+        <span class="update-main">
+          <span class="update-title">Frames Commander<span class="ver">v1.16</span></span>
+          <span class="update-desc">Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.</span>
+        </span>
+        <svg class="update-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+      
+      
+      
+      
+        
+        
+      
+      <a class="update-row" href="roadmapper-versions.html">
+        <span class="update-date">2026-06-02</span>
+        <span class="update-icon">⚙️</span>
+        <span class="update-main">
+          <span class="update-title">RoadMapper<span class="ver">v2.1</span></span>
+          <span class="update-desc">Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support</span>
+        </span>
+        <svg class="update-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+      
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ── All news button ── -->
+<div class="wrap">
+  <div class="all-news-cta">
+    <a href="news.html" class="btn-all-news">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a1 1 0 0 1 1 1v13a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2V4z"/><path d="M8 8h6M8 12h6M8 16h4"/></svg>
+      ALL NEWS
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+    </a>
+  </div>
+</div>
+
+
+
 <!-- ── New Release ── -->
 <div class="wrap">
   <div class="section new-release" id="new-release">
@@ -634,15 +759,6 @@
         </div>
       </div>
     </div>
-    
-    <div class="all-news-cta">
-      <a href="news.html" class="btn-all-news">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a1 1 0 0 1 1 1v13a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2V4z"/><path d="M8 8h6M8 12h6M8 16h4"/></svg>
-        ALL NEWS
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
-      </a>
-    </div>
-    
   </div>
 </div>
 
