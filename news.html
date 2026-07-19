@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News — what's new | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0d0f14;
+    --bg2:       #13161e;
+    --bg3:       #1a1d28;
+    --border:    #252836;
+    --accent:    #00e5ff;
+    --accent2:   #7c3aed;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --green:     #10b981;
+    --mono:      'JetBrains Mono', monospace;
+    --sans:      'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: .15;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--accent2); top: -150px; right: -150px; }
+  .blob-2 { width: 350px; height: 350px; background: var(--accent); bottom: -100px; left: -100px; }
+
+  .wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  /* nav */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.8);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap {
+    display: flex; align-items: center;
+    justify-content: space-between; height: 56px;
+  }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* page header */
+  .page-head { padding: 56px 0 8px; text-align: center; }
+  .page-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    background: rgba(0,229,255,.08); border: 1px solid rgba(0,229,255,.2);
+    border-radius: 20px; padding: 4px 12px; margin-bottom: 20px;
+    letter-spacing: .08em;
+  }
+  .page-badge::before {
+    content: ''; width: 6px; height: 6px; background: var(--accent);
+    border-radius: 50%; animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .page-head h1 {
+    font-size: clamp(30px, 5vw, 44px); font-weight: 300;
+    line-height: 1.1; letter-spacing: -.03em;
+  }
+  .page-head h1 strong {
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .page-sub {
+    font-size: 15px; color: var(--muted); margin-top: 16px;
+    font-weight: 300;
+  }
+
+  /* timeline */
+  .feed { padding: 48px 0 24px; }
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+  /* vertical rail */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent2), var(--border) 60%, transparent);
+  }
+
+  .news-item {
+    position: relative;
+    margin-bottom: 22px;
+  }
+  /* dot on the rail */
+  .news-item::before {
+    content: '';
+    position: absolute;
+    left: -27px; top: 22px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--muted);
+  }
+  .news-item.is-new::before { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,229,255,.12); }
+  .news-item.is-update::before { border-color: var(--accent2); box-shadow: 0 0 0 4px rgba(124,58,237,.12); }
+
+  .news-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    transition: border-color .2s, transform .2s;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .news-card:hover { border-color: rgba(0,229,255,.28); transform: translateY(-1px); }
+  .news-card.clickable { cursor: pointer; }
+  .news-body { flex: 1; min-width: 0; }
+  .news-thumb {
+    width: 210px;
+    flex-shrink: 0;
+    aspect-ratio: 16 / 10;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .news-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top left;
+    display: block; opacity: .9; transition: opacity .3s;
+  }
+  .news-card:hover .news-thumb img { opacity: 1; }
+  @media (max-width: 600px) {
+    .news-card { flex-direction: column-reverse; }
+    .news-thumb { width: 100%; }
+  }
+
+  .news-top {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .news-icon { font-size: 20px; line-height: 1; }
+  .news-title {
+    font-size: 17px; font-weight: 500; color: var(--text);
+    margin-right: auto;
+  }
+  .news-title .ver {
+    font-family: var(--mono); font-size: 12px; color: var(--accent);
+    margin-left: 6px;
+  }
+  .type-badge {
+    font-family: var(--mono); font-size: 10px; font-weight: 500;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+  }
+  .type-badge.new {
+    color: var(--accent); background: rgba(0,229,255,.08);
+    border: 1px solid rgba(0,229,255,.25);
+  }
+  .type-badge.update {
+    color: #b794f6; background: rgba(124,58,237,.1);
+    border: 1px solid rgba(124,58,237,.3);
+  }
+  .news-date {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .05em; white-space: nowrap;
+  }
+
+  .news-desc {
+    font-size: 14px; color: var(--muted); line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  .news-actions {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px;
+  }
+  .btn-news {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 10px; font-weight: 500;
+    letter-spacing: .06em; padding: 7px 13px; border-radius: 6px;
+    text-decoration: none; transition: all .2s; white-space: nowrap;
+  }
+  .btn-news svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .btn-news.primary {
+    background: linear-gradient(135deg, rgba(0,229,255,.12), rgba(124,58,237,.12));
+    border: 1px solid rgba(0,229,255,.3); color: var(--accent);
+  }
+  .btn-news.primary:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.22), rgba(124,58,237,.22));
+    border-color: rgba(0,229,255,.6);
+  }
+  .btn-news.secondary {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+  }
+  .btn-news.secondary:hover { border-color: rgba(0,229,255,.4); color: var(--accent); }
+  .btn-news.youtube {
+    background: rgba(255,0,0,.08); border: 1px solid rgba(255,0,0,.25); color: #ff4444;
+  }
+  .btn-news.youtube:hover { background: rgba(255,0,0,.15); border-color: rgba(255,0,0,.4); }
+
+  /* empty state */
+  .empty {
+    text-align: center; padding: 60px 0;
+    color: var(--muted); font-family: var(--mono); font-size: 14px;
+  }
+
+  /* back to top / all software */
+  .feed-foot { text-align: center; padding: 16px 0 0; }
+  .btn-all {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: .06em; padding: 10px 20px; border-radius: 8px;
+    text-decoration: none; border: 1px solid var(--border);
+    color: var(--muted); background: var(--bg3); transition: all .2s;
+  }
+  .btn-all:hover { border-color: rgba(0,229,255,.4); color: var(--accent); }
+  .btn-all svg { width: 14px; height: 14px; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0; text-align: center;
+    font-size: 13px; color: var(--muted);
+    font-family: var(--mono); margin-top: 40px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <a href="index.html" class="nav-back">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 3L5 8l5 5"/>
+      </svg>
+      Back to all software
+    </a>
+  </div>
+</nav>
+
+<!-- Header -->
+<div class="wrap">
+  <div class="page-head">
+    <div class="page-badge">Changelog &amp; releases</div>
+    <h1>What's <strong>new</strong></h1>
+    <p class="page-sub">New tools and updates, newest first. Missed something? It's all here.</p>
+  </div>
+</div>
+
+<!-- Feed -->
+<div class="wrap">
+  <div class="feed">
+    
+    <div class="timeline">
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="roadmapper-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">RoadMapper<span class="ver">v2.2</span></span>
+            <span class="type-badge update">Update</span>
+            <span class="news-date">2026-07-01</span>
+          </div>
+          
+          <div class="news-desc">Optimization. Minor fix.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="roadmapper-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              <a class="btn-news secondary" href="roadmapper.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                DETAILS
+              </a>
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_scr.jpg" alt="RoadMapper"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="frames_commander-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🎬</span>
+            <span class="news-title">Frames Commander<span class="ver">v1.18</span></span>
+            <span class="type-badge update">Update</span>
+            <span class="news-date">2026-06-27</span>
+          </div>
+          
+          <div class="news-desc">Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing "magic" ink. Offset for Maya. Correct VFR playback. Smooth multi-video.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="frames_commander-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🎬</span>
+            <span class="news-title">Frames Commander<span class="ver">v1.16</span></span>
+            <span class="type-badge update">Update</span>
+            <span class="news-date">2026-06-21</span>
+          </div>
+          
+          <div class="news-desc">Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="roadmapper-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">RoadMapper<span class="ver">v2.1</span></span>
+            <span class="type-badge update">Update</span>
+            <span class="news-date">2026-06-02</span>
+          </div>
+          
+          <div class="news-desc">Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="roadmapper-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              <a class="btn-news secondary" href="roadmapper.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                DETAILS
+              </a>
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_scr.jpg" alt="RoadMapper"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="frames_commander-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🎬</span>
+            <span class="news-title">Frames Commander<span class="ver">v1.15</span></span>
+            <span class="type-badge update">Update</span>
+            <span class="news-date">2026-05-30</span>
+          </div>
+          
+          <div class="news-desc">Auto-play on File Open
+  Videos now automatically start playing when opened from Windows Explorer
+  or after export. Playlist Position Memory
+  When switching between files in playlist, your playhead position and
+  in/out points are now remembered. Playlist States Saved to Project
+  In/out points and playhead positions for ALL playlist files are now
+  saved with the project.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="roadmapper-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">RoadMapper<span class="ver">v2.0</span></span>
+            <span class="type-badge update">Update</span>
+            <span class="news-date">2026-05-30</span>
+          </div>
+          
+          <div class="news-desc">Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="roadmapper-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              <a class="btn-news secondary" href="roadmapper.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                DETAILS
+              </a>
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_scr.jpg" alt="RoadMapper"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="frames_commander-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🎬</span>
+            <span class="news-title">Frames Commander<span class="ver">v1.14</span></span>
+            <span class="type-badge update">Update</span>
+            <span class="news-date">2026-05-26</span>
+          </div>
+          
+          <div class="news-desc">Fix for Paste Image from Clipboard in split/2x2 modes. Fix for QImage processing with padding. Added GIF animation support. Scrub Speed persistence for split modes</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">Quick Text Drop<span class="ver">v1.1</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2026-05-17</span>
+          </div>
+          
+          <div class="news-desc">Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp. Perfect for collecting references, sending logs, and managing text notes.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/QTD/QuickTextDrop_PRO.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/YVqgbZS6nUE" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/QTD/qtd_poster2.jpg" alt="Quick Text Drop"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">Maya Compositoon Grids<span class="ver">v1.2</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2026-05-17</span>
+          </div>
+          
+          <div class="news-desc">Update 19.05.2026 ver1.2.  A free composition grids tool for Autodesk Maya that helps artists frame shots using classic composition rules.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://eu-melnikov.github.io/files/maya_comp_grids.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/uEnHM2Hb8Ho" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/maya_comp_grids.jpg" alt="Maya Compositoon Grids"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="frames_commander-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🎬</span>
+            <span class="news-title">Frames Commander<span class="ver">v1.13</span></span>
+            <span class="type-badge update">Update</span>
+            <span class="news-date">2026-05-14</span>
+          </div>
+          
+          <div class="news-desc">Auto-fit window to video size, Smooth video scaling, Open file location, Auto-open folder after export, Auto-play after export, Image Mirroring, Playback Speed Control, Curve Speed — Speed Curve Editor, Maya Integration — Retiming Export,</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card clickable" data-href="frames_commander-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🎬</span>
+            <span class="news-title">Frames Commander<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2026-05-10</span>
+          </div>
+          
+          <div class="news-desc">Multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card clickable" data-href="roadmapper-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">RoadMapper<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2026-04-22</span>
+          </div>
+          
+          <div class="news-desc">Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="roadmapper-versions.html">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                VERSIONS
+              </a>
+              
+              
+              <a class="btn-news secondary" href="roadmapper.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                DETAILS
+              </a>
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_scr.jpg" alt="RoadMapper"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">Year Sprint<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2026-04-22</span>
+          </div>
+          
+          <div class="news-desc">YearSprint — a minimalist year progress tracker that turns abstract time into a visual picture. Each passed day becomes a colored cell in a 365-day grid, creating a beautiful gradient from red to green. Track your year at a glance, add daily wishes you can't edit later (keeping them honest), and export your thoughts at year's end. Full source code included. A single portable EXE — no installation needed.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/YearSprint/YearSprint_v1.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/YearSprint/YearSprint_pict.jpg" alt="Year Sprint"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">Сamera Shake Tool<span class="ver">v2.1</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2026-04-11</span>
+          </div>
+          
+          <div class="news-desc">Camera Shake Tool for Maya 2019–2026 — a tool that generates realistic camera shake based on any animated object's movement. Three modes: add shake to static cameras, layer it over existing animation, or stabilize overly shaky mocap-driven cameras like a virtual steadicam. Real-time preview, per-axis control, animation layer output. Perfect for adding that hand-held feel or impact vibrations to your shots.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://eu-melnikov.github.io/files/camera_shake_tool_lite.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/o5KfqscD5AE" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/camera_shake_tool_poster.jpg" alt="Сamera Shake Tool"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">EU Anim Curve Tools<span class="ver">v2.57</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2026-04-07</span>
+          </div>
+          
+          <div class="news-desc">Updated! EU Anim Curve Tools is a toolkit for manipulating animation curves in Maya. It lets you quickly smooth, scale, time-offset, and ease selected keys using intuitive sliders. Includes 14 tools: Pull/Push, Smooth/Rough, Ease In/Out, Time Offset, Scale, and more. Works with Maya 2019–2026. Currently in open beta — feedback and bug reports are welcome!</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/eu_curve/eu_anim_curve_tools_v2.57_Public_Beta.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/wN9r4Zk1cWs" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/eu_curve/eu_anim_curve_tools_poster.jpg" alt="EU Anim Curve Tools"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">Free Motion Trail 1.4 Public Beta<span class="ver">v1.4</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2026-04-02</span>
+          </div>
+          
+          <div class="news-desc">EU FreeMotionTrail v1.4 Public Beta free Maya plugin for visualizing object motion paths. Displays animation trajectory in real-time directly in the viewport with customizable colors, line styles, orientation frets, and velocity-based temperature coloring. Supports Animation Layers. Works in Maya 2019–2026. This is a public beta! Your feedback, bug reports, and feature ideas are very welcome.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_maya_1_4_2019_2026.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/uPMs79yk_5c" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_poster1.jpg" alt="Free Motion Trail 1.4 Public Beta"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">⚙️</span>
+            <span class="news-title">Maya Batch Converter<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-28</span>
+          </div>
+          
+          <div class="news-desc">Batch convert Maya scenes between MA, MB, and FBX formats. Supports recursive folder processing, FPS preservation, and works with Maya 2019–2026.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://eu-melnikov.github.io/files/maya_batch_converter.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/lJlrtSLNBH4" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/maya_batchconv.jpg" alt="Maya Batch Converter"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card clickable" data-href="flbs.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">💬</span>
+            <span class="news-title">Feedback Like A Boss<span class="ver">v4.62</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-16</span>
+          </div>
+          
+          <div class="news-desc">Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. Born in animation production, built for any field.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FLBS/Feedback_Like_A_Boss.v4.62.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              <a class="btn-news secondary" href="flbs.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                DETAILS
+              </a>
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/nTZnjrRuiKc" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/flbs.jpg" alt="Feedback Like A Boss"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card clickable" data-href="psi.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🖼️</span>
+            <span class="news-title">PSI — Pict Snap Index<span class="ver">v1.23</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-16</span>
+          </div>
+          
+          <div class="news-desc">Index your media folders once — then browse the full thumbnail gallery at any time, even with the source drives offline. Thousands of photos and videos, always at hand.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI_PictSnapIndex.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              <a class="btn-news secondary" href="psi.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                DETAILS
+              </a>
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/fFRkWOJaENs" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/psi_app.jpg" alt="PSI — Pict Snap Index"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🗂️</span>
+            <span class="news-title">SortMatic5000<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-15</span>
+          </div>
+          
+          <div class="news-desc">If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.0/SortMatic5000.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/klBmDmjOjJ8" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/sort_matic_5000.jpg" alt="SortMatic5000"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🌳</span>
+            <span class="news-title">FolderTree Collector<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-15</span>
+          </div>
+          
+          <div class="news-desc">Scans any folder and builds a full directory tree with timestamps. Export the result to a .txt file in one click. Simple, free, source code included.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.1/tree_collector.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/tree_collect.jpg" alt="FolderTree Collector"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🔀</span>
+            <span class="news-title">Swap Animation<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-15</span>
+          </div>
+          
+          <div class="news-desc">Swaps animation data between two objects on a selected timeline range. Everything outside the range stays untouched. Perfect for fixing mocap mixups, timing experiments or rearranging cycle phases.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://eu-melnikov.github.io/files/swap_animation.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/swap_anim.jpg" alt="Swap Animation"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🎬</span>
+            <span class="news-title">Scene Review Tool<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-15</span>
+          </div>
+          
+          <div class="news-desc">Batch-review Maya scenes (.mb, .ma, .fbx) from a folder without opening each file manually. Pick a folder, choose format, hit Start — then click Next through every file in order. Nothing gets opened twice.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://eu-melnikov.github.io/files/scene_review_tool.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/tMx9ndjgFnA" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/scene_review_tool.jpg" alt="Scene Review Tool"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">💾</span>
+            <span class="news-title">Quick Save to Temp<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-15</span>
+          </div>
+          
+          <div class="news-desc">One-click save to a fixed temp folder — no dialogs, no hassle. Adds a _QS suffix and auto-increments versions. Works even on unsaved scenes. Perfect for quick experiments and backups.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://eu-melnikov.github.io/files/Quick_Save_to_Temp.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/quick_save.jpg" alt="Quick Save to Temp"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🎥</span>
+            <span class="news-title">Maya Persp Camera History<span class="ver">v1.0</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-15</span>
+          </div>
+          
+          <div class="news-desc">Adds Undo/Redo history for the Persp camera — including moves triggered by scripts, which Maya's built-in [ ] hotkeys can't track. Stores up to 50 positions, runs silently in the background.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://eu-melnikov.github.io/files/Maya_Persp_Camera_History.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/persp_cam_hyst.jpg" alt="Maya Persp Camera History"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+        
+      
+      <div class="news-item is-new">
+        <div class="news-card">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🦴</span>
+            <span class="news-title">BoneAnim Combo<span class="ver">v1.2</span></span>
+            <span class="type-badge new">New release</span>
+            <span class="news-date">2025-03-15</span>
+          </div>
+          
+          <div class="news-desc">Merges multiple animation files into a single continuous sequence. Built for working with large animation libraries. Copy to shelf and go.</div>
+          
+          <div class="news-actions">
+            
+              
+              <a class="btn-news primary" href="https://eu-melnikov.github.io/files/BoneAnim-Combo.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                DOWNLOAD
+              </a>
+              
+              
+              
+              <a class="btn-news youtube" href="https://youtu.be/7ddA2nk3jq4" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
+                TUTORIAL
+              </a>
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://eu-melnikov.github.io/files/boneanim_combo1.jpg" alt="BoneAnim Combo"></div>
+          
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="feed-foot">
+      <a href="index.html" class="btn-all">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3L1 8l5 5M1 8h14"/></svg>
+        Back to all software
+      </a>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap">
+    <a href="index.html">e.melnikov.dev</a> — free software, no catch
+  </div>
+</footer>
+
+<script>
+  // Клик по всей плашке ведёт на страницу программы.
+  // Клики по вложенным ссылкам/кнопкам обрабатываются ими самими.
+  document.querySelectorAll('.news-card[data-href]').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return;
+      window.location.href = card.getAttribute('data-href');
+    });
+  });
+</script>
+
+</body>
+</html>

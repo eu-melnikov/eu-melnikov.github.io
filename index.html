@@ -92,6 +92,29 @@
     transition: color .2s;
   }
   .nav-links a:hover { color: var(--text); }
+  .nav-links a.nav-news { color: var(--accent); }
+  .nav-links a.nav-news:hover { color: #5eefff; }
+
+  /* "All News" CTA button under the New Release card */
+  .all-news-cta { display: flex; justify-content: center; margin-top: 28px; }
+  .btn-all-news {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, rgba(0,229,255,.14), rgba(124,58,237,.14));
+    border: 1px solid rgba(0,229,255,.35);
+    color: var(--accent);
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: .1em; padding: 13px 30px; border-radius: 10px;
+    text-decoration: none;
+    transition: background .2s, border-color .2s, transform .15s;
+  }
+  .btn-all-news:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.24), rgba(124,58,237,.24));
+    border-color: rgba(0,229,255,.65);
+    transform: translateY(-1px);
+  }
+  .btn-all-news svg { flex-shrink: 0; }
+  .btn-all-news svg:first-child { width: 16px; height: 16px; }
+  .btn-all-news svg:last-child { width: 14px; height: 14px; }
 
   /* ── hero ── */
   .hero { padding: 100px 0 80px; text-align: center; }
@@ -547,6 +570,7 @@
     <a href="#" class="nav-logo">e.melnikov<span>.dev</span></a>
     <div class="nav-links">
       <a href="#software">Software</a>
+      <a href="news.html" class="nav-news">News</a>
       <a href="#about">About</a>
     </div>
   </div>
@@ -610,6 +634,15 @@
         </div>
       </div>
     </div>
+    
+    <div class="all-news-cta">
+      <a href="news.html" class="btn-all-news">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a1 1 0 0 1 1 1v13a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2V4z"/><path d="M8 8h6M8 12h6M8 16h4"/></svg>
+        ALL NEWS
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5"/></svg>
+      </a>
+    </div>
+    
   </div>
 </div>
 

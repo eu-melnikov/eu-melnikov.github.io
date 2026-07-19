@@ -102,7 +102,7 @@
     border: 1px solid var(--border);
   }
   .badge-free {
-    color: #10b981;
+    color: var(--green);
     background: rgba(16,185,129,.08);
     border: 1px solid rgba(16,185,129,.25);
   }
@@ -329,6 +329,7 @@
   }
   .story-content strong { color: var(--text); }
 
+
   /* ── footer ── */
   footer {
     border-top: 1px solid var(--border);
@@ -369,12 +370,17 @@ function toggleStory() {
 </nav>
 
 <!-- ── Hero ── -->
+
+
+  
+  
+
 <div class="wrap">
   <div class="hero">
     <div class="hero-meta">
       <span class="badge badge-version">v4.62</span>
       <span class="badge badge-platform">Windows</span>
-        <span class="badge badge-free">Free</span>
+      <span class="badge badge-free">Free</span>
     </div>
     <h1><strong>Feedback Like A Boss</strong></h1>
     <p class="tagline">Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. No more digging through folders in the middle of a meeting.</p>
@@ -385,10 +391,13 @@ function toggleStory() {
         </svg>
         DOWNLOAD FREE
       </a>
+      
+      
       <a class="btn-youtube" href="https://youtu.be/nTZnjrRuiKc" target="_blank">
         <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="var(--bg)"/></svg>
-        WATCH REVIEW ON YOUTUBE
+        WATCH ON YOUTUBE
       </a>
+      
       <span class="file-info">Windows &nbsp;·&nbsp; Free</span>
     </div>
   </div>
@@ -401,7 +410,6 @@ function toggleStory() {
       <span class="dot dot-g"></span>
       <span class="screenshot-title">Feedback Like A Boss v4.62</span>
     </div>
-    <!-- Put your screenshot file next to psi.html and update the src -->
     <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FLBS/Feedback_Like_A_Boss_.jpg" alt="Feedback Like A Boss interface screenshot">
   </div>
 
@@ -412,9 +420,13 @@ function toggleStory() {
       <div class="section-line"></div>
     </div>
     <div class="lead">
+      
       <p>Feedback Like A Boss is a tool for anyone working with a large number of tasks and assets in production projects. It keeps everything in one place — feedback, tasks, notes, references and files — all linked to a specific project element and always one click away.</p>
+      
       <p>No more digging through folders, chat histories or sticky notes in the middle of a meeting. Born in animation production, but built for any field where there's a project, a list of elements, and feedback to manage.</p>
+      
       <p>Free, portable, no installation required.</p>
+      
     </div>
   </div>
 
@@ -425,46 +437,47 @@ function toggleStory() {
       <div class="section-line"></div>
     </div>
     <div class="features">
-
+      
       <div class="feature">
         <span class="feature-icon">📋</span>
         <div class="feature-title">All feedback in one place</div>
         <div class="feature-desc">Tasks, notes, comments and references — all linked to a specific project element. No more scattered sticky notes or chat messages.</div>
       </div>
-
+      
       <div class="feature">
         <span class="feature-icon">📁</span>
-        <div class="feature-title">Files &amp; references attached</div>
+        <div class="feature-title">Files & references attached</div>
         <div class="feature-desc">Attach files, images and references directly to any task or element. Everything stays where it belongs.</div>
       </div>
-
+      
       <div class="feature">
         <span class="feature-icon">🎯</span>
         <div class="feature-title">Built for production</div>
         <div class="feature-desc">Designed for animation and VFX pipelines where dozens of assets need feedback simultaneously. Works for any project-based workflow.</div>
       </div>
-
+      
       <div class="feature">
         <span class="feature-icon">⚡</span>
         <div class="feature-title">One click away</div>
         <div class="feature-desc">Quick access to any element's full history — no digging through folders or scrolling chat logs during a review session.</div>
       </div>
-
+      
       <div class="feature">
         <span class="feature-icon">📦</span>
         <div class="feature-title">Portable, no install</div>
         <div class="feature-desc">Just unzip and run. No installation, no setup. Take it anywhere.</div>
       </div>
-
+      
       <div class="feature">
         <span class="feature-icon">🆓</span>
         <div class="feature-title">Completely free</div>
         <div class="feature-desc">No license, no subscription, no ads. Free for personal and commercial use.</div>
       </div>
-
+      
     </div>
   </div>
 
+  
   <!-- ── Behind the scenes ── -->
   <div class="section" style="padding-top:0">
     <div class="section-header">
@@ -476,7 +489,7 @@ function toggleStory() {
         <span class="story-icon">📖</span>
         <div>
           <div class="story-btn-title">How Feedback Like A Boss was built</div>
-          <div class="story-btn-sub">From a Notepad habit to a full project manager — the story behind the tool</div>
+          <div class="story-btn-sub">The story behind the tool</div>
         </div>
         <svg class="story-chevron" id="story-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 6l4 4 4-4"/>
@@ -485,35 +498,35 @@ function toggleStory() {
     </div>
     <div class="story-body" id="story-body">
       <div class="story-content">
-
         <h3>Where it all started</h3>
-        <p>I work in animation production for games. At any given time we can have dozens of animation assets in progress — each going through multiple rounds of review and revision with outsource teams. For a long time my workflow was embarrassingly basic: open Notepad, write comments, manually find the right folder, dump in the text along with some screenshots. Multiply that by 80+ weapons and you get pure chaos.</p>
-        <p>At some point I thought: enough, it's time to build a proper tool. That's how Feedback Like A Boss was born.</p>
-        <p>The original idea was dead simple — press a button, a document gets created with the right name in the right folder, ready to edit. I built the first prototype in a day. Already a win.</p>
+<p>I work in animation production for games. At any given time we can have dozens of animation assets in progress — each going through multiple rounds of review and revision with outsource teams. For a long time my workflow was embarrassingly basic: open Notepad, write comments, manually find the right folder, dump in the text along with some screenshots. Multiply that by 80+ weapons and you get pure chaos.</p>
+<p>At some point I thought: enough, it's time to build a proper tool. That's how Feedback Like A Boss was born.</p>
+<p>The original idea was dead simple — press a button, a document gets created with the right name in the right folder, ready to edit. I built the first prototype in a day. Already a win.</p>
 
-        <h3>How the program grew</h3>
-        <p>But then the most interesting part started — I began using it in real work and discovering what was still missing. First I added a "Merge All" button. Then feedbacks got their own subfolder. Then came importing external files, screenshots, videos. Then a trash bin with restore functionality.</p>
-        <p>A few days in I already had a full-blown project manager with multiple document types — feedbacks, meeting notes, personal notes, tasks. Each type gets its own color so you can tell at a glance what's what.</p>
+<h3>How the program grew</h3>
+<p>But then the most interesting part started — I began using it in real work and discovering what was still missing. First I added a "Merge All" button. Then feedbacks got their own subfolder. Then came importing external files, screenshots, videos. Then a trash bin with restore functionality.</p>
+<p>A few days in I already had a full-blown project manager with multiple document types — feedbacks, meeting notes, personal notes, tasks. Each type gets its own color so you can tell at a glance what's what.</p>
 
-        <h3>The timeline — the coolest part</h3>
-        <p>At some point I came up with timeline mode. On the left — a list of animations, on the right — a time axis showing when each feedback was created. Click a marker — open the document. You see the whole picture of the project at once.</p>
-        <p>Then I remembered how the time range slider works in Maya. You can drag the edges to change the playback range. I wanted something like that for navigating through time. We built it. Then added double-click — so the slider snaps to the full range and back. A small thing, but it made working with it so much smoother.</p>
+<h3>The timeline — the coolest part</h3>
+<p>At some point I came up with timeline mode. On the left — a list of animations, on the right — a time axis showing when each feedback was created. Click a marker — open the document. You see the whole picture of the project at once.</p>
+<p>Then I remembered how the time range slider works in Maya. You can drag the edges to change the playback range. I wanted something like that for navigating through time. We built it. Then added double-click — so the slider snaps to the full range and back. A small thing, but it made working with it so much smoother.</p>
 
-        <h3>The details that matter</h3>
-        <p>When you build a tool for yourself, you start noticing little things that nobody ever bothers fixing in standard software. I removed all confirmation dialogs like "File created — click OK." I can already see that it was created. Why click OK? Gone.</p>
-        <p>Added document preview on hover with Ctrl held down. Hover over a file — you see the first 20–30 words. No need to open the file just to know what's inside. Card pinning — right-click, "Pin" — the card flies to the top. Card grouping, like groups in Telegram. Collapse a group and it's out of the way.</p>
+<h3>The details that matter</h3>
+<p>When you build a tool for yourself, you start noticing little things that nobody ever bothers fixing in standard software. I removed all confirmation dialogs like "File created — click OK." I can already see that it was created. Why click OK? Gone.</p>
+<p>Added document preview on hover with Ctrl held down. Hover over a file — you see the first 20–30 words. No need to open the file just to know what's inside. Card pinning — right-click, "Pin" — the card flies to the top. Card grouping, like groups in Telegram. Collapse a group and it's out of the way.</p>
 
-        <h3>Thumbnails and video preview</h3>
-        <p>The last thing I added was thumbnail mode for media files. Instead of a card with a plain icon — an actual preview image. For videos, it's the first frame. And more than that: hover over a video card and the video starts playing right inside the thumbnail. You can scrub through it by moving the mouse left and right, like in a proper media manager. The technically trickiest part — but the end result is genuinely satisfying to use.</p>
+<h3>Thumbnails and video preview</h3>
+<p>The last thing I added was thumbnail mode for media files. Instead of a card with a plain icon — an actual preview image. For videos, it's the first frame. And more than that: hover over a video card and the video starts playing right inside the thumbnail. You can scrub through it by moving the mouse left and right, like in a proper media manager. The technically trickiest part — but the end result is genuinely satisfying to use.</p>
 
-        <h3>Two months later</h3>
-        <p>Over roughly two months, the program went from "create a document in a folder" to a full project manager. I originally built it for animation production, but it works for any project where there are tasks, folders with files, and people who need to give notes — VFX, design, 3D modeling, architecture, or anywhere the work revolves around folders and content.</p>
-        <p><strong>Feedback Like A Boss is completely free.</strong> Download it, try it, and let me know what you think.</p>
-
+<h3>Two months later</h3>
+<p>Over roughly two months, the program went from "create a document in a folder" to a full project manager. I originally built it for animation production, but it works for any project where there are tasks, folders with files, and people who need to give notes — VFX, design, 3D modeling, architecture, or anywhere the work revolves around folders and content.</p>
+<p><strong>Feedback Like A Boss is completely free.</strong> Download it, try it, and let me know what you think.</p>
       </div>
     </div>
   </div>
+  
 
+  
   <!-- ── Specs ── -->
   <div class="section" style="padding-top:0">
     <div class="section-header">
@@ -543,10 +556,12 @@ function toggleStory() {
       </div>
       <div class="spec">
         <div class="spec-label">Installation</div>
-        <div class="spec-value">Unzip &amp; run</div>
+        <div class="spec-value">Unzip & run</div>
       </div>
     </div>
   </div>
+  
+
 
   <!-- ── Download CTA ── -->
   <div class="section" style="padding-top:0; padding-bottom: 80px; text-align:center">
@@ -562,10 +577,13 @@ function toggleStory() {
         </svg>
         DOWNLOAD FREE
       </a>
+      
+      
       <a class="btn-youtube" href="https://youtu.be/nTZnjrRuiKc" target="_blank">
         <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="var(--bg)"/></svg>
-        WATCH REVIEW ON YOUTUBE
+        WATCH ON YOUTUBE
       </a>
+      
     </div>
   </div>
 
