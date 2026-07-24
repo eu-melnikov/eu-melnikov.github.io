@@ -501,12 +501,10 @@
   }
   .release-screenshot {
     overflow: hidden;
-    max-height: 280px;
-    display: flex; align-items: center;
+    display: flex; align-items: center; justify-content: center;
   }
   .release-screenshot img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: top left;
+    width: 100%; height: auto;
     display: block;
     opacity: .85;
     transition: opacity .3s;
@@ -617,7 +615,7 @@
     <p class="hero-sub">A collection of free utilities I've built along the way. Download, use, share — no strings attached.</p>
     <div class="hero-stats">
       <div class="stat">
-        <span class="stat-num">19</span>
+        <span class="stat-num">20</span>
         <span class="stat-label">Programs</span>
       </div>
       <div class="stat">
@@ -750,27 +748,33 @@ brings the open window back, so two copies can't overwrite your notes.</span>
     </div>
     <div class="release-card">
       <div class="release-screenshot">
-        <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/Poster_FuryNotes_002.jpg" alt="FuryNotes interface">
+        <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MayaMerge/MayaMerge_en1.jpg" alt="MayaMerge interface">
       </div>
       <div class="release-info">
         <span class="release-badge">Just released</span>
-        <div class="release-title"><strong>FuryNotes</strong></div>
-        <p class="release-desc">FuryNotes is a fast, distraction-free notepad for Windows with one breakthrough idea: there is nothing to save and nowhere to lose. Every note becomes a real file the moment you start typing and saves itself automatically — no Save button, no "where should I put this?" dialog. Your notes stay yours: they'replain Markdown text files you can open anywhere, wrapped in a clean, dark, beautifully formatted editor with folders, links, and instant search across everything.</p>
+        <div class="release-title"><strong>MayaMerge</strong></div>
+        <p class="release-desc">MayaMerge — move objects between scenes, like Merge in 3ds Max
+
+MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects
+you need from a handy list, and bring only those into your current scene — with
+no junk: only the selection's own materials, skin and animation come across.
+Its highlight is Detach mode: you can pull a working sub-rig (say, a weapon with
+its control bones) out of a character as a standalone, still-animated prop, with
+animation and skin intact. And for total isolation there's an off-screen mode,
+where your scene never touches the source file at all.
+
+Who it's for: animators, riggers, and anyone who assembles scenes from pieces
+and is tired of dragging clutter out of other people's files.</p>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <span class="tag badge-platform" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">v1.1.5</span>
-          <span class="tag" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">Windows</span>
+          <span class="tag badge-platform" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">v1.1</span>
+          <span class="tag" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">Windows / Maya 2019+</span>
         </div>
         <div class="release-actions">
-          <a class="btn-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.1.5.zip" download style="font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;padding:9px 18px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,rgba(0,229,255,.12),rgba(124,58,237,.12));border:1px solid rgba(0,229,255,.3);color:var(--accent);transition:all .2s;">
+          <a class="btn-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MayaMerge/MayaMerge_1.1.0.zip" download style="font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;padding:9px 18px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,rgba(0,229,255,.12),rgba(124,58,237,.12));border:1px solid rgba(0,229,255,.3);color:var(--accent);transition:all .2s;">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
             DOWNLOAD
           </a>
           
-          
-          <a class="btn-details" href="FuryNotes.html">
-            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-            VIEW DETAILS
-          </a>
           
         </div>
       </div>
@@ -795,6 +799,47 @@ brings the open window back, so two copies can't overwrite your notes.</span>
       </div>
       <div class="grid">
 
+
+      <div class="card" data-cat="windows maya">
+        <div class="card-preview">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MayaMerge/MayaMerge_en1.jpg" alt="MayaMerge">
+          
+        </div>
+        <div class="card-title">MayaMerge</div>
+        <div class="card-desc">MayaMerge — move objects between scenes, like Merge in 3ds Max
+
+MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects
+you need from a handy list, and bring only those into your current scene — with
+no junk: only the selection's own materials, skin and animation come across.
+Its highlight is Detach mode: you can pull a working sub-rig (say, a weapon with
+its control bones) out of a character as a standalone, still-animated prop, with
+animation and skin intact. And for total isolation there's an off-screen mode,
+where your scene never touches the source file at all.
+
+Who it's for: animators, riggers, and anyone who assembles scenes from pieces
+and is tired of dragging clutter out of other people's files.</div>
+        <div class="card-meta">
+          <span class="tag tag-accent">v1.1</span>
+          
+          <span class="tag">Windows</span>
+          
+          <span class="tag">Maya 2019+</span>
+          
+          <span class="card-meta-right">50 Mb &nbsp;&bull;&nbsp; 2026-07-24</span>
+        </div>
+        <div class="card-buttons">
+          
+          <a class="btn-card btn-card-primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MayaMerge/MayaMerge_1.1.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            DOWNLOAD
+          </a>
+          
+          
+          
+          
+        </div>
+      </div>
 
       <div class="card" data-cat="windows">
         <div class="card-preview">
