@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ru" data-lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RoadMapper 2.3 — Release Notes / Что нового</title>
+<style>
+  :root{
+    --bg:#1b1b1b; --side:#232323; --content:#1e1e1e; --card:#2a2a2a; --card2:#252525;
+    --accent:#ff6b35; --accent2:#ff8555; --accent-dim:#8a4425;
+    --blue:#6B9BC3; --green:#7EB07E; --amber:#D4A574; --red:#C47070; --violet:#9d7ec2;
+    --text:#d2d2d2; --dim:#969696; --title:#c9b3a5; --link:#7fbfff;
+    --border:#353535; --border2:#404040;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--text);
+    font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.66}
+  a{color:var(--link);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ---- language switching ---- */
+  :root[data-lang="en"] .ru{display:none}
+  :root[data-lang="ru"] .en{display:none}
+
+  .layout{display:flex;height:100vh;overflow:hidden}
+
+  /* ================= LEFT FRAME : contents ================= */
+  .sidebar{width:312px;flex:0 0 312px;background:var(--side);
+    border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+  .brand{padding:20px 20px 14px;border-bottom:1px solid var(--border);
+    background:linear-gradient(160deg,#2b2320 0%,var(--side) 70%)}
+  .brand .logo{display:flex;align-items:center;gap:11px}
+  .brand .mark{width:38px;height:38px;border-radius:9px;flex:0 0 38px;
+    background:linear-gradient(150deg,var(--accent) 0%,#b4432033 100%),#2a2a2a;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:19px;
+    box-shadow:0 3px 12px rgba(255,107,53,.25)}
+  .brand h1{font-size:19px;margin:0;color:#f0f0f0;letter-spacing:.2px}
+  .brand .sub{color:var(--dim);font-size:12.5px;margin-top:1px}
+  .brand .ver{color:var(--title);font-size:12px;margin-top:8px;opacity:.9}
+
+  .langbar{display:flex;gap:6px;margin-top:13px}
+  .langbar button{flex:1;background:#2e2e2e;border:1px solid var(--border2);color:var(--text);
+    padding:6px 0;border-radius:6px;font-size:13px;cursor:pointer;font-weight:600;transition:.15s;
+    font-family:inherit}
+  .langbar button:hover{background:#383838}
+  .langbar button.active{background:var(--accent);color:#1a1a1a;border-color:var(--accent)}
+
+  nav{padding:12px 10px 40px}
+  nav .group{color:var(--dim);text-transform:uppercase;font-size:10.5px;letter-spacing:.09em;
+    margin:15px 12px 5px;font-weight:700}
+  nav a.item{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:6px;color:var(--text);
+    font-size:14px;cursor:pointer;border-left:2px solid transparent}
+  nav a.item:hover{background:#2e2e2e;text-decoration:none}
+  nav a.item.active{background:linear-gradient(90deg,#3a2a22,#2f2926);color:#fff;
+    border-left-color:var(--accent)}
+  nav a.item .ic{width:15px;text-align:center;opacity:.75;flex:0 0 15px}
+  nav a.item .n{margin-left:auto;color:#6f6f6f;font-size:11.5px}
+  nav a.item.active .n{color:#a98d7c}
+
+  /* ================= RIGHT FRAME : content ================= */
+  .content{flex:1;overflow-y:auto;padding:0 0 90px;background:var(--content);scroll-behavior:smooth}
+  .inner{max-width:960px;padding:0 56px}
+
+  /* ---- hero ---- */
+  .hero{background:linear-gradient(150deg,#2b2320 0%,#241f1d 45%,#1e1e1e 100%);
+    border-bottom:1px solid var(--border);padding:44px 0 34px;margin-bottom:30px}
+  .hero .inner{padding-top:0;padding-bottom:0}
+  h1.big{font-size:36px;line-height:1.12;margin:0 0 10px;font-weight:650;color:#f2f2f2;
+    letter-spacing:-.4px}
+  h1.big .accent{color:var(--accent)}
+  .lead{color:#a9a9a9;font-size:16.5px;margin:0;line-height:1.55;max-width:660px}
+  .period{color:#7a7a7a;font-size:13px;margin-top:16px}
+
+  .stats{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 4px}
+  .stat{flex:1 1 150px;background:#262626;border:1px solid var(--border);
+    border-radius:10px;padding:13px 17px}
+  .stat b{display:block;font-size:26px;color:#f0f0f0;line-height:1.1;font-weight:600}
+  .stat span{font-size:12.5px;color:var(--dim)}
+
+  /* ---- intro ---- */
+  .intro{background:var(--card);border:1px solid var(--border);border-radius:10px;
+    padding:16px 20px;margin:0 0 34px;color:#b9b9b9;font-size:14.6px}
+  .intro b{color:#ececec}
+  .intro p{margin:9px 0}
+  .intro p:first-child{margin-top:0}
+  .intro p:last-child{margin-bottom:0}
+
+  /* ---- sections ---- */
+  section.cat{margin:0 0 34px;scroll-margin-top:14px}
+  .cat-head{display:flex;align-items:center;gap:12px;margin:0 0 12px;
+    border-bottom:1px solid var(--border);padding-bottom:9px}
+  .cat-head .ico{width:34px;height:34px;flex:0 0 34px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-size:17px;color:#ffb894;
+    background:linear-gradient(150deg,#332722,#282828);border:1px solid #3d3129}
+  .cat-head h2{font-size:22px;margin:0;font-weight:600;color:#f2f2f2;letter-spacing:-.2px}
+  .cat-head .count{font-size:12px;color:var(--dim);margin-left:auto;white-space:nowrap}
+
+  .items{background:var(--card2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .item{display:flex;gap:13px;padding:13px 17px;border-top:1px solid var(--border)}
+  .item:first-child{border-top:none}
+  .item:hover{background:#2a2a2a}
+  .item .tag{flex:0 0 auto;align-self:flex-start;margin-top:3px;
+    font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid}
+  .tag.new{color:#a9d8a9;background:#22301f;border-color:#3d5c3d}
+  .tag.fix{color:#a9c8e6;background:#1f2833;border-color:#3a5570}
+  .item .body{min-width:0}
+  .item .body h3{margin:0 0 2px;font-size:15px;font-weight:600;color:#ededed;
+    border:none;padding:0;line-height:1.4}
+  .item .body p{margin:0;font-size:14px;color:#a4a4a4;line-height:1.55}
+  code{background:#141414;color:#e0c0aa;padding:1px 5px;border-radius:4px;
+    font-family:Consolas,'Courier New',monospace;font-size:13px}
+  kbd{background:#303030;border:1px solid #4a4a4a;border-bottom-width:2px;border-radius:5px;
+    padding:0 6px;font-family:Consolas,monospace;font-size:12px;color:#f0f0f0;white-space:nowrap}
+
+  .warn{border-radius:8px;padding:11px 16px;margin:14px 0 0;border-left:4px solid var(--amber);
+    background:#33291c;font-size:13.8px;color:#cfc0ab}
+  .warn b{color:#fff}
+  .warn ul{margin:6px 0 0;padding-left:20px}
+  .warn li{margin:3px 0}
+
+  footer{color:#5f5f5f;font-size:12.5px;margin-top:44px;border-top:1px solid var(--border);
+    padding-top:16px}
+  footer .legend{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:10px;color:#909090}
+  footer .legend b{color:#c8c8c8}
+  footer .legend span{display:inline-flex;align-items:center;gap:8px}
+  footer .dot{width:10px;height:10px;border-radius:3px;display:inline-block;border:1px solid}
+
+  /* scrollbars */
+  ::-webkit-scrollbar{width:11px;height:11px}
+  ::-webkit-scrollbar-track{background:#1a1a1a}
+  ::-webkit-scrollbar-thumb{background:#3d3d3d;border-radius:6px;border:2px solid #1a1a1a}
+  ::-webkit-scrollbar-thumb:hover{background:#4d4d4d}
+
+  @media (max-width:1000px){
+    .layout{flex-direction:column;height:auto;overflow:visible}
+    .sidebar{width:100%;flex:none;border-right:none;border-bottom:1px solid var(--border)}
+    .content{overflow:visible}
+    .inner{padding:0 22px}
+    h1.big{font-size:29px}
+  }
+  @media print{
+    .sidebar{display:none} .layout{display:block;height:auto;overflow:visible}
+    .content{overflow:visible} body{background:#fff;color:#000}
+    .items,.intro,.item{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ==================== LEFT FRAME : CONTENTS ==================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><div class="mark">R</div>
+        <div><h1>RoadMapper</h1>
+          <div class="sub"><span class="en">What&rsquo;s new</span><span class="ru">Что нового</span></div></div></div>
+      <div class="ver">v2.3 &nbsp;·&nbsp; by e.ov &nbsp;·&nbsp; <span class="en">July 2026</span><span class="ru">июль 2026</span></div>
+      <div class="langbar">
+        <button id="btn-ru">RU</button>
+        <button id="btn-en">EN</button>
+      </div>
+    </div>
+    <nav id="nav">
+      <div class="group"><span class="en">The plan</span><span class="ru">План</span></div>
+      <a class="item" data-target="timeline"><span class="ic">▬</span><span class="en">Timeline &amp; clips</span><span class="ru">Таймлайн и клипы</span><span class="n">22</span></a>
+      <a class="item" data-target="cells"><span class="ic">▥</span><span class="en">Columns &amp; cells</span><span class="ru">Столбцы и ячейки</span><span class="n">16</span></a>
+      <a class="item" data-target="formulas"><span class="ic">ƒ</span><span class="en">Formulas in cells</span><span class="ru">Формулы в ячейках</span><span class="n">10</span></a>
+      <a class="item" data-target="menus"><span class="ic">▾</span><span class="en">Dropdown menus</span><span class="ru">Выпадающие меню</span><span class="n">9</span></a>
+      <a class="item" data-target="readiness"><span class="ic">▰</span><span class="en">Readiness &amp; progress</span><span class="ru">Готовность и прогресс</span><span class="n">7</span></a>
+
+      <div class="group"><span class="en">Notes &amp; reports</span><span class="ru">Заметки и отчёты</span></div>
+      <a class="item" data-target="comments"><span class="ic">✎</span><span class="en">Comments &amp; notes</span><span class="ru">Комментарии и заметки</span><span class="n">10</span></a>
+      <a class="item" data-target="history"><span class="ic">◷</span><span class="en">Work History</span><span class="ru">История работы трека</span><span class="n">12</span></a>
+      <a class="item" data-target="activity"><span class="ic">☰</span><span class="en">Activity Log</span><span class="ru">Журнал изменений</span><span class="n">5</span></a>
+      <a class="item" data-target="export"><span class="ic">↧</span><span class="en">Export &amp; import</span><span class="ru">Экспорт и импорт</span><span class="n">6</span></a>
+
+      <div class="group"><span class="en">The program</span><span class="ru">Программа</span></div>
+      <a class="item" data-target="ui"><span class="ic">⚙</span><span class="en">Settings &amp; interface</span><span class="ru">Настройки и интерфейс</span><span class="n">19</span></a>
+
+      <div class="group"><span class="en">Teamwork</span><span class="ru">Командная работа</span></div>
+      <a class="item" data-target="collab"><span class="ic">⇄</span><span class="en">Working together</span><span class="ru">Совместная работа</span><span class="n">16</span></a>
+      <a class="item" data-target="kitsu"><span class="ic">⚭</span><span class="en">Kitsu integration</span><span class="ru">Интеграция с Kitsu</span><span class="n">5</span></a>
+
+      <div class="group"><span class="en">Under the hood</span><span class="ru">Под капотом</span></div>
+      <a class="item" data-target="stability"><span class="ic">◈</span><span class="en">Reliability</span><span class="ru">Надёжность</span><span class="n">10</span></a>
+    </nav>
+  </aside>
+
+  <!-- ==================== RIGHT FRAME : CONTENT ==================== -->
+  <main class="content" id="content">
+
+    <header class="hero">
+      <div class="inner">
+        <h1 class="big">RoadMapper — <span class="accent"><span class="en">what&rsquo;s new</span><span class="ru">что нового</span></span></h1>
+        <p class="lead">
+          <span class="en">Everything added to the production planning and tracking tool since v2.2: the timeline, cells and formulas, readiness, track history, teamwork on a server, integrations and reliability.</span>
+          <span class="ru">Всё, что появилось в инструменте планирования и трекинга производства со времён версии 2.2: таймлайн, ячейки и формулы, готовность, история треков, командная работа на сервере, интеграции и надёжность.</span>
+        </p>
+        <div class="stats">
+          <div class="stat"><b>111</b><span><span class="en">new capabilities</span><span class="ru">новых возможностей</span></span></div>
+          <div class="stat"><b>36</b><span><span class="en">fixes &amp; hardening</span><span class="ru">исправлений и улучшений</span></span></div>
+          <div class="stat"><b>13</b><span><span class="en">areas of work</span><span class="ru">направлений развития</span></span></div>
+          <div class="stat"><b>2.3</b><span><span class="en">current version</span><span class="ru">текущая версия</span></span></div>
+        </div>
+        <p class="period"><span class="en">Changes from 3 to 26 July 2026</span><span class="ru">Изменения с 3 по 26 июля 2026 года</span></p>
+      </div>
+    </header>
+
+    <div class="inner">
+
+      <div class="intro">
+        <div class="en">
+          <p>Over this run of updates RoadMapper grew from a table-with-a-timeline into a full
+          production management tool: <b>status events and overtime on the timeline</b>, a
+          <b>readiness system with importance tiers</b>, <b>comments and a notes journal</b>,
+          a <b>work history per track with HTML export</b>, <b>shared dropdown menus</b> and
+          dozens of ergonomic improvements.</p>
+          <p>The table half of the window reached <b>Excel-style formulas with A1 addressing</b>:
+          column letters, row numbers and a non-modal formula bar with <code>SUM</code>,
+          <code>AVERAGE</code>, <code>MIN</code>, <code>MAX</code> and <code>COUNT</code> — hours,
+          volumes and percentages are now computed inside the plan instead of in a spreadsheet
+          kept beside it.</p>
+          <p>The other large step was <b>teamwork</b>: client-server synchronisation of several
+          people over one document on a lock model, a <b>project activity log</b> answering
+          “what changed this week”, and <b>Kitsu integration</b> that pulls task statuses in
+          automatically. By the end of July teamwork reached production: the server is deployed
+          on a studio host, there is a <b>browser admin panel</b>, a <b>project version history
+          with Perforce-style rollback</b> and a configurable revision ring, and <b>view mode</b>
+          was widened so that producers can browse and filter the project freely without
+          changing anything in it.</p>
+          <p>A separate effort went into <b>reliability</b>: atomic saving, protection against
+          data loss, crash fixes and a sweeping code audit before the server went out.</p>
+        </div>
+        <div class="ru">
+          <p>За эту серию обновлений RoadMapper вырос из таблицы-таймлайна в полноценный
+          инструмент управления производством: появились <b>статус-события и овертайм на таймлайне</b>,
+          <b>система готовности с этапами важности</b>, <b>комментарии и журнал заметок</b>,
+          <b>история работы по каждому треку с экспортом в HTML</b>, <b>общие выпадающие меню</b>
+          и десятки улучшений эргономики.</p>
+          <p>Табличная половина окна дошла до <b>формул с адресацией A1, как в Excel</b>: буквы столбцов,
+          нумерация строк, немодальная строка формул с <code>SUM</code>, <code>AVERAGE</code>,
+          <code>MIN</code>, <code>MAX</code>, <code>COUNT</code> — часы, объёмы и проценты теперь
+          считаются прямо в плане, а не в отдельном файле рядом.</p>
+          <p>Отдельным большим шагом стал переход к <b>командной работе</b>: клиент-серверная
+          синхронизация нескольких человек над одним документом по модели блокировок,
+          <b>журнал изменений проекта</b> «что менялось за неделю» и <b>интеграция с Kitsu</b>
+          для автоматической подтяжки статусов задач. К концу июля командная работа доросла до
+          продакшена: сервер развёрнут на студийном хосте, появилась <b>браузерная админ-панель</b>,
+          <b>история версий проекта с откатом «как в Perforce»</b> и настраиваемое хранение ревизий,
+          а <b>режим просмотра</b> расширен так, чтобы продюсеры могли свободно смотреть и
+          фильтровать проект, ничего в нём не меняя.</p>
+          <p>Отдельно проведена большая работа над <b>надёжностью</b>: атомарное сохранение,
+          защита от потери данных, устранение крашей и сплошной аудит кода перед выкладкой сервера.</p>
+        </div>
+      </div>
+
+      <!-- ============ TIMELINE ============ -->
+      <section class="section cat" id="timeline">
+        <div class="cat-head"><div class="ico">▬</div>
+          <h2><span class="en">Timeline &amp; clips</span><span class="ru">Таймлайн и клипы</span></h2>
+          <span class="count"><span class="en">17 new · 5 fixes</span><span class="ru">17 новых · 5 фиксов</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Several assignees on one clip</span><span class="ru">Несколько исполнителей на клипе</span></h3>
+            <p><span class="en">A task can carry 2–4 people: an “+ Assignee” picker and a row of chips with a cross; on the bar it reads compactly as “Vasya +2”. Older files load without loss.</span><span class="ru">На одной задаче можно указать 2–4 исполнителей: пикер «+ Assignee» и ряд «чипов» с крестиком; на клипе — компактно «Вася +2». Старые файлы читаются без потерь.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Bulk status change up to a date</span><span class="ru">Массовое переключение статусов до даты</span></h3>
+            <p><span class="en">Right-click the timeline → change the status of every task that ended before the chosen date: “Not Started only” and “all tasks” modes, project-wide, as a single Undo entry.</span><span class="ru">ПКМ по таймлайну → сменить статус всех задач, завершившихся до выбранной даты: режимы «только Not Started» и «все задачи», по всему проекту и одной записью в Undo.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Filter by assignee (whole history)</span><span class="ru">Фильтр по исполнителю (вся история)</span></h3>
+            <p><span class="en">Show every clip of one person (or several) across the whole project — including tracks now led by somebody else, and people who have left but whose old clips remain.</span><span class="ru">Показать все клипы конкретного человека (или нескольких) по всему проекту — включая треки, которые сейчас ведут другие; учитываются и уволенные, чьи старые клипы остались.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Status events on the timeline</span><span class="ru">Статус-события на таймлайне</span></h3>
+            <p><span class="en">A second kind of clip — a production event (review, fixes, engine export): a full bar with a duration, a dashed outline and a diamond marker whose colour and label come from the status.</span><span class="ru">Второй тип клипа — событие производства (отсмотр, доделки, экспорт в движок): полноценная полоса с длительностью, пунктирной рамкой и ромб-маркером, цвет и метка которого берутся из статуса.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Task overtime</span><span class="ru">Овертайм задач</span></h3>
+            <p><span class="en">A task now has a planned duration; stretch the clip beyond it and the excess is painted in its own colour right on the bar.</span><span class="ru">У задачи появилось плановое время; если растянуть клип дольше плана, перерасход подсвечивается отдельным цветом прямо на полосе.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Plan and delta on the clip label</span><span class="ru">План и отклонение в подписи клипа</span></h3>
+            <p><span class="en">The clip shows both the planned time and the deviation: (5d) on plan, (5d +3d) over, (5d −2d) early.</span><span class="ru">На клипе видно плановое время и отклонение: (5d) — по плану, (5d +3d) — перерасход, (5d −2d) — досрочно.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Assignee inside the clip</span><span class="ru">Исполнитель внутри клипа</span></h3>
+            <p><span class="en">A clip carries an assignee from the workers list, shown right on the bar — hand-overs during production become visible.</span><span class="ru">У клипа есть поле исполнителя из списка воркеров, которое отображается прямо на полосе — видно смену исполнителей по ходу производства.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The “Theme” field on a clip</span><span class="ru">Поле «Theme» на клипе</span></h3>
+            <p><span class="en">Instead of the technical “Row” field — a semantic theme bound to a project column, shown on the clip after the assignee.</span><span class="ru">Вместо служебного поля «Row» — семантическая тема, привязанная к столбцу проекта; тема показывается на клипе после исполнителя.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Attachments on a clip</span><span class="ru">Вложения к клипу</span></h3>
+            <p><span class="en">Links (clickable URLs) and Documents (local files with drag-and-drop and open-in-system) panels.</span><span class="ru">Панели Links (кликабельные URL) и Documents (локальные файлы с drag-and-drop и открытием в системе).</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Duration typed by hand</span><span class="ru">Ручной ввод длительности</span></h3>
+            <p><span class="en">A narrow working-days field with an automatically computed end date, instead of a dropdown.</span><span class="ru">Вместо выпадашки — узкое поле рабочих дней с автоматически вычисляемой датой окончания.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A compact clip editor</span><span class="ru">Компактное окно редактирования клипа</span></h3>
+            <p><span class="en">A two-column layout with hints inside the fields and a Task/Status switch among the properties themselves.</span><span class="ru">Двухколоночный вид с подсказками внутри полей и переключателем типа Task/Status прямо в свойствах.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Zoom Fit — everything on screen</span><span class="ru">Zoom Fit — вписать всё в экран</span></h3>
+            <p><span class="en">One click (or <kbd>Ctrl+Shift+F</kbd>) picks the zoom and scroll so that the whole range of clips fits on screen.</span><span class="ru">Одним кликом (или <kbd>Ctrl+Shift+F</kbd>) масштаб и прокрутка подбираются так, чтобы весь диапазон клипов уместился на экране.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Track numbering</span><span class="ru">Нумерация треков</span></h3>
+            <p><span class="en">Every track name is prefixed with a running number; separators are not numbered.</span><span class="ru">Перед именем каждого трека — сквозной порядковый номер; разделители не нумеруются.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Coloured description in the track name</span><span class="ru">Цветное описание в имени трека</span></h3>
+            <p><span class="en">The part of the name in brackets is drawn in its own configurable colour and a smaller font — codes and notes read better.</span><span class="ru">Часть имени в скобках рисуется отдельным настраиваемым цветом и меньшим шрифтом — коды и пояснения читаются лучше.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Work-time counter on the track</span><span class="ru">Счётчик времени трека</span></h3>
+            <p><span class="en">The track name automatically shows total work time as “5d / 40h” (tasks only, status events excluded).</span><span class="ru">В имени трека автоматически выводится суммарное время работы в формате «5d / 40h» (только задачи, без статус-событий).</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Duplicating tracks (rows)</span><span class="ru">Дублирование треков (строк)</span></h3>
+            <p><span class="en">Right-click a track name → “Duplicate”, Maya-style (quick or through an option box), inserts a copy under the original row.</span><span class="ru">ПКМ по имени трека → «Duplicate» в стиле Maya (быстро или через option box) вставляет копию под исходной строкой.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Deadline label above the day ribbon</span><span class="ru">Лейбл дедлайна над лентой дней</span></h3>
+            <p><span class="en">The deadline caption moved into the free part of the calendar ribbon and no longer covers the timeline or the track names.</span><span class="ru">Подпись дедлайна перенесена в свободную часть календарной ленты и больше не перекрывает таймлайн и имена треков.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Alt-drag copies every field</span><span class="ru">Alt-перетаскивание копирует все поля</span></h3>
+            <p><span class="en">Duplicating a clip with Alt+drag now carries links, documents, assignee, theme and type across; a status no longer turns into a task.</span><span class="ru">Дублирование клипа через Alt+drag теперь переносит ссылки, документы, исполнителя, тему и тип; статус больше не превращается в задачу.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Correct order with hidden tracks</span><span class="ru">Верный порядок при скрытых треках</span></h3>
+            <p><span class="en">Dragging a track while a search or filter is active no longer drops it one row off.</span><span class="ru">Перетаскивание трека при активном поиске/фильтре больше не ставит его со смещением.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Weekends counted the same way everywhere</span><span class="ru">Единый учёт выходных</span></h3>
+            <p><span class="en">Working days are Mon–Fri throughout — clips that start on a weekend no longer drift when resized.</span><span class="ru">Рабочими днями везде считаются только Пн–Пт — клипы, начинающиеся в выходной, больше не «плывут» при ресайзе.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Accurate track hit-test</span><span class="ru">Точный выбор трека по клику</span></h3>
+            <p><span class="en">The hit-test now accounts for horizontal scroll — a click on empty timeline no longer selects the wrong track.</span><span class="ru">Исправлен хит-тест при горизонтальном скролле — клик по пустому таймлайну больше не выбирает трек ошибочно.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Overtime stays inside the timeline</span><span class="ru">Овертайм не залезает на столбцы</span></h3>
+            <p><span class="en">The orange overtime fill is clipped to the timeline area and no longer spills onto the frozen left columns when scrolling.</span><span class="ru">Оранжевая заливка перерасхода теперь обрезается по области таймлайна и не выходит на закреплённые слева столбцы при прокрутке.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ CELLS ============ -->
+      <section class="section cat" id="cells">
+        <div class="cat-head"><div class="ico">▥</div>
+          <h2><span class="en">Columns &amp; cells</span><span class="ru">Столбцы и ячейки</span></h2>
+          <span class="count"><span class="en">10 new · 6 fixes</span><span class="ru">10 новых · 6 фиксов</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Colour fill by value</span><span class="ru">Цветовая заливка значений</span></h3>
+            <p><span class="en">Dropdown cells are coloured automatically by their value — one status or one person gets the same colour in every column — with automatic text contrast.</span><span class="ru">Ячейки-выпадашки автоматически окрашиваются по значению (один статус или исполнитель — один цвет во всех колонках) с автоконтрастом текста.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Column colours</span><span class="ru">Покраска столбцов</span></h3>
+            <p><span class="en">Columns can be tinted through “Change Color” with the same pastel palette as tracks.</span><span class="ru">Столбцы можно тонировать через «Change Color» той же пастельной палитрой, что и треки.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Collapsing columns</span><span class="ru">Сворачивание столбцов</span></h3>
+            <p><span class="en">A click on the chevron folds a column into a narrow strip (or all of them at once), freeing space for the timeline; collapsed status columns keep their colour stripe.</span><span class="ru">Столбцы сворачиваются в узкую полоску кликом по шеврону (или все сразу), освобождая место для таймлайна; у свёрнутых статусных остаётся цветная полоска.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Filling a range of cells (Ctrl+Enter)</span><span class="ru">Заливка диапазона ячеек (Ctrl+Enter)</span></h3>
+            <p><span class="en">Google-Sheets style: select the source and the range, press <kbd>Ctrl+Enter</kbd> — type, options and value are copied into every cell.</span><span class="ru">По образцу Google-таблиц: выделяем источник и диапазон, жмём <kbd>Ctrl+Enter</kbd> — тип, опции и значение копируются во все ячейки.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Clearing cells</span><span class="ru">Очистка ячеек</span></h3>
+            <p><span class="en">“Clear cell(s)” empties one cell or every selected one and drops the dropdown type.</span><span class="ru">Пункт «Clear cell(s)» очищает одну или все выделенные ячейки, снимая тип-выпадашку.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Comments on column headers</span><span class="ru">Комментарии к заголовкам столбцов</span></h3>
+            <p><span class="en">Any column can carry a hint; an “i” icon with a pop-up text appears in the header.</span><span class="ru">К любому столбцу можно добавить подсказку; в заголовке появляется иконка «i» с всплывающим текстом.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Duplicating columns</span><span class="ru">Дублирование столбцов</span></h3>
+            <p><span class="en">Right-click the header → “Duplicate” inserts a copy on the right, with a choice of what happens to the values (as is / clear / filled → “n/a”).</span><span class="ru">ПКМ по заголовку → «Duplicate» вставляет копию справа с выбором режима значений (как есть / очистить / заполненные → «n/a»).</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Left click opens the list, right click the menu</span><span class="ru">Левый клик — выпадашка, правый — меню</span></h3>
+            <p><span class="en">A value is picked with a left click (also double-click, <kbd>Enter</kbd>, <kbd>F2</kbd>), while the right click opens the cell management menu.</span><span class="ru">Значение выбирается левым кликом (а также двойным, <kbd>Enter</kbd>, <kbd>F2</kbd>), а правый клик открывает меню управления ячейкой.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A selection strip along the cell edge</span><span class="ru">Зона выделения по краю ячейки</span></h3>
+            <p><span class="en">A click right at the edge of a cell only selects it, without opening the dropdown — exactly as in Google Sheets.</span><span class="ru">Клик у самого края ячейки только выделяет её без открытия выпадашки — как в Google-таблицах.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Isolate a filter value in one click</span><span class="ru">Изоляция фильтра одним кликом</span></h3>
+            <p><span class="en">In the value filter, a click leaves only the chosen value, the next adds another, clicking again removes it.</span><span class="ru">В фильтре по значениям клик оставляет только выбранное значение, следующий добавляет ещё, повторный — убирает.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Dropdowns after a collapsed column</span><span class="ru">Выпадашки после свёрнутого столбца</span></h3>
+            <p><span class="en">Fixed a bug that stopped dropdowns from opening in every column to the right of a collapsed one.</span><span class="ru">Устранён баг, из-за которого выпадашки не открывались во всех столбцах правее свёрнутого.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Readable collapsed columns</span><span class="ru">Читаемость свёрнутых столбцов</span></h3>
+            <p><span class="en">Vertical names of collapsed columns now fit whole, without an ellipsis.</span><span class="ru">Вертикальные имена свёрнутых столбцов помещаются целиком без многоточия.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Contrasting dropdown chevron</span><span class="ru">Контрастный шеврон выпадашки</span></h3>
+            <p><span class="en">The dropdown glyph darkens on a light fill and turns white on a dark one.</span><span class="ru">Значок выпадашки автоматически темнеет на светлой заливке и белеет на тёмной.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Column edits mark the project modified</span><span class="ru">Правка колонок помечает изменения</span></h3>
+            <p><span class="en">A header comment and a readiness-stage change now mark the project as modified, so it asks to save on exit.</span><span class="ru">Комментарий заголовка и смена этапа готовности теперь помечают проект изменённым (запрос на сохранение при выходе).</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Accurate column drag</span><span class="ru">Точное перетаскивание колонок</span></h3>
+            <p><span class="en">Fixed the off-by-one when dragging a column downwards.</span><span class="ru">Устранена ошибка «на единицу» при перетаскивании колонки вниз.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">“Manage Columns” stability</span><span class="ru">Стабильность «Manage Columns»</span></h3>
+            <p><span class="en">Dropping foreign text into the column manager no longer crashes the program.</span><span class="ru">Перетаскивание постороннего текста в диалог управления столбцами больше не роняет программу.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ FORMULAS ============ -->
+      <section class="section cat" id="formulas">
+        <div class="cat-head"><div class="ico">ƒ</div>
+          <h2><span class="en">Formulas in cells</span><span class="ru">Формулы в ячейках</span></h2>
+          <span class="count"><span class="en">10 new</span><span class="ru">10 новых</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A1 addressing, like a spreadsheet</span><span class="ru">Адресация A1, как в электронной таблице</span></h3>
+            <p><span class="en">Every data column carries a Latin letter (A, B, C … Z, AA, AB…) and a strip on the left numbers the rows. A cell has a short address — <code>B7</code>, <code>C12</code> — no matter how long the track name is, and the numbers do not shift when rows are hidden by a filter.</span><span class="ru">У каждого столбца с данными появилась латинская буква (A, B, C … Z, AA, AB…), а слева — полоса с номерами строк. Ячейка адресуется коротко: <code>B7</code>, <code>C12</code> — какой бы длины ни было имя трека; номера не сбиваются, когда строки скрыты фильтром.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A non-modal formula bar</span><span class="ru">Немодальная строка формул</span></h3>
+            <p><span class="en">The table stays usable while the formula bar is open. Buttons for <code>+ − × ÷ ( )</code> and the functions <b>Sum, Average, Min, Max, Count</b>, with a live result under the input: green for a value, red for a computed error.</span><span class="ru">Пока окно формулы открыто, с таблицей можно работать. Кнопки <code>+ − × ÷ ( )</code> и функции <b>Sum, Average, Min, Max, Count</b>, а под полем ввода — живой результат: зелёным значение, красным посчитанная ошибка.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Addresses inserted by clicking the table</span><span class="ru">Адреса подставляются кликом по таблице</span></h3>
+            <p><span class="en">The familiar “press Sum, click the cells, press Enter” flow: a click inserts the cell’s address — separated by commas inside a function, by a plus outside it.</span><span class="ru">Привычный сценарий «нажал Сумма → натыкал ячейки → Enter»: клик подставляет адрес ячейки — внутри функции через запятую, снаружи через плюс.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Three ways to start a formula</span><span class="ru">Три способа завести формулу</span></h3>
+            <p><span class="en">Type a value starting with <code>=</code> straight into a text cell, right-click the cell → <b>Add formula…</b>, or double-click a cell that already holds one.</span><span class="ru">Набрать в текстовой ячейке значение, начав со знака <code>=</code>; ПКМ по ячейке → <b>Add formula…</b>; или двойной клик по ячейке, в которой формула уже есть.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Arithmetic, functions and ranges</span><span class="ru">Арифметика, функции и диапазоны</span></h3>
+            <p><span class="en"><code>=B1+B2*C3</code>, <code>=(A1+A2)/2</code> — plus, minus, times, divide, brackets, unary minus; <code>=SUM(B1:B7)</code>, <code>=AVERAGE(D1,D5)</code>, <code>MIN</code>, <code>MAX</code>, <code>COUNT</code>. A range works inside a function.</span><span class="ru"><code>=B1+B2*C3</code>, <code>=(A1+A2)/2</code> — плюс, минус, умножение, деление, скобки, унарный минус; <code>=SUM(B1:B7)</code>, <code>=AVERAGE(D1,D5)</code>, <code>MIN</code>, <code>MAX</code>, <code>COUNT</code>. Диапазон работает внутри функции.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Forgiving number input</span><span class="ru">Терпимый ввод чисел</span></h3>
+            <p><span class="en"><code>1,5</code>, <code>1.5</code> and space-grouped <code>1 000</code> are all read as numbers, and a cell holding no number is skipped in a sum instead of breaking it.</span><span class="ru"><code>1,5</code>, <code>1.5</code> и <code>1 000</code> с пробелом-разделителем понимаются как числа, а ячейка без числа в сумме просто пропускается, а не ломает расчёт.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Chains and instant recalculation</span><span class="ru">Цепочки и мгновенный пересчёт</span></h3>
+            <p><span class="en">A formula may point at another formula — the order of recalculation is worked out automatically, and changing a source number updates the result at once.</span><span class="ru">Формула может ссылаться на другую формулу — порядок пересчёта определяется автоматически, а поменяли число в источнике — результат обновился мгновенно.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Formulas survive rebuilding the table</span><span class="ru">Формулы переживают перестройку таблицы</span></h3>
+            <p><span class="en">Renaming a column or reordering columns and rows does not break a formula: it stores references to the cells themselves, while the letters and numbers are recalculated.</span><span class="ru">Переименование столбца и перестановка столбцов и строк формулу не ломают: она хранит ссылки на сами ячейки, а буквы и номера пересчитываются.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The ƒ marker and errors in plain words</span><span class="ru">Маркер ƒ и понятные ошибки</span></h3>
+            <p><span class="en">A small <b>ƒ</b> on the right of a cell means the value was computed, not typed; numbers align right. Errors are named: <code>#REF</code>, <code>#DIV/0</code>, <code>#CYCLE</code>, <code>#ERR</code> — and a mistyped formula simply refuses to save until you fix it.</span><span class="ru">Маленький значок <b>ƒ</b> справа в ячейке означает, что значение посчитано, а не набрано; числа выравниваются по правому краю. Ошибки называются словами: <code>#REF</code>, <code>#DIV/0</code>, <code>#CYCLE</code>, <code>#ERR</code>, а неверно набранная формула просто не даёт себя сохранить.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Removing a formula, and Excel export</span><span class="ru">Снятие формулы и экспорт в Excel</span></h3>
+            <p><span class="en">Right-click → <b>Remove formula</b> leaves the last computed value behind as ordinary text. In the export, numeric cells — typed or computed — become real numbers (values, not formulas), so SUM in Excel works on them.</span><span class="ru">ПКМ → <b>Remove formula</b> оставляет в ячейке последнее посчитанное значение обычным текстом. В экспорте числовые ячейки — и набранные руками, и посчитанные — выгружаются настоящими числами (значениями, а не формулами), поэтому СУММА в Excel по ним работает.</span></p></div></div>
+        </div>
+        <div class="warn"><b><span class="en">Current limits:</span><span class="ru">Текущие ограничения:</span></b>
+          <ul>
+            <li><span class="en">References are absolute — copying a formula or filling a range keeps it pointing at the same cells, so a column of similar sums has to be entered cell by cell for now.</span><span class="ru">Ссылки абсолютные: копирование формулы или заливка диапазона оставляют её смотреть на те же ячейки, поэтому столбик однотипных сумм пока заводится в каждой ячейке отдельно.</span></li>
+            <li><span class="en">Only clean numbers count — <code>8h</code> is not a number.</span><span class="ru">В расчёт идут только чистые числа — <code>8h</code> числом не считается.</span></li>
+            <li><span class="en">The name column cannot hold a formula.</span><span class="ru">На колонку с именами формулу поставить нельзя.</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ MENUS ============ -->
+      <section class="section cat" id="menus">
+        <div class="cat-head"><div class="ico">▾</div>
+          <h2><span class="en">Dropdown menus</span><span class="ru">Выпадающие меню</span></h2>
+          <span class="count"><span class="en">7 new · 2 fixes</span><span class="ru">7 новых · 2 фикса</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Shared named menus</span><span class="ru">Общие именованные меню</span></h3>
+            <p><span class="en">A custom dropdown can be saved as a shared preset and cells linked to it — editing the option list in one place applies to every linked cell at once.</span><span class="ru">Кастомную выпадашку можно сохранить как общий пресет и привязать к нему ячейки — правка списка опций в одном месте применяется сразу во всех связанных ячейках.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Menus as named cell sets</span><span class="ru">Меню как именованные наборы ячеек</span></h3>
+            <p><span class="en">A cell can be gathered into a new shared set, or moved into another one, in a single action — even when it is already linked, with no manual unlink/relink. The options of the new set are merged across the whole selection.</span><span class="ru">Ячейку можно одним действием собрать в новый общий набор или перенести в другой, даже если она уже привязана — без ручного «отвязать/привязать». Опции нового набора объединяются по всему выделению.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The shared-menu manager</span><span class="ru">Менеджер общих меню</span></h3>
+            <p><span class="en">A “Manage shared menus” dialog listing every menu (option and cell counts) with New / Rename / Edit / Delete and cell linking, including a quick link-by-matching-content.</span><span class="ru">Диалог «Manage shared menus» со списком меню (число опций и ячеек), кнопками New / Rename / Edit / Delete и привязкой ячеек, в том числе быстрой — по совпадению содержимого.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Unused sets highlighted, plus “Delete unused”</span><span class="ru">Подсветка пустых наборов и «Delete unused»</span></h3>
+            <p><span class="en">Sets with not a single linked cell are marked with a muted-orange “· unused”; the “Delete unused” button removes them all at once.</span><span class="ru">Наборы без единой привязанной ячейки помечаются приглушённо-оранжевым «· unused»; кнопка «Delete unused» удаляет их все разом.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Filter by shared menu</span><span class="ru">Фильтр по общему меню</span></h3>
+            <p><span class="en">A project-wide filter over custom dropdown values: values grouped by set, multi-select (the menu stays open), and only tracks with the chosen values remain.</span><span class="ru">Фильтр всего проекта по значениям кастомных выпадашек: значения сгруппированы по наборам, мультивыбор (меню не закрывается), остаются только треки с выбранными значениями.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Safe unlink and delete</span><span class="ru">Безопасная отвязка и удаление</span></h3>
+            <p><span class="en">Unlinking or deleting a shared menu does not strip the cell of its dropdown — the options stay behind as a private copy.</span><span class="ru">При отвязке или удалении общего меню ячейка не теряет выпадашку — опции остаются в ней личной копией.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A colour for every list entry</span><span class="ru">Цвет для пунктов списка</span></h3>
+            <p><span class="en">The workers manager and the option editor gained a “Color” column with a palette (16 presets, “no fill”, custom colour) for each entry.</span><span class="ru">В менеджере воркеров и редакторе опций появилась колонка «Color» с палитрой (16 пресетов, «без заливки», свой цвет) для каждого пункта.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Lists no longer clip the current value</span><span class="ru">Списки не обрезают текущее значение</span></h3>
+            <p><span class="en">In the Theme, Assignee, column-type and status lists the current value is no longer truncated, and the open list widens to the longest entry.</span><span class="ru">В списках Theme, Assignee, выбора типа столбца и статуса текущее значение больше не обрезается, а раскрытый список расширяется под самый длинный пункт.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">The “Edit Cell Options” dialog</span><span class="ru">Диалог «Edit Cell Options»</span></h3>
+            <p><span class="en">The option editor no longer sprawls when opened from the shared-menu manager.</span><span class="ru">Диалог редактирования опций больше не «расползается» при открытии из менеджера общих меню.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ READINESS ============ -->
+      <section class="section cat" id="readiness">
+        <div class="cat-head"><div class="ico">▰</div>
+          <h2><span class="en">Readiness &amp; progress</span><span class="ru">Готовность и прогресс</span></h2>
+          <span class="count"><span class="en">6 new · 1 fix</span><span class="ru">6 новых · 1 фикс</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A readiness bar per track</span><span class="ru">Прогресс-бар готовности трека</span></h3>
+            <p><span class="en">Readiness is drawn as a two-segment fill behind the track name (green — done, amber — in progress); stage columns are marked from the right-click menu.</span><span class="ru">Готовность визуализируется двухсегментной заливкой имени (зелёный — готово, жёлтый — в процессе); столбцы-этапы помечаются через ПКМ.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Multi-stage readiness (importance tiers)</span><span class="ru">Многоэтапная готовность (тиры важности)</span></h3>
+            <p><span class="en">Readiness can be split into stages of different weight (say Base / Secondary / Bonus), columns bound to those stages, and which stages form the bar switched on the fly.</span><span class="ru">Готовность можно разбить на этапы разной важности (например База / Второстепенное / Бонус), привязать столбцы к этапам и на лету переключать, какие этапы формируют бар.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Configurable status markers</span><span class="ru">Настраиваемые маркеры статусов</span></h3>
+            <p><span class="en">The values and colours for “Done”, “In Progress” and “N/A” are configurable with a live preview; matching is case-insensitive.</span><span class="ru">Значения и цвета «Done», «In Progress» и «N/A» настраиваются с живым предпросмотром; сравнение без учёта регистра.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">“n/a” left out of the maths</span><span class="ru">Исключение «n/a» из расчёта</span></h3>
+            <p><span class="en">Cells holding “n/a” are not counted — a track can reach 100% without the stages that do not apply to it.</span><span class="ru">Ячейки со значением «n/a» не учитываются в готовности — можно достичь 100% без неприменимых к задаче этапов.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A green chevron on readiness columns</span><span class="ru">Зелёный шеврон у столбцов готовности</span></h3>
+            <p><span class="en">The collapse chevron of a column taking part in the calculation is tinted with the progress-bar colour — the link between column and readiness is visible at a glance.</span><span class="ru">Шеврон сворачивания у столбца, участвующего в расчёте, окрашивается в цвет прогресс-бара — видна связка столбца с готовностью.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Live stage switching</span><span class="ru">Живое переключение этапов</span></h3>
+            <p><span class="en">The “which stages form the bar” menu stays open and repaints the progress instantly on every click.</span><span class="ru">Меню «какие этапы формируют бар» остаётся открытым и мгновенно перерисовывает прогресс на каждый клик.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">The exact progress-bar colour</span><span class="ru">Точный цвет прогресс-бара</span></h3>
+            <p><span class="en">The fill is drawn in exactly the colour chosen in the settings, not dimmed by transparency.</span><span class="ru">Заливка рисуется ровно тем цветом, что выбран в настройках, а не тусклее из-за полупрозрачности.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ COMMENTS ============ -->
+      <section class="section cat" id="comments">
+        <div class="cat-head"><div class="ico">✎</div>
+          <h2><span class="en">Comments &amp; notes</span><span class="ru">Комментарии и заметки</span></h2>
+          <span class="count"><span class="en">10 new</span><span class="ru">10 новых</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Comments on the timeline</span><span class="ru">Комментарии на таймлайне</span></h3>
+            <p><span class="en">An entity of its own, pinned to a track and a date: an icon (7 types) plus text, a creation dialog and a “Comments On/Off” toggle.</span><span class="ru">Отдельная от клипов сущность на треке во времени: значок (7 типов) + текст, диалог создания и тумблер «Comments On/Off».</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A comment straight over a clip</span><span class="ru">Комментарий прямо над клипом</span></h3>
+            <p><span class="en">The “Comment” submenu (quick icons plus “with text”) is now available in the context menu of a task or a status, not only on empty track space.</span><span class="ru">Подменю «Comment» (быстрые иконки + «с текстом») теперь доступно и в контекстном меню задачи/статуса, а не только на пустом месте трека.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Dragging comments (Shift)</span><span class="ru">Перетаскивание комментариев (Shift)</span></h3>
+            <p><span class="en">A comment can be dragged with <kbd>Shift</kbd> held, snapping to the track and day under the cursor; the move is undoable.</span><span class="ru">Комментарий можно перетащить с зажатым <kbd>Shift</kbd>, привязываясь к треку и дню под курсором; операция отменяема.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Duplicating comments (Alt)</span><span class="ru">Дублирование комментариев (Alt)</span></h3>
+            <p><span class="en">With <kbd>Alt</kbd> held, dragging leaves the original in place and creates a copy.</span><span class="ru">С зажатым <kbd>Alt</kbd> комментарий дублируется перетаскиванием копии, оригинал остаётся на месте.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The “Notes” column — a journal per cell</span><span class="ru">Колонка «Notes» — журнал заметок</span></h3>
+            <p><span class="en">A new column type: every cell holds an icon button with a journal of notes for that particular task; entries can be added, edited and deleted.</span><span class="ru">Новый тип колонки: в каждой ячейке кнопка-иконка с журналом заметок к конкретной задаче; записи можно добавлять, править и удалять.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">An attention indicator in Notes</span><span class="ru">Индикатор внимания в Notes</span></h3>
+            <p><span class="en">The cell icon turns red when the “needs attention” flag is on, and grey when everything is fine.</span><span class="ru">Иконка ячейки становится красной при включённом флаге «обратить внимание» и серой, когда всё в порядке.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A flag per entry, plus an Add button</span><span class="ru">Флажок у каждой заметки + кнопка Add</span></h3>
+            <p><span class="en">“Needs attention” can be set on each note separately (a flagged one is highlighted red), and “Add” files the note into the journal at once. The column icon stays red while at least one entry is flagged; old “red” notes are migrated automatically.</span><span class="ru">Помечать «обратить внимание» можно каждую заметку по отдельности (помеченная подсвечивается красным), а кнопка «Add» отправляет заметку в журнал сразу. Иконка колонки краснеет, пока помечена хотя бы одна; старые «красные» заметки мигрируются автоматически.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Notes live inside the project</span><span class="ru">Заметки хранятся в проекте</span></h3>
+            <p><span class="en">Every entry and flag is saved inside the .stab file — the project opens on another machine with all its notes.</span><span class="ru">Все записи и флаги сохраняются внутри файла .stab — проект можно открыть на другом компьютере со всеми заметками.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Clickable links in text</span><span class="ru">Кликабельные ссылки в тексте</span></h3>
+            <p><span class="en">Web links (http/https and “www.”) in comments and notes became clickable and open in the browser — in the track history, the notes journal and the column comment pop-up.</span><span class="ru">Веб-ссылки (http/https и «www.») в комментариях и заметках стали кликабельными и открываются в браузере — в истории трека, журнале заметок и всплывающем комментарии столбца.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Word wrap when editing a note</span><span class="ru">Перенос строк при правке заметки</span></h3>
+            <p><span class="en">Editing an existing Notes entry now happens in a word-wrapping field instead of a single-line input.</span><span class="ru">Редактирование существующей записи Notes теперь в поле с переносом по словам вместо однострочного ввода.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ HISTORY ============ -->
+      <section class="section cat" id="history">
+        <div class="cat-head"><div class="ico">◷</div>
+          <h2><span class="en">Work History of a track</span><span class="ru">История работы трека</span></h2>
+          <span class="count"><span class="en">9 new · 3 fixes</span><span class="ru">9 новых · 3 фикса</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">An activity feed per track</span><span class="ru">Лента активности по треку</span></h3>
+            <p><span class="en">Right-click a track name to open a non-modal window with the whole activity of that track by date: tasks, statuses, comments and notes.</span><span class="ru">По правому клику на имени трека открывается немодальное окно с лентой всей активности по датам: задачи, статусы, комментарии и заметки.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Search in the feed</span><span class="ru">Поиск по ленте событий</span></h3>
+            <p><span class="en">Notepad-style search: every match highlighted in yellow, the current one in orange, a “3/12” counter, ▲/▼ and Enter navigation, and auto-scroll to the match. It searches tasks, statuses, comments, notes, assignee and theme.</span><span class="ru">Поиск как в «Блокноте»: подсветка всех совпадений жёлтым, текущего — оранжевым, счётчик «3/12», навигация ▲/▼ и Enter, автопрокрутка к совпадению. Ищет по задачам, статусам, комментариям, заметкам, исполнителю и теме.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Filters and track comparison</span><span class="ru">Фильтры и сравнение треков</span></h3>
+            <p><span class="en">Event-source toggles and a picker for a second track to compare against, right inside the history window.</span><span class="ru">Переключатели источников событий и выбор другого трека для сравнения прямо в окне истории.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Jump to an event</span><span class="ru">Переход к событию</span></h3>
+            <p><span class="en">Every event carries “show on the timeline” and “edit” buttons.</span><span class="ru">У каждого события — кнопки «показать на таймлайне» и «редактировать».</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Live updates</span><span class="ru">Живое обновление</span></h3>
+            <p><span class="en">The history window refreshes automatically on any edit to the project, and several windows can be open at once.</span><span class="ru">Окно истории обновляется автоматически при любой правке проекта; можно открыть несколько окон одновременно.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Several assignees in the history</span><span class="ru">Несколько исполнителей в истории</span></h3>
+            <p><span class="en">An orange “+N” badge next to the initials avatar, with the full list of names as text — the same in the HTML export.</span><span class="ru">Рядом с аватаром-инициалами показывается оранжевый бейдж «+N», полный список имён — текстом; то же в HTML-экспорте.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A deviation badge</span><span class="ru">Бейдж отклонения</span></h3>
+            <p><span class="en">Every task shows its planned time and a badge: “+3d over” in the overtime colour, or “−2d ahead” in green.</span><span class="ru">Каждая задача показывает плановое время и бейдж: «+3d over» цветом овертайма или «−2d ahead» зелёным.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Marker icons</span><span class="ru">Иконки-маркеры</span></h3>
+            <p><span class="en">Marker comments with no text (a red movie camera for “review”, say) appear with their own icon and colour.</span><span class="ru">Комментарии-маркеры без текста (например красная кинокамера «отсмотр») отображаются собственной иконкой и цветом.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">History export to HTML</span><span class="ru">Экспорт истории в HTML</span></h3>
+            <p><span class="en">A track’s history can be written out as a self-contained HTML file in the product colour scheme with embedded icons.</span><span class="ru">Историю трека можно выгрузить в самодостаточный HTML-файл в фирменной цветовой схеме со встроенными иконками.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Resilient to broken data</span><span class="ru">Устойчивость к битым данным</span></h3>
+            <p><span class="en">The history window no longer crashes on clips with an invalid date or duration.</span><span class="ru">Окно истории больше не падает на клипах с некорректной датой или длительностью.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">The feed follows Undo/Redo</span><span class="ru">Лента следует за Undo/Redo</span></h3>
+            <p><span class="en">After an undo/redo or reopening the project the window re-resolves the track by id and adopts the live object — no more stale data, and no edits lost from the feed.</span><span class="ru">После отмены/повтора и открытия проекта окно переразрешает трек по id и «усыновляет» живой объект — больше не показывает устаревшие данные и не теряет правки из ленты.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">The decorative spine stays put</span><span class="ru">Декоративная лента не пропадает</span></h3>
+            <p><span class="en">The axis with its ring nodes is repainted against current geometry when filters are toggled — no drifting, and no need to scroll to bring it back.</span><span class="ru">Ось с кольцами-узлами перерисовывается по актуальной геометрии при переключении фильтров — без «съезжания» и без необходимости прокручивать.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ ACTIVITY LOG ============ -->
+      <section class="section cat" id="activity">
+        <div class="cat-head"><div class="ico">☰</div>
+          <h2><span class="en">Project activity log</span><span class="ru">Журнал изменений проекта</span></h2>
+          <span class="count"><span class="en">4 new · 1 fix</span><span class="ru">4 новых · 1 фикс</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A “what changed” feed</span><span class="ru">Лента «что изменилось»</span></h3>
+            <p><span class="en">A non-modal window in the track-history style shows every edit of the project over a period (24 hours / 3 days / week / 2 weeks / month / all time) — comments, tasks, clip statuses and dropdown-cell switches. Opened from Project → “Activity Log”.</span><span class="ru">Немодальное окно в стиле истории трека показывает все правки проекта за период (24 часа / 3 дня / неделя / 2 недели / месяц / всё время) — комментарии, задачи, статусы клипов и переключения ячеек-выпадашек. Открывается из Project → «Activity Log».</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">An append-only journal in the file</span><span class="ru">Append-only журнал в файле</span></h3>
+            <p><span class="en">A log of real actions (rather than a guess from planned dates) lives inside the .stab: it works offline, travels with Undo/Redo and migrates old files. Capped at 4000 entries.</span><span class="ru">Журнал реальных действий (а не расчёт по плановым датам) хранится внутри .stab — работает офлайн, ходит вместе с Undo/Redo и мигрируется со старыми файлами. Ограничен 4000 записями.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Filters and grouping by day</span><span class="ru">Фильтры и группировка по дням</span></h3>
+            <p><span class="en">Chips per event type (statuses, cells, tasks, comments, notes, tracks) and cards grouped by day (Today / Yesterday / date) with the time and a “was → became” change.</span><span class="ru">Чипы по типам событий (статусы, ячейки, задачи, комментарии, заметки, дорожки) и карточки, сгруппированные по дням (Сегодня / Вчера / дата), с временем и изменением «было → стало».</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The “Timeline” source — a live slice</span><span class="ru">Источник «Timeline» — живой срез</span></h3>
+            <p><span class="en">Besides the recorded journal there is a “Timeline” mode: a slice of everything standing on the timeline for the period. It works on any file — old, imported from Excel or synced from Kitsu — where no journal exists yet, and it is the default.</span><span class="ru">Кроме журнала записанных правок появился режим «Timeline»: срез всего, что стоит на таймлайне за период. Работает на любом файле — старом, импортированном из Excel или синканутом из Kitsu, где журнала ещё нет. Сделан режимом по умолчанию.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">An accurate day slice</span><span class="ru">Точный срез по дням</span></h3>
+            <p><span class="en">“Last 24 hours” in Timeline mode shows exactly today (one cell) instead of dragging in last week’s tasks — the selection goes by the day an event starts.</span><span class="ru">«Последние 24 часа» в режиме Timeline показывают ровно сегодняшний день (одну ячейку), а не тянут задачи прошлой недели — отбор идёт по дню начала события.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ EXPORT ============ -->
+      <section class="section cat" id="export">
+        <div class="cat-head"><div class="ico">↧</div>
+          <h2><span class="en">Export &amp; import</span><span class="ru">Экспорт и импорт</span></h2>
+          <span class="count"><span class="en">3 new · 3 fixes</span><span class="ru">3 новых · 3 фикса</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A compact “Grid” sheet in Excel</span><span class="ru">Компактный лист «Grid» в Excel</span></h3>
+            <p><span class="en">A new first sheet — an exact copy of the table view: one row per track, statuses in the same colours, headers in the column colour, a separate Readiness % column, frozen header and left columns. Columns collapsed in the app are exported expanded.</span><span class="ru">Новый первый лист — точная копия табличного вида: одна строка на трек, статусы в тех же цветах, заголовки цветом колонки, отдельная колонка Readiness %, закреплённые шапка и левые колонки. Свёрнутые в приложении столбцы экспортируются развёрнутыми.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A “Readiness” column in Excel</span><span class="ru">Столбец «Readiness» в Excel</span></h3>
+            <p><span class="en">On the “Task List” sheet, right after the track name — the readiness percentage with value-based highlighting (it appears when readiness columns exist).</span><span class="ru">На листе «Task List» после имени трека — процент готовности с подсветкой по значению (появляется при наличии столбцов готовности).</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Track history export to HTML</span><span class="ru">Экспорт истории трека в HTML</span></h3>
+            <p><span class="en">A ready self-contained report for one track in a single file — easy to send on or attach to a ticket.</span><span class="ru">Готовый самодостаточный отчёт по треку в один файл — удобно отправить или приложить к задаче.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Excel fills match the screen exactly</span><span class="ru">Заливка Excel один-в-один с экраном</span></h3>
+            <p><span class="en">The export honours per-cell type overrides — the colours in the file match what you see in the program.</span><span class="ru">Экспорт учитывает пер-ячейковые переопределения типа — цвета в файле совпадают с тем, что видно в программе.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">A sturdier export</span><span class="ru">Устойчивость экспорта</span></h3>
+            <p><span class="en">A typo in a date (blowing up the column count) or an invalid fill colour no longer breaks the export — columns are bounded and bad colours fall back to white.</span><span class="ru">Опечатка в дате (взрыв числа колонок) или невалидный цвет заливки больше не срывают экспорт — колонки ограничены, плохие цвета откатываются на белый.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Clear export errors</span><span class="ru">Понятные ошибки экспорта</span></h3>
+            <p><span class="en">If the file is open in Excel itself, you get a plain message instead of an obscure failure.</span><span class="ru">Если файл открыт в самом Excel — пользователь получает понятное сообщение вместо непонятного сбоя.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ UI ============ -->
+      <section class="section cat" id="ui">
+        <div class="cat-head"><div class="ico">⚙</div>
+          <h2><span class="en">Settings &amp; interface</span><span class="ru">Настройки и интерфейс</span></h2>
+          <span class="count"><span class="en">12 new · 7 fixes</span><span class="ru">12 новых · 7 фиксов</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Non-modal editors</span><span class="ru">Немодальные окна редактирования</span></h3>
+            <p><span class="en">The clip, comment, marker and note editors no longer block the application or hide the history window behind them; editing the same object again raises the window already open instead of a second one.</span><span class="ru">Окна правки клипов, комментариев, маркеров и заметок больше не блокируют приложение и не прячут окно истории за собой; повторная правка того же объекта поднимает уже открытое окно вместо второго.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Incremental save (Save Inc)</span><span class="ru">Инкрементное сохранение (Save Inc)</span></h3>
+            <p><span class="en">File → Save Inc (<kbd>Ctrl+Alt+S</kbd>) writes the next numbered copy (“_01” → “_02”, keeping the zero padding), never overwrites an existing file and switches to the new one.</span><span class="ru">File → Save Inc (<kbd>Ctrl+Alt+S</kbd>) сохраняет следующую нумерованную копию («_01» → «_02», ширина нулей сохраняется), никогда не перезаписывает существующие файлы и переключается на новый файл.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The timeline opens centred on today</span><span class="ru">Старт таймлайна на сегодня по центру</span></h3>
+            <p><span class="en">Opening a project centres the view on the current date instead of jumping to the earliest clip.</span><span class="ru">При открытии проекта вид центрируется на текущей дате вместо прыжка к самому раннему клипу.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Section headers in context menus</span><span class="ru">Заголовки-секции в контекстных меню</span></h3>
+            <p><span class="en">Menu entries are grouped by meaning under small headers (INSERT / EDIT / READINESS / FILTER …); disabled entries are plainly grey and the whole row highlights on hover.</span><span class="ru">Пункты меню сгруппированы по смыслу с мини-заголовками (INSERT / EDIT / READINESS / FILTER …); неактивные пункты явно серые, а вся строка подсвечивается при наведении.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A reorganised settings window</span><span class="ru">Реорганизация окна настроек</span></h3>
+            <p><span class="en">Settings split into 4 sensible tabs (Appearance, Readiness, Timeline, Files), with a scope badge on every group: global or per-project.</span><span class="ru">Настройки разбиты на 4 логичные вкладки (Appearance, Readiness, Timeline, Files), у каждой группы — бейдж области действия: глобально или для проекта.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Colour pickers with a live preview</span><span class="ru">Пикеры цвета с живым превью</span></h3>
+            <p><span class="en">The track description colour, the selection colour and the overtime colour are previewed while you pick.</span><span class="ru">Выбор цвета описания трека, цвета выделения и цвета овертайма — с предпросмотром прямо во время выбора.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A configurable selection colour</span><span class="ru">Настраиваемый цвет выделения</span></h3>
+            <p><span class="en">One colour for the outline of the selected clip and for the full-width track selection bar.</span><span class="ru">Единый цвет для рамки выбранного клипа и горизонтальной полосы выделения трека на всю ширину окна.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A horizontal scrollbar</span><span class="ru">Горизонтальный скроллбар</span></h3>
+            <p><span class="en">Wide tables gained horizontal scrolling — the rightmost columns and the timeline no longer run off the edge of the window.</span><span class="ru">Для широких таблиц добавлена горизонтальная прокрутка — правые колонки и таймлайн больше не уходят за край окна.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Search by task and status name</span><span class="ru">Поиск по именам задач и статусов</span></h3>
+            <p><span class="en">A second search box hides rows with no matching clips and combines with the track search by AND.</span><span class="ru">Второе поле поиска прячет строки без совпадающих клипов и комбинируется с поиском по трекам по логике «И».</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The “RF” button — reset every filter</span><span class="ru">Кнопка «RF» — сброс всех фильтров</span></h3>
+            <p><span class="en">One toolbar button clears every timeline filter at once (track and task search, tags, columns, assignees, shared menus, Focus) and brings hidden tracks back.</span><span class="ru">Одна кнопка на тулбаре разом сбрасывает все фильтры таймлайна (поиск по трекам и задачам, теги, колонки, исполнители, общие меню, Focus) и возвращает скрытые треки.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">“Change Color”: numbers, names, custom colour</span><span class="ru">Меню «Change Color»: номера, имена, свой цвет</span></h3>
+            <p><span class="en">The track and column colour presets gained running numbers and names, a “Custom color…” entry for anything else, and a tick on the current one — what is already applied is visible at once.</span><span class="ru">Пресеты покраски треков и столбцов получили порядковые номера и имена, пункт «Custom color…» для произвольного цвета и галочку на текущем — сразу видно, чем уже покрашено.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The interface translated to English</span><span class="ru">Перевод интерфейса на английский</span></h3>
+            <p><span class="en">The remaining Russian labels in the Notes dialogs, the value colour palette and the shared-menu manager were translated.</span><span class="ru">Переведены оставшиеся русские подписи в диалогах Notes, палитре цвета значения и менеджере общих меню.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Correct track search</span><span class="ru">Корректный поиск по трекам</span></h3>
+            <p><span class="en">The “Track name…” box filters tracks by name rather than hiding individual clips.</span><span class="ru">Строка поиска «Track name…» фильтрует именно треки по имени, а не прячет отдельные клипы.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">The .stab icon restored</span><span class="ru">Восстановление иконки .stab</span></h3>
+            <p><span class="en">Project files no longer lose their icon after a rebuild — the shell icon cache is refreshed at start-up.</span><span class="ru">После пересборки иконка у файлов проекта больше не пропадает — кэш иконок оболочки обновляется при запуске.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">“Cancel” in Manage Workers</span><span class="ru">«Отмена» в Manage Workers</span></h3>
+            <p><span class="en">Cancel really does roll back removing a worker from tasks, leaving the project untouched.</span><span class="ru">Кнопка Cancel действительно откатывает удаление воркера из задач, оставляя проект нетронутым.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Unreachable Recent files</span><span class="ru">Недоступные Recent-файлы</span></h3>
+            <p><span class="en">Files on temporarily disconnected network or USB drives are no longer dropped from the recent list for good.</span><span class="ru">Файлы с временно отключённых сетевых или USB-дисков больше не удаляются навсегда из списка недавних.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">The Favourites dialog</span><span class="ru">Диалог «Избранное»</span></h3>
+            <p><span class="en">Fixed reordering the first and last entry without a selection, and a crash when deleting a row.</span><span class="ru">Исправлены перестановка первого/последнего элемента без выделения и краш при удалении строки.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Labels on the colour buttons</span><span class="ru">Надписи на кнопках выбора цвета</span></h3>
+            <p><span class="en">In the mini palette and the system colour dialog the buttons no longer clip their text (“No fill”, “Custom color…”, “Pick Screen Color”).</span><span class="ru">В мини-палитре и системном диалоге выбора цвета кнопки больше не обрезают текст («No fill», «Custom color…», «Pick Screen Color»).</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Proper icons instead of “tofu” boxes</span><span class="ru">Аккуратные иконки вместо «квадратов»</span></h3>
+            <p><span class="en">Spin-box, menu, combo-box and date-field arrows, menu ticks and emoji icons were replaced with SVG — empty boxes no longer appear on other machines.</span><span class="ru">Стрелки спинбоксов, меню, комбобоксов и полей даты, галочки в меню и эмодзи-иконки заменены на SVG — на разных машинах больше не появляются квадраты-«тофу».</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ COLLAB ============ -->
+      <section class="section cat" id="collab">
+        <div class="cat-head"><div class="ico">⇄</div>
+          <h2><span class="en">Working together on a project</span><span class="ru">Совместная работа над проектом</span></h2>
+          <span class="count"><span class="en">16 new</span><span class="ru">16 новых</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Teamwork on a check-out / submit model</span><span class="ru">Одновременная работа по модели «взял — отдал»</span></h3>
+            <p><span class="en">Several people work on one .stab through a server: an editor takes the lock (check out), saves and releases it (submit), while viewers see the changes in real time over WebSocket.</span><span class="ru">Несколько человек работают над одним .stab через сервер: редактор берёт блокировку (check out), сохраняет и отпускает (submit), а зрители видят изменения в реальном времени по WebSocket.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Access levels: Viewer / Editor / Master</span><span class="ru">Уровни доступа: Читатель / Редактор / Мастер</span></h3>
+            <p><span class="en">The role is issued by the server with your token, not by buttons in the client: a viewer signs in without a password (read-only), an editor and a master with a personal one; a master can take the document over (root).</span><span class="ru">Роль выдаёт сервер по токену, а не кнопки в клиенте: читатель входит без пароля (только просмотр), редактор и мастер — по личному паролю; мастер может перехватить документ (root).</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Read-only mode for viewers</span><span class="ru">Режим «только чтение» для зрителей</span></h3>
+            <p><span class="en">Editing is blocked for a viewer, but panning, scrolling and zoom stay free — you can look around without changing anything.</span><span class="ru">У зрителя правка заблокирована, но панорамирование, скролл и масштаб свободны — можно спокойно смотреть, ничего не меняя.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Full viewing for viewers</span><span class="ru">Полноценный просмотр для зрителей</span></h3>
+            <p><span class="en">Without checking anything out you still get the filters (by assignee, values, shared menus), context menus (mutating actions greyed out), Work History and clip/comment cards in read mode. Filters are temporary and never mark the document as modified.</span><span class="ru">Без «взятия на редактирование» доступны фильтры (по исполнителю, значениям, общим меню), контекстные меню (действия-изменения показаны серыми), Work History и карточки клипов/комментариев в режиме чтения. Фильтры временные и не помечают документ изменённым.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Unsaved edits protected on a takeover</span><span class="ru">Защита несохранённых правок при перехвате</span></h3>
+            <p><span class="en">If the lead takes the document over, the client offers to save a local copy — the edits you made are not lost.</span><span class="ru">Если документ перехватывает главный лид, клиент предлагает сохранить локальную копию — сделанные правки не теряются.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Reconnect and session resume</span><span class="ru">Автопереподключение и возобновление сессии</span></h3>
+            <p><span class="en">The client reconnects on its own after a drop and resumes the lock by session_id; a brief outage does not release the lock immediately (a heartbeat guards it).</span><span class="ru">Клиент сам переподключается после обрыва и возобновляет блокировку по session_id; кратковременный обрыв не снимает лок мгновенно (страховка — heartbeat).</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Several projects on one server</span><span class="ru">Несколько проектов на одном сервере</span></h3>
+            <p><span class="en">Weapons, locomotion, effects, cinematics — each project with its own team and its own independent lock; on sign-in the client shows a picker of the projects available to you, with a role badge on each.</span><span class="ru">Пушки, локомоушен, эффекты, синематики — каждый проект со своей командой и независимой блокировкой; при входе клиент показывает пикер доступных проектов со значком роли у каждого.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Publishing and switching projects</span><span class="ru">Публикация и переключение проектов</span></h3>
+            <p><span class="en">“Publish current document to server” uploads the open project in one action; “Open project…” switches between the projects available to you while you work, without reconnecting.</span><span class="ru">«Publish current document to server» одним действием заливает открытый проект на сервер; «Open project…» переключает между доступными проектами прямо во время работы, без переподключения.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Compact toolbar buttons</span><span class="ru">Компактные кнопки в тулбаре</span></h3>
+            <p><span class="en">check out / submit / root (blue / green / violet) appear only for an editor and a master and enable by state; the user name comes from the server.</span><span class="ru">check out / submit / root (синяя / зелёная / фиолетовая) появляются только у редактора и мастера и включаются по состоянию; имя пользователя приходит с сервера.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The “Cancel” button — discard edits</span><span class="ru">Кнопка «Cancel» — отмена правок</span></h3>
+            <p><span class="en">Drops unsaved edits, releases the document and brings back the server version. Previously this meant disconnecting by hand. Visible to an editor, and active only while the document is checked out to you.</span><span class="ru">Отбрасывает несохранённые правки, отпускает документ и возвращает серверную версию. Раньше для этого приходилось вручную отключаться. Видна редактору и активна, только когда документ у вас на редактировании.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Project version history on the server</span><span class="ru">История версий проекта на сервере</span></h3>
+            <p><span class="en">The server keeps the recent saves of every project with author and time — you can see who submitted and when. Any version can be downloaded or “made current”; a rollback creates a new version, so the history is never rewritten.</span><span class="ru">Сервер хранит последние сохранения каждого проекта с автором и временем — видно, кто и когда сабмитил. Любую версию можно скачать или «сделать текущей»; откат создаёт новую версию (история не переписывается).</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A version browser in the app (Perforce-style)</span><span class="ru">Браузер версий в программе (в стиле Perforce)</span></h3>
+            <p><span class="en">Collaboration → “Server version history”: a list of versions, where “Open copy” opens an old one as a separate local copy just to look at (the server is untouched) and “Make latest” makes it current with a new submit.</span><span class="ru">Меню Collaboration → «Server version history»: список версий, «Open copy» открывает старую версию отдельной локальной копией «на посмотреть» (сервер не меняется), «Make latest» делает её текущей новым сабмитом.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A configurable revision ring</span><span class="ru">Настраиваемое число хранимых ревизий</span></h3>
+            <p><span class="en">How many recent versions the server keeps per project is set right in the admin panel (say 20 → 60) and changes without a restart.</span><span class="ru">Сколько последних версий держать на сервере для каждого проекта задаётся прямо в админ-панели (например 20 → 60) и меняется без перезапуска.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A web panel for the server (/admin)</span><span class="ru">Веб-панель управления сервером (/admin)</span></h3>
+            <p><span class="en">A browser panel on the same address and TLS as the client: projects, access tokens, version history with rollback, backups. Protected by an administrator password; no separate application and no separate port.</span><span class="ru">Браузерная панель по тому же адресу и TLS, что и клиент: проекты, токены доступа, история версий с откатом, резервные копии. Закрыта паролём администратора; отдельного приложения или порта не требует.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">The project name in the window title</span><span class="ru">Имя проекта в заголовке окна</span></h3>
+            <p><span class="en">When connected, the title starts with “● Online: “Project name”” — you can see at a glance that the document lives on the server, not on disk.</span><span class="ru">При подключении к серверу заголовок начинается с «● Online: «Название проекта»» — сразу видно, что документ живёт на сервере, а не на диске.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Notes readable for a viewer</span><span class="ru">Заметки доступны зрителю (чтение)</span></h3>
+            <p><span class="en">The notes journal now opens in view mode too — for a viewer, and while somebody else holds the lock — read-only, with no edits.</span><span class="ru">Журнал заметок теперь открывается и в режиме просмотра — для зрителя и когда замок у другого — только для чтения, без правок.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ KITSU ============ -->
+      <section class="section cat" id="kitsu">
+        <div class="cat-head"><div class="ico">⚭</div>
+          <h2><span class="en">Kitsu integration</span><span class="ru">Интеграция с Kitsu</span></h2>
+          <span class="count"><span class="en">5 new</span><span class="ru">5 новых</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Status sync from Kitsu</span><span class="ru">Синхронизация статусов из Kitsu</span></h3>
+            <p><span class="en">Task statuses from Kitsu (Done / on review / has feedback / Pending…) are pulled into the column cells automatically: track ↔ Kitsu entity, column ↔ task type, value ↔ status, all by mapping table.</span><span class="ru">Статусы задач из Kitsu (Done / on review / has feedback / Pending…) автоматически подтягиваются в ячейки столбцов: трек ↔ сущность Kitsu, столбец ↔ тип задачи, значение ↔ статус по таблице маппинга.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Manual mapping tables, plus a dry run</span><span class="ru">Ручные таблицы соответствий + предпросмотр</span></h3>
+            <p><span class="en">Tracks ↔ weapons (sequences), columns ↔ task types, statuses ↔ cell values — with auto-matching by name and a dry run showing “old → new” before anything is applied.</span><span class="ru">Треки ↔ пушки (sequences), столбцы ↔ типы задач, статусы ↔ значения ячеек — с автоподбором по именам и сухим прогоном (dry run), который показывает «старое → новое» до применения.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">One-click refresh</span><span class="ru">Обновление в один клик</span></h3>
+            <p><span class="en">“Sync from Kitsu (update now)” pulls fresh statuses over the saved mappings without opening the settings dialog.</span><span class="ru">Пункт «Sync from Kitsu (update now)» тянет свежие статусы по сохранённым связям без открытия диалога настроек.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A remembered token, exportable mappings</span><span class="ru">Запоминание токена и экспорт связей</span></h3>
+            <p><span class="en">The access token is stored on the machine, not in the .stab; mapping tables can be saved to and loaded from JSON for backup and for moving between machines.</span><span class="ru">Токен доступа хранится на машине (не в .stab); таблицы соответствий можно выгрузить/загрузить в JSON для резервной копии и переноса между машинами.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">Isolated and safe</span><span class="ru">Изолированная и безопасная</span></h3>
+            <p><span class="en">The gazu library is imported lazily — without it the application works as usual; passwords are never written into the project file.</span><span class="ru">Библиотека gazu подключается лениво — без неё приложение работает как обычно; пароли в файл проекта не пишутся.</span></p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ STABILITY ============ -->
+      <section class="section cat" id="stability">
+        <div class="cat-head"><div class="ico">◈</div>
+          <h2><span class="en">Reliability &amp; performance</span><span class="ru">Надёжность и производительность</span></h2>
+          <span class="count"><span class="en">10 improvements</span><span class="ru">10 улучшений</span></span></div>
+        <div class="items">
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Atomic file saving</span><span class="ru">Атомарное сохранение файлов</span></h3>
+            <p><span class="en">The project and the settings are written to a temporary file and then swapped in — a failure in the middle of a write no longer destroys the previous version.</span><span class="ru">Проект и настройки пишутся через временный файл с последующей заменой — сбой посреди записи больше не уничтожает старую версию.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">The project protected on load</span><span class="ru">Защита проекта при открытии</span></h3>
+            <p><span class="en">Broken ids and dates in old or archived files no longer take the whole load down — the damaged items are skipped and the project opens.</span><span class="ru">Битые id и даты в старых или архивных файлах больше не роняют всю загрузку — испорченные элементы пропускаются, проект открывается.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Edits protected against undo overflow</span><span class="ru">Защита от потери правок при отмене</span></h3>
+            <p><span class="en">After the undo stack overflows, the project is no longer wrongly considered saved — the unsaved-changes asterisk is now correct.</span><span class="ru">После переполнения стека отмены проект больше не считается ошибочно сохранённым — «звёздочка» несохранённых изменений теперь корректна.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Opening from Recent without losing edits</span><span class="ru">Открытие из Recent без потери правок</span></h3>
+            <p><span class="en">Opening a project from the recent list asks about unsaved changes.</span><span class="ru">Открытие проекта из списка недавних спрашивает о сохранении несохранённых изменений.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Sturdier timeline painting</span><span class="ru">Устойчивость отрисовки таймлайна</span></h3>
+            <p><span class="en">An error while painting one frame no longer spams or crashes the application — a bad frame degrades instead of bringing the whole loop down.</span><span class="ru">Ошибка при отрисовке одного кадра больше не спамит и не роняет приложение — плохой кадр деградирует, а не рушит весь цикл.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">A full-height timeline</span><span class="ru">Полноразмерный таймлайн</span></h3>
+            <p><span class="en">Fixed a bug that drew the table only in the upper half of the window.</span><span class="ru">Устранён баг, из-за которого таблица рисовалась только в верхней половине окна.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">The comment pop-up no longer traps input</span><span class="ru">Окно комментария не подвешивает</span></h3>
+            <p><span class="en">The column comment pop-up no longer grabs the input focus.</span><span class="ru">Всплывающее окно комментария к столбцу больше не захватывает управление вводом.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A lighter timeline engine</span><span class="ru">Более лёгкий движок таймлайна</span></h3>
+            <p><span class="en">Internal restructuring made the built application more stable, with no change in behaviour.</span><span class="ru">Внутренняя реструктуризация повысила стабильность собранного приложения без изменения поведения.</span></p></div></div>
+          <div class="item"><span class="tag new"><span class="en">New</span><span class="ru">Новое</span></span><div class="body">
+            <h3><span class="en">A crash log next to the program</span><span class="ru">Лог крашей рядом с программой</span></h3>
+            <p><span class="en">Any failure (including silent crashes of the protected build) is written to <code>roadmapper_crash.log</code> next to the exe for diagnosis.</span><span class="ru">Любой сбой (включая скрытые падения защищённого билда) записывается в <code>roadmapper_crash.log</code> рядом с exe для диагностики.</span></p></div></div>
+          <div class="item"><span class="tag fix"><span class="en">Fix</span><span class="ru">Фикс</span></span><div class="body">
+            <h3><span class="en">Code audit and collaboration hardening</span><span class="ru">Аудит кода и харденинг совместной работы</span></h3>
+            <p><span class="en">Before the server went out, sweeping multi-agent code reviews closed the risks of silent data loss and of collaboration security (role and session verified on save, message size and rate limits, cross-site blocking), and version promotion was made a safe write under a lock.</span><span class="ru">Перед выкладкой сервера проведены сплошные многоагентные код-ревью: закрыты риски тихой потери данных и безопасности совместной работы (проверка роли и сессии при сохранении, лимит и частота сообщений, блокировка cross-site), а промоут версии сделан безопасной записью под блокировкой.</span></p></div></div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="legend">
+          <span><i class="dot" style="background:#22301f;border-color:#3d5c3d"></i> <b><span class="en">New</span><span class="ru">Новое</span></b> — <span class="en">a new capability or a noticeable improvement</span><span class="ru">новая возможность или заметное улучшение</span></span>
+          <span><i class="dot" style="background:#1f2833;border-color:#3a5570"></i> <b><span class="en">Fix</span><span class="ru">Фикс</span></b> — <span class="en">a bug or a robustness fix</span><span class="ru">исправление ошибки или устойчивости</span></span>
+        </div>
+        <p><span class="en">What&rsquo;s new in RoadMapper 2.3 — the changes made between 3 and 26 July 2026.</span><span class="ru">Что нового в RoadMapper 2.3 — изменения, сделанные с 3 по 26 июля 2026 года.</span></p>
+      </footer>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  var root    = document.documentElement;
+  var nav     = document.getElementById('nav');
+  var content = document.getElementById('content');
+
+  /* ---------- language ---------- */
+  function setLang(lang){
+    root.setAttribute('data-lang', lang);
+    root.setAttribute('lang', lang);
+    document.getElementById('btn-en').classList.toggle('active', lang==='en');
+    document.getElementById('btn-ru').classList.toggle('active', lang==='ru');
+    try{ localStorage.setItem('rm_help_lang', lang); }catch(e){}
+  }
+  document.getElementById('btn-en').addEventListener('click', function(){setLang('en');});
+  document.getElementById('btn-ru').addEventListener('click', function(){setLang('ru');});
+  var saved = 'ru';
+  try{ saved = localStorage.getItem('rm_help_lang') || 'ru'; }catch(e){}
+  setLang(saved === 'en' ? 'en' : 'ru');
+
+  /* ---------- contents: click scrolls, scrolling highlights ---------- */
+  var items = [].slice.call(nav.querySelectorAll('a.item'));
+
+  nav.addEventListener('click', function(e){
+    var t = e.target.closest('a.item'); if(!t) return;
+    e.preventDefault();
+    var sec = document.getElementById(t.getAttribute('data-target'));
+    if(!sec) return;
+    /* the hero is part of the scroller, so offsetTop is already the right place */
+    content.scrollTo({top: sec.offsetTop - 14, behavior:'smooth'});
+    history.replaceState(null, '', '#' + t.getAttribute('data-target'));
+  });
+
+  function markActive(){
+    var pos = content.scrollTop + 80, cur = null;
+    for(var i=0;i<items.length;i++){
+      var sec = document.getElementById(items[i].getAttribute('data-target'));
+      if(sec && sec.offsetTop <= pos) cur = items[i];
+    }
+    for(var j=0;j<items.length;j++) items[j].classList.toggle('active', items[j]===cur);
+  }
+  var ticking = false;
+  content.addEventListener('scroll', function(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ markActive(); ticking = false; });
+  });
+  markActive();
+
+  /* opened with #section in the address bar */
+  if(location.hash){
+    var target = document.getElementById(location.hash.slice(1));
+    if(target){ content.scrollTop = target.offsetTop - 14; markActive(); }
+  }
+</script>
+</body>
+</html>
