@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>News — what's new | e.melnikov.dev</title>
+<title data-en="What's new — e.melnikov" data-ru="Что нового — e.melnikov">What's new — e.melnikov</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -206,10 +206,64 @@
     letter-spacing: .05em; white-space: nowrap;
   }
 
-  .news-desc {
-    font-size: 14px; color: var(--muted); line-height: 1.7;
-    white-space: pre-line;
+  /* Текст новости — та же разметка, что и на странице программы: заголовки
+     разделов акцентным моно, пункты с точкой. Отдельный набор правил, а не
+     общий .prose: на этой странице больше размеченного текста нигде нет. */
+  .news-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .news-desc p { margin-bottom: 12px; }
+  .news-desc p:last-child { margin-bottom: 0; }
+  .news-desc strong { color: var(--text); font-weight: 500; }
+  .news-desc em { font-style: italic; }
+  .news-desc a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .news-desc a:hover { border-bottom-color: var(--accent); }
+  .news-desc h3 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 18px 0 6px;
   }
+  .news-desc h4 { font-size: 14px; font-weight: 600; color: var(--text); margin: 14px 0 5px; }
+  .news-desc h3:first-child, .news-desc h4:first-child { margin-top: 0; }
+  .news-desc ul, .news-desc ol { list-style: none; margin: 0 0 12px; padding: 0; }
+  .news-desc ol { counter-reset: news-ol; }
+  .news-desc li { position: relative; padding-left: 20px; margin-bottom: 6px; }
+  .news-desc ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 10px;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .news-desc ol > li { counter-increment: news-ol; }
+  .news-desc ol > li::before {
+    content: counter(news-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 12px; color: var(--accent); opacity: .8;
+  }
+
+  /* Длинный список изменений карточку не растягивает: подрезаем по высоте и
+     растворяем низ в фоне. Класс вешает скрипт — только там, где текст правда
+     не поместился, иначе кнопка «читать дальше» врала бы о спрятанном. */
+  .news-desc { position: relative; }
+  .news-desc.clamped { max-height: 190px; overflow: hidden; }
+  .news-desc.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 72px;
+    background: linear-gradient(to bottom, rgba(19, 22, 30, 0), var(--bg2));
+    pointer-events: none;
+  }
+
+  .news-more {
+    margin-top: 10px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .05em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .news-more[hidden] { display: none; }
+  .news-more:hover { color: var(--accent); }
+  .news-more svg { width: 11px; height: 11px; transition: transform .25s; }
+  .news-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .news-more .on-open { display: none; }
+  .news-more.open .on-closed { display: none; }
+  .news-more.open .on-open { display: inline; }
 
   .news-actions {
     display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px;
@@ -264,6 +318,17 @@
   }
   footer a { color: var(--accent); text-decoration: none; }
   footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+
 </style>
 </head>
 <body>
@@ -279,17 +344,21 @@
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M10 3L5 8l5 5"/>
       </svg>
-      Back to all software
+      <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
     </a>
+    <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
   </div>
 </nav>
 
 <!-- Header -->
 <div class="wrap">
   <div class="page-head">
-    <div class="page-badge">Changelog &amp; releases</div>
-    <h1>What's <strong>new</strong></h1>
-    <p class="page-sub">New tools and updates, newest first. Missed something? It's all here.</p>
+    <div class="page-badge"><span data-en="Changelog &amp; releases" data-ru="Обновления и релизы">Changelog &amp; releases</span></div>
+    <h1><span data-en="What's" data-ru="Что">What's</span> <strong><span data-en="new" data-ru="нового">new</span></strong></h1>
+    <p class="page-sub"><span data-en="New tools and updates, newest first. Missed something? It's all here." data-ru="Новые программы и обновления, свежие сверху. Пропустили что-то? Здесь всё.">New tools and updates, newest first. Missed something? It's all here.</span></p>
   </div>
 </div>
 
@@ -303,29 +372,124 @@
       
       
       
-        
-        
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="FuryNotes-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🔧</span>
+            <span class="news-title"><span data-en="FuryNotes" data-ru="FuryNotes">FuryNotes</span><span class="ver">v1.2.0</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
+            <span class="news-date">2026-08-18</span>
+          </div>
+          
+          <div class="news-desc" data-en="&lt;h3&gt;Icons for notes.&lt;/h3&gt;
+&lt;p&gt;A note can be given a picture, and it stands in front of its name in the tree. Fifty-odd to choose from: an aeroplane, books, a guitar, a lightbulb, a rocket, a heart, smileys, music notes, a calculator and so on. The point is simple — in a column of similar names the eye finds a shape faster than it reads words. Right-click a note → &quot;Icon&quot;, then the grid; one click and it is there. &quot;No icon&quot; in the same menu takes it off. The icon belongs to the note: rename it or move it to another folder and the icon goes along, the way a colour and a pin already do. It also travels to another computer — only the icon's name is kept beside the note, and the picture itself is inside the program at both ends.&lt;/p&gt;
+&lt;h3&gt;A colour of its own for each icon.&lt;/h3&gt;
+&lt;p&gt;Under the grid are ten neon colours. The one you pick paints that icon, not all of them, so you can tell things apart: work in blue, home in green, urgent in red. &quot;Default colour&quot; puts it back. The colour knows about the theme. What is stored is really the hue, and how light to draw it is worked out again for the background in use. That is why the same note looks right on the dark theme and on the light one — a vivid yellow-green that glows on black would otherwise simply vanish on white.&lt;/p&gt;
+&lt;h3&gt;Neon and a glow, if you want them.&lt;/h3&gt;
+&lt;p&gt;Two tick-boxes in the settings. &quot;Neon note icons&quot; paints every icon that has no colour of its own in your accent colour. &quot;with a glow&quot; lights a halo around them — the neon outline itself. Both are off as the program ships: this is a taste, not the way the program has to look. The glow is drawn into the empty margins around the icon, so not one name in the tree moves by a single pixel.&lt;/p&gt;
+&lt;h3&gt;Back and forward, like a browser.&lt;/h3&gt;
+&lt;p&gt;Two arrows on the toolbar, and Alt+← / Alt+→, walk the notes you have already opened. The side buttons on your mouse do the same. The trail follows the notes rather than the files: a note that has since been deleted is not a dead end — that step is skipped and the next one taken — and a renamed note keeps its place in the chain. An arrow with nowhere to go is drawn faded, so you can see at a glance whether there is anything behind you.&lt;/p&gt;
+&lt;h3&gt;You can see which note is open.&lt;/h3&gt;
+&lt;p&gt;A caret now stands in front of its row and its name is a shade brighter than the rest. Before this, coming back to the program meant working out where you had left off. A pinned note keeps its bookmark at the same time — the marks no longer push each other out.&lt;/p&gt;
+&lt;h3&gt;Two gestures on a folder instead of one.&lt;/h3&gt;
+&lt;p&gt;The folder's icon opens and closes it, the name only selects it, and a double click on the name opens it. Before, a click anywhere on the row toggled the folder, so it could not be chosen as the place for a new note without flapping open on the way. Two vertical stripes down a selected row went at the same time: one was ours, the other was Windows painting its own accent colour, which answered to nothing in the theme.&lt;/p&gt;
+&lt;h3&gt;A new manual, one for everything.&lt;/h3&gt;
+&lt;p&gt;Instead of a stack of per-version documents there is now a single page: docs/manual. English and Russian switch with a button, and it has contents down the side and a search across the text. A &quot;What's new&quot; section carries a card per version, so a minute is enough to see what has appeared since you last updated. And the formatting section opens with a cheat sheet: one picture showing every kind of formatting at once, where each line names the keys that made it.&lt;/p&gt;
+&lt;h3&gt;Smaller fixes.&lt;/h3&gt;
+&lt;p&gt;Toolbar buttons that cannot be used now look switched off — before this, a &quot;Back&quot; with nowhere to go was as bright as a working one.&lt;/p&gt;" data-ru="&lt;h3&gt;Значки для заметок.&lt;/h3&gt;
+&lt;p&gt;Заметке можно дать картинку — она встаёт перед её именем в дереве. Полсотни готовых: самолёт, книги, гитара, лампочка, ракета, сердце, смайлики, ноты, калькулятор и так далее. Смысл простой: в столбце похожих названий глаз находит форму быстрее, чем читает слова. Правая кнопка на заметке → «Icon», дальше сетка — щёлкнули и всё. Там же «No icon», чтобы снять. Значок принадлежит заметке: переименуете её или перенесёте в другую папку — он поедет следом, как цвет и закрепление. И он переезжает на другой компьютер: рядом с заметкой хранится только имя значка, а сама картинка лежит внутри программы с обеих сторон.&lt;/p&gt;
+&lt;h3&gt;Свой цвет для каждого значка.&lt;/h3&gt;
+&lt;p&gt;Под сеткой — десять неоновых цветов. Выбранный красит именно этот значок, а не все сразу, так что можно развести: рабочее синим, домашнее зелёным, срочное красным. «Default colour» возвращает обычный вид. Цвет умеет подстраиваться под тему. Хранится, по сути, оттенок, а насколько светлым его рисовать — считается заново под текущий фон. Поэтому одна и та же заметка выглядит правильно и на тёмной теме, и на светлой: иначе яркий жёлто-зелёный, прекрасно видимый на чёрном, на белом просто исчез бы.&lt;/p&gt;
+&lt;h3&gt;Неон и свечение — по желанию.&lt;/h3&gt;
+&lt;p&gt;В настройках две галочки. «Neon note icons» красит цветом акцента все значки, у которых нет своего цвета. «with a glow» зажигает вокруг них ореол — тот самый неоновый контур. Обе по умолчанию выключены: это вкус, а не обязательный вид программы. Свечение рисуется в пустых полях вокруг значка, поэтому ни одно название в дереве не сдвигается ни на пиксель.&lt;/p&gt;
+&lt;h3&gt;Назад и вперёд, как в браузере.&lt;/h3&gt;
+&lt;p&gt;Две стрелки на панели и Alt+← / Alt+→ ходят по заметкам, которые вы уже открывали. Боковые кнопки мыши работают так же. След ведётся по заметкам, а не по файлам: удалённая заметка не становится тупиком — шаг пропускается и берётся следующий, а переименованная сохраняет своё место в цепочке. Стрелка, которой некуда идти, приглушена, так что видно сразу, есть ли что-то позади.&lt;/p&gt;
+&lt;h3&gt;Видно, какая заметка открыта.&lt;/h3&gt;
+&lt;p&gt;Перед её строкой встала стрелка, а имя стало чуть ярче остальных. Раньше при возврате в программу приходилось вспоминать, где вы остановились. Закреплённая заметка при этом не теряет свою закладку — метки больше не вытесняют друг друга.&lt;/p&gt;
+&lt;h3&gt;У папки два жеста вместо одного.&lt;/h3&gt;
+&lt;p&gt;Значок папки раскрывает и закрывает её, имя — только выделяет, двойной клик по имени раскрывает. Раньше клик в любое место строки переключал папку, и выбрать её как место для новой заметки, не распахнув по дороге, было нельзя. Заодно пропали две вертикальные полосы у выделенной строки: одну рисовали мы, вторую — сама Windows своим системным цветом, который не подчинялся теме.&lt;/p&gt;
+&lt;h3&gt;Новая справка, одна на всё.&lt;/h3&gt;
+&lt;p&gt;Вместо стопки документов по версиям — одна страница: docs/manual. Русский и английский переключаются кнопкой, есть оглавление и поиск по тексту. Отдельный раздел «Что нового» с карточкой на каждую версию — можно за минуту понять, что появилось с тех пор, как вы обновлялись в последний раз. А в разделе про оформление лежит шпаргалка: одна картинка, где показаны все виды форматирования сразу, и каждая строка на ней сама называет клавиши, которыми сделана.&lt;/p&gt;
+&lt;h3&gt;Мелкие исправления.&lt;/h3&gt;
+&lt;p&gt;Кнопки на панели, которыми нельзя воспользоваться, теперь и выглядят выключенными — раньше «Назад», которому некуда идти, был таким же ярким, как рабочий.&lt;/p&gt;"><h3>Icons for notes.</h3>
+<p>A note can be given a picture, and it stands in front of its name in the tree. Fifty-odd to choose from: an aeroplane, books, a guitar, a lightbulb, a rocket, a heart, smileys, music notes, a calculator and so on. The point is simple — in a column of similar names the eye finds a shape faster than it reads words. Right-click a note → "Icon", then the grid; one click and it is there. "No icon" in the same menu takes it off. The icon belongs to the note: rename it or move it to another folder and the icon goes along, the way a colour and a pin already do. It also travels to another computer — only the icon's name is kept beside the note, and the picture itself is inside the program at both ends.</p>
+<h3>A colour of its own for each icon.</h3>
+<p>Under the grid are ten neon colours. The one you pick paints that icon, not all of them, so you can tell things apart: work in blue, home in green, urgent in red. "Default colour" puts it back. The colour knows about the theme. What is stored is really the hue, and how light to draw it is worked out again for the background in use. That is why the same note looks right on the dark theme and on the light one — a vivid yellow-green that glows on black would otherwise simply vanish on white.</p>
+<h3>Neon and a glow, if you want them.</h3>
+<p>Two tick-boxes in the settings. "Neon note icons" paints every icon that has no colour of its own in your accent colour. "with a glow" lights a halo around them — the neon outline itself. Both are off as the program ships: this is a taste, not the way the program has to look. The glow is drawn into the empty margins around the icon, so not one name in the tree moves by a single pixel.</p>
+<h3>Back and forward, like a browser.</h3>
+<p>Two arrows on the toolbar, and Alt+← / Alt+→, walk the notes you have already opened. The side buttons on your mouse do the same. The trail follows the notes rather than the files: a note that has since been deleted is not a dead end — that step is skipped and the next one taken — and a renamed note keeps its place in the chain. An arrow with nowhere to go is drawn faded, so you can see at a glance whether there is anything behind you.</p>
+<h3>You can see which note is open.</h3>
+<p>A caret now stands in front of its row and its name is a shade brighter than the rest. Before this, coming back to the program meant working out where you had left off. A pinned note keeps its bookmark at the same time — the marks no longer push each other out.</p>
+<h3>Two gestures on a folder instead of one.</h3>
+<p>The folder's icon opens and closes it, the name only selects it, and a double click on the name opens it. Before, a click anywhere on the row toggled the folder, so it could not be chosen as the place for a new note without flapping open on the way. Two vertical stripes down a selected row went at the same time: one was ours, the other was Windows painting its own accent colour, which answered to nothing in the theme.</p>
+<h3>A new manual, one for everything.</h3>
+<p>Instead of a stack of per-version documents there is now a single page: docs/manual. English and Russian switch with a button, and it has contents down the side and a search across the text. A "What's new" section carries a card per version, so a minute is enough to see what has appeared since you last updated. And the formatting section opens with a cheat sheet: one picture showing every kind of formatting at once, where each line names the keys that made it.</p>
+<h3>Smaller fixes.</h3>
+<p>Toolbar buttons that cannot be used now look switched off — before this, a "Back" with nowhere to go was as bright as a working one.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
+          
+          <div class="news-actions">
+            
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
+              </a>
+              
+              <a class="btn-news secondary" href="FuryNotes-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
+              
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/Poster_FuryNotes_002.jpg" alt="FuryNotes"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
       
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="BackDrop-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">BackDrop<span class="ver">v1.1</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="BackDrop" data-ru="BackDrop">BackDrop</span><span class="ver">v1.1</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-08-10</span>
           </div>
           
-          <div class="news-desc">A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes</div>
+          <div class="news-desc" data-en="&lt;p&gt;A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes&lt;/p&gt;" data-ru="&lt;p&gt;ПЛАВАЮЩАЯ ПАНЕЛЬ, ДВЕНАДЦАТЬ МЕСТ ДЛЯ ЕЁ ПАРКОВКИ, КНОПКИ НА САМОЙ ПАНЕЛИ, исправления&lt;/p&gt;"><p>A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="BackDrop-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/BackDrop_1.1.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="BackDrop-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
             
@@ -340,53 +504,36 @@
       
       
       
-      
-        
-        
       
       <div class="news-item is-new">
         <div class="news-card clickable" data-href="BackDrop-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">BackDrop</span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="BackDrop" data-ru="BackDrop">BackDrop</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-08-06</span>
           </div>
           
-          <div class="news-desc">BackDrop hides your desktop behind a solid colour or an image while you
-record a tutorial or stream, so icons, folders and personal files never
-reach the frame. You can draw straight on the cover — pencil, lines,
-shapes, arrows and text captions — and the magic pencil leaves strokes
-that fade away by themselves after a few seconds, so you can point at
-things without stopping to clean up. See-through mode turns the program
-into a sheet of tracing paper: the cover disappears and you annotate
-your running applications directly, while putting the tool down hands
-clicks straight back to the app underneath. What you drew saves to PNG
-or JPG, or reaches the clipboard with a single keystroke — and in
-see-through mode that gives you a finished annotated screenshot. It
-needs no installer, keeps its settings beside the executable, and can
-ask for confirmation before minimising or closing, so the desktop never
-appears in the middle of a recording.
-
-At a glance:
-  · Solid colour or your own image — 18 ready-made colours, or any other
-  · Drawing on top: pencil, eraser, line, rectangle, circle, triangle,
-    arrow, text
-  · Magic pencil — strokes fade away on their own after 1–30 seconds
-  · See-through mode — draw over your running applications
-  · Save as PNG/JPG and copy to the clipboard
-  · Guards against uncovering the desktop by accident while recording
-  · Portable: settings and pictures live beside the program</div>
+          <div class="news-desc" data-en="&lt;p&gt;BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame. You can draw straight on the cover — pencil, lines, shapes, arrows and text captions.&lt;/p&gt;" data-ru="&lt;p&gt;BackDrop прячет рабочий стол за сплошным цветом или картинкой, пока вы записываете урок или ведёте стрим, — иконки, папки и личные файлы не попадают в кадр. По этой заслонке можно рисовать прямо поверх: карандаш, линии, фигуры, стрелки и подписи.&lt;/p&gt;"><p>BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame. You can draw straight on the cover — pencil, lines, shapes, arrows and text captions.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="BackDrop-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/BackDrop_1.1.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="BackDrop-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
             
@@ -402,33 +549,40 @@ At a glance:
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="Scene_Manager-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">Scene_Manager<span class="ver">v1.3</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Scene_Manager" data-ru="Scene_Manager">Scene_Manager</span><span class="ver">v1.3</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-08-01</span>
           </div>
           
-          <div class="news-desc">Scene Manager is a visual library for your 3D models with a version history: a card with a preview for every asset, instead of a folder full of final_v2_fix_new.mb. Every file you drop onto a card becomes the next revision and is marked read-only, so nothing is ever overwritten and older versions stay one click away. Its other half is a plugin for Maya 2019–2026: the same board inside Maya, where a scene opens or imports with a single button and any revision can be picked. It handles .ma, .mb and .fbx, and a project is just a folder on disk — no server, no database.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Scene Manager is a visual library for your 3D models with a version history: a card with a preview for every asset, instead of a folder full of final_v2_fix_new.mb.&lt;/p&gt;" data-ru="&lt;p&gt;Scene Manager — визуальная библиотека 3D-моделей с историей версий: у каждого ассета карточка с превью вместо папки, забитой final_v2_fix_new.mb.&lt;/p&gt;"><p>Scene Manager is a visual library for your 3D models with a version history: a card with a preview for every asset, instead of a folder full of final_v2_fix_new.mb.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/Scene_Manager/Scene_Manager_v1.3.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="Scene_Manager-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/R1bEpwRtzXw" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -444,33 +598,34 @@ At a glance:
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="FuryNotes-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🔧</span>
-            <span class="news-title">FuryNotes<span class="ver">v1.1.7</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="FuryNotes" data-ru="FuryNotes">FuryNotes</span><span class="ver">v1.1.7</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-07-30</span>
           </div>
           
-          <div class="news-desc">Row colours in the note tree. Drag rows: the order is yours. Formats now stack on one word. A star is just a star. Smaller fixes.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Row colours in the note tree. Drag rows: the order is yours. Formats now stack on one word. A star is just a star. Smaller fixes.&lt;/p&gt;" data-ru="&lt;p&gt;Цвета строк в дереве заметок. Перетаскивание строк — порядок ваш. Форматирование теперь накладывается друг на друга на одном слове. Звёздочка — просто звёздочка. Мелкие исправления.&lt;/p&gt;"><p>Row colours in the note tree. Drag rows: the order is yours. Formats now stack on one word. A star is just a star. Smaller fixes.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="FuryNotes-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="FuryNotes.html">
+              <a class="btn-news secondary" href="FuryNotes-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
@@ -487,40 +642,40 @@ At a glance:
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="roadmapper-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">RoadMapper<span class="ver">v2.3.1</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="RoadMapper" data-ru="RoadMapper">RoadMapper</span><span class="ver">v2.3.1</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-07-26</span>
           </div>
           
-          <div class="news-desc">В RoadMapper 2.3.1 - по сравнению с версией 2.2 добавилось 100+ новых фич и возможностей, включая синхронизация с Kitsu, формулы, совместная работа клиент-сервер. Полный список фич можно посмотреть здесь. 
-https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html</div>
+          <div class="news-desc" data-en="&lt;p&gt;RoadMapper 2.3.1 brings 100+ new features compared to 2.2, including Kitsu sync, formulas and client-server collaboration. The full list is here. https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html&lt;/p&gt;" data-ru="&lt;p&gt;В RoadMapper 2.3.1 - по сравнению с версией 2.2 добавилось 100+ новых фич и возможностей, включая синхронизация с Kitsu, формулы, совместная работа клиент-сервер. Полный список фич можно посмотреть здесь. https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html&lt;/p&gt;"><p>RoadMapper 2.3.1 brings 100+ new features compared to 2.2, including Kitsu sync, formulas and client-server collaboration. The full list is here. https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="roadmapper-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_v2.3.1.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="roadmapper.html">
+              <a class="btn-news secondary" href="roadmapper-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -536,33 +691,34 @@ https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="FuryNotes-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🔧</span>
-            <span class="news-title">FuryNotes<span class="ver">v1.1.6</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="FuryNotes" data-ru="FuryNotes">FuryNotes</span><span class="ver">v1.1.6</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-07-24</span>
           </div>
           
-          <div class="news-desc">Pin mode bugfix</div>
+          <div class="news-desc" data-en="&lt;p&gt;Pin mode bugfix&lt;/p&gt;" data-ru="&lt;p&gt;Исправлен режим закрепления&lt;/p&gt;"><p>Pin mode bugfix</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="FuryNotes-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="FuryNotes.html">
+              <a class="btn-news secondary" href="FuryNotes-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
@@ -579,39 +735,35 @@ https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="MayaMerge-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">MayaMerge<span class="ver">v1.1</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="MayaMerge" data-ru="MayaMerge">MayaMerge</span><span class="ver">v1.1</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-07-24</span>
           </div>
           
-          <div class="news-desc">MayaMerge — move objects between scenes, like Merge in 3ds Max
-
-MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects
-you need from a handy list, and bring only those into your current scene — with
-no junk: only the selection's own materials, skin and animation come across.
-Its highlight is Detach mode: you can pull a working sub-rig (say, a weapon with
-its control bones) out of a character as a standalone, still-animated prop, with
-animation and skin intact. And for total isolation there's an off-screen mode,
-where your scene never touches the source file at all.
-
-Who it's for: animators, riggers, and anyone who assembles scenes from pieces
-and is tired of dragging clutter out of other people's files.</div>
+          <div class="news-desc" data-en="&lt;p&gt;MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects you need from a handy list, and bring only those into your current scene — with no junk.&lt;/p&gt;" data-ru="&lt;p&gt;MayaMerge открывает любой файл (.mb/.ma/.fbx/.obj), даёт выбрать из удобного списка ровно те объекты, которые нужны, и переносит в текущую сцену только их — без мусора.&lt;/p&gt;"><p>MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects you need from a handy list, and bring only those into your current scene — with no junk.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MayaMerge/MayaMerge_1.1.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="MayaMerge-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
             
@@ -627,45 +779,49 @@ and is tired of dragging clutter out of other people's files.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="FuryNotes-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🔧</span>
-            <span class="news-title">FuryNotes<span class="ver">v1.1.5</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="FuryNotes" data-ru="FuryNotes">FuryNotes</span><span class="ver">v1.1.5</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-07-23</span>
           </div>
           
-          <div class="news-desc">• Format several lines at once.
-  You can now select multiple lines and make them bold, italic,
-  strikethrough or monospace in one go. Before, this worked on a single
-  line only.
-
-• "Keep on top" mode.
-  A new toolbar button — right of the one that hides the note tree — keeps
-  the window above all others, so your note stays in view. Press it again
-  to turn it off. The state is remembered until the next launch.
-
-• "Update" button.
-  A button in the top-right corner opens the versions page in your browser,
-  so you can check for a newer version in one click.</div>
+          <div class="news-desc" data-en="&lt;h3&gt;Format several lines at once.&lt;/h3&gt;
+&lt;p&gt;You can now select multiple lines and make them bold, italic, strikethrough or monospace in one go. Before, this worked on a single line only.&lt;/p&gt;
+&lt;h3&gt;&quot;Keep on top&quot; mode.&lt;/h3&gt;
+&lt;p&gt;A new toolbar button — right of the one that hides the note tree — keeps the window above all others, so your note stays in view. Press it again to turn it off. The state is remembered until the next launch.&lt;/p&gt;
+&lt;h3&gt;&quot;Update&quot; button.&lt;/h3&gt;
+&lt;p&gt;A button in the top-right corner opens the versions page in your browser, so you can check for a newer version in one click.&lt;/p&gt;" data-ru="&lt;h3&gt;Форматирование сразу нескольких строк.&lt;/h3&gt;
+&lt;p&gt;Теперь можно выделить несколько строк и разом сделать их жирными, курсивом, зачёркнутыми или моноширинными. Раньше это работало только на одной строке.&lt;/p&gt;
+&lt;h3&gt;Режим «поверх всех окон».&lt;/h3&gt;
+&lt;p&gt;Новая кнопка на панели — справа от той, что прячет дерево заметок, — держит окно поверх остальных, чтобы заметка была на виду. Нажмите ещё раз, чтобы выключить. Состояние помнится до следующего запуска.&lt;/p&gt;
+&lt;h3&gt;Кнопка «Обновление».&lt;/h3&gt;
+&lt;p&gt;Кнопка в правом верхнем углу открывает страницу версий в браузере — проверить, вышло ли что-то новее, можно в один клик.&lt;/p&gt;"><h3>Format several lines at once.</h3>
+<p>You can now select multiple lines and make them bold, italic, strikethrough or monospace in one go. Before, this worked on a single line only.</p>
+<h3>"Keep on top" mode.</h3>
+<p>A new toolbar button — right of the one that hides the note tree — keeps the window above all others, so your note stays in view. Press it again to turn it off. The state is remembered until the next launch.</p>
+<h3>"Update" button.</h3>
+<p>A button in the top-right corner opens the versions page in your browser, so you can check for a newer version in one click.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="FuryNotes-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="FuryNotes.html">
+              <a class="btn-news secondary" href="FuryNotes-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
@@ -682,37 +838,34 @@ and is tired of dragging clutter out of other people's files.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="FuryNotes-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🔧</span>
-            <span class="news-title">FuryNotes<span class="ver">v1.1.4</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="FuryNotes" data-ru="FuryNotes">FuryNotes</span><span class="ver">v1.1.4</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-07-20</span>
           </div>
           
-          <div class="news-desc">Links now reach your own computer: turn any word into a shortcut to a local file
-or folder that opens on Ctrl+click (with a prompt before it runs a program).
-Making web links is simpler too — a typed or copied address becomes clickable in
-one step. And now only one copy of the program runs at a time: launching it again
-brings the open window back, so two copies can't overwrite your notes.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Links now reach your own computer: turn any word into a shortcut to a local file or folder that opens on Ctrl+click (with a prompt before it runs a program). Making web links is simpler too — a typed or copied address becomes clickable in one step. And now only one copy of the program runs at a time: launching it again brings the open window back, so two copies can't overwrite your notes.&lt;/p&gt;" data-ru="&lt;p&gt;Ссылки теперь достают до вашего компьютера: любое слово превращается в ярлык на локальный файл или папку, которые открываются по Ctrl+клику (с предупреждением, если это запуск программы). Веб-ссылки делать тоже проще — набранный или вставленный адрес становится кликабельным в один шаг. И теперь одновременно работает только одна копия программы: повторный запуск возвращает уже открытое окно, так что две копии не затрут ваши заметки.&lt;/p&gt;"><p>Links now reach your own computer: turn any word into a shortcut to a local file or folder that opens on Ctrl+click (with a prompt before it runs a program). Making web links is simpler too — a typed or copied address becomes clickable in one step. And now only one copy of the program runs at a time: launching it again brings the open window back, so two copies can't overwrite your notes.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="FuryNotes-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="FuryNotes.html">
+              <a class="btn-news secondary" href="FuryNotes-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
@@ -728,34 +881,35 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-      
-        
-        
       
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="FuryNotes-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🔧</span>
-            <span class="news-title">FuryNotes<span class="ver">v1.1</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="FuryNotes" data-ru="FuryNotes">FuryNotes</span><span class="ver">v1.1</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-07-19</span>
           </div>
           
-          <div class="news-desc">A notepad without the "where do I even save this?" question.</div>
+          <div class="news-desc" data-en="&lt;p&gt;A notepad without the &quot;where do I even save this?&quot; question.&lt;/p&gt;" data-ru="&lt;p&gt;Блокнот без вопроса «а куда это вообще сохранять?».&lt;/p&gt;"><p>A notepad without the "where do I even save this?" question.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="FuryNotes-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="FuryNotes.html">
+              <a class="btn-news secondary" href="FuryNotes-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
@@ -771,34 +925,35 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-      
-        
-        
       
       <div class="news-item is-new">
         <div class="news-card clickable" data-href="FuryNotes-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🔧</span>
-            <span class="news-title">FuryNotes<span class="ver">v1.1</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="FuryNotes" data-ru="FuryNotes">FuryNotes</span><span class="ver">v1.1</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-07-19</span>
           </div>
           
-          <div class="news-desc">FuryNotes is a fast, distraction-free notepad for Windows with one breakthrough idea: there is nothing to save and nowhere to lose. Every note becomes a real file the moment you start typing and saves itself automatically — no Save button, no "where should I put this?" dialog. Your notes stay yours: they'replain Markdown text files you can open anywhere, wrapped in a clean, dark, beautifully formatted editor with folders, links, and instant search across everything.</div>
+          <div class="news-desc" data-en="&lt;p&gt;FuryNotes is a fast, distraction-free notepad for Windows with one breakthrough idea: there is nothing to save and nowhere to lose. Every note becomes a real file the moment you start typing and saves itself automatically — no Save button, no &quot;where should I put this?&quot; dialog. Your notes stay yours: they'replain Markdown text files you can open anywhere, wrapped in a clean, dark, beautifully formatted editor with folders, links, and instant search across everything.&lt;/p&gt;" data-ru="&lt;p&gt;FuryNotes — быстрый блокнот для Windows без отвлекающих деталей и с одной прорывной идеей: здесь нечего сохранять и негде потерять. Каждая заметка становится настоящим файлом в момент, когда вы начали печатать, и сохраняется сама — ни кнопки «Сохранить», ни вопроса «а куда это положить?». Заметки остаются вашими: это обычные текстовые файлы в формате Markdown, которые открываются где угодно, — а вокруг них аккуратный тёмный редактор с папками, ссылками и мгновенным поиском по всему сразу.&lt;/p&gt;"><p>FuryNotes is a fast, distraction-free notepad for Windows with one breakthrough idea: there is nothing to save and nowhere to lose. Every note becomes a real file the moment you start typing and saves itself automatically — no Save button, no "where should I put this?" dialog. Your notes stay yours: they'replain Markdown text files you can open anywhere, wrapped in a clean, dark, beautifully formatted editor with folders, links, and instant search across everything.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="FuryNotes-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="FuryNotes.html">
+              <a class="btn-news secondary" href="FuryNotes-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
@@ -815,39 +970,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="roadmapper-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">RoadMapper<span class="ver">v2.2</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="RoadMapper" data-ru="RoadMapper">RoadMapper</span><span class="ver">v2.2</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-07-01</span>
           </div>
           
-          <div class="news-desc">Optimization. Minor fix.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Optimization. Minor fix.&lt;/p&gt;" data-ru="&lt;p&gt;Оптимизация. Мелкие исправления.&lt;/p&gt;"><p>Optimization. Minor fix.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="roadmapper-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_v2.3.1.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="roadmapper.html">
+              <a class="btn-news secondary" href="roadmapper-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -863,34 +1019,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="frames_commander-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🎬</span>
-            <span class="news-title">Frames Commander<span class="ver">v1.18</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="Frames Commander" data-ru="Frames Commander">Frames Commander</span><span class="ver">v1.18</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-06-27</span>
           </div>
           
-          <div class="news-desc">Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing "magic" ink. Offset for Maya. Correct VFR playback. Smooth multi-video.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing &quot;magic&quot; ink. Offset for Maya. Correct VFR playback. Smooth multi-video.&lt;/p&gt;" data-ru="&lt;p&gt;Единая платформа воспроизведения. Редактор горячих клавиш. Упрощённый трекинг. Гибкий гостинг. Исчезающие «волшебные» чернила. Смещение для Maya. Корректное воспроизведение VFR. Плавное мультивидео.&lt;/p&gt;"><p>Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing "magic" ink. Offset for Maya. Correct VFR playback. Smooth multi-video.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="frames_commander-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/FramesCommander.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -906,34 +1068,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="frames_commander-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🎬</span>
-            <span class="news-title">Frames Commander<span class="ver">v1.16</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="Frames Commander" data-ru="Frames Commander">Frames Commander</span><span class="ver">v1.16</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-06-21</span>
           </div>
           
-          <div class="news-desc">Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.&lt;/p&gt;" data-ru="&lt;p&gt;Трекинг видео, гостинг (onion skinning), смещение кадра, исправления Curve Speed.&lt;/p&gt;"><p>Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="frames_commander-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/FramesCommander.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -949,39 +1117,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="roadmapper-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">RoadMapper<span class="ver">v2.1</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="RoadMapper" data-ru="RoadMapper">RoadMapper</span><span class="ver">v2.1</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-06-02</span>
           </div>
           
-          <div class="news-desc">Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support</div>
+          <div class="news-desc" data-en="&lt;p&gt;Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support&lt;/p&gt;" data-ru="&lt;p&gt;Поиск в выпадающих списках исполнителей, поиск в фильтрах колонок, сортировка по алфавиту, поддержка клавиатуры&lt;/p&gt;"><p>Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="roadmapper-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_v2.3.1.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="roadmapper.html">
+              <a class="btn-news secondary" href="roadmapper-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -997,40 +1166,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="frames_commander-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🎬</span>
-            <span class="news-title">Frames Commander<span class="ver">v1.15</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="Frames Commander" data-ru="Frames Commander">Frames Commander</span><span class="ver">v1.15</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-05-30</span>
           </div>
           
-          <div class="news-desc">Auto-play on File Open
-  Videos now automatically start playing when opened from Windows Explorer
-  or after export. Playlist Position Memory
-  When switching between files in playlist, your playhead position and
-  in/out points are now remembered. Playlist States Saved to Project
-  In/out points and playhead positions for ALL playlist files are now
-  saved with the project.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Auto-play on File Open Videos now automatically start playing when opened from Windows Explorer or after export. Playlist Position Memory When switching between files in playlist, your playhead position and in/out points are now remembered. Playlist States Saved to Project In/out points and playhead positions for ALL playlist files are now saved with the project.&lt;/p&gt;" data-ru="&lt;p&gt;Автовоспроизведение при открытии файла Видео теперь запускается само при открытии из проводника Windows или после экспорта. Память позиции в плейлисте При переключении между файлами плейлиста позиция головки и точки in/out теперь запоминаются. Состояния плейлиста в проекте Точки in/out и позиции головки для ВСЕХ файлов плейлиста теперь сохраняются вместе с проектом.&lt;/p&gt;"><p>Auto-play on File Open Videos now automatically start playing when opened from Windows Explorer or after export. Playlist Position Memory When switching between files in playlist, your playhead position and in/out points are now remembered. Playlist States Saved to Project In/out points and playhead positions for ALL playlist files are now saved with the project.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="frames_commander-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/FramesCommander.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1045,40 +1214,41 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-      
-        
-        
       
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="roadmapper-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">RoadMapper<span class="ver">v2.0</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="RoadMapper" data-ru="RoadMapper">RoadMapper</span><span class="ver">v2.0</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-05-30</span>
           </div>
           
-          <div class="news-desc">Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.&lt;/p&gt;" data-ru="&lt;p&gt;Версия 2.0: зависимости задач с визуальными связями, режим фокуса на цепочках, произвольные статусы любых цветов, система тегов, гибкие колонки с выпадающими списками, перенос задач между дорожками, клонирование задач, навигация в стиле Maya, плавающие окна фильтров, улучшенный экспорт в Excel.&lt;/p&gt;"><p>Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="roadmapper-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_v2.3.1.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="roadmapper.html">
+              <a class="btn-news secondary" href="roadmapper-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1094,34 +1264,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="frames_commander-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🎬</span>
-            <span class="news-title">Frames Commander<span class="ver">v1.14</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="Frames Commander" data-ru="Frames Commander">Frames Commander</span><span class="ver">v1.14</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-05-26</span>
           </div>
           
-          <div class="news-desc">Fix for Paste Image from Clipboard in split/2x2 modes. Fix for QImage processing with padding. Added GIF animation support. Scrub Speed persistence for split modes</div>
+          <div class="news-desc" data-en="&lt;p&gt;Fix for Paste Image from Clipboard in split/2x2 modes. Fix for QImage processing with padding. Added GIF animation support. Scrub Speed persistence for split modes&lt;/p&gt;" data-ru="&lt;p&gt;Исправлена вставка изображения из буфера в режимах split и 2×2. Исправлена обработка QImage с полями. Добавлена поддержка GIF-анимации. Скорость перемотки запоминается в режимах разделения экрана.&lt;/p&gt;"><p>Fix for Paste Image from Clipboard in split/2x2 modes. Fix for QImage processing with padding. Added GIF animation support. Scrub Speed persistence for split modes</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="frames_commander-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/FramesCommander.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1137,33 +1313,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="quick_text_drop-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">Quick Text Drop<span class="ver">v1.1</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Quick Text Drop" data-ru="Quick Text Drop">Quick Text Drop</span><span class="ver">v1.1</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-05-17</span>
           </div>
           
-          <div class="news-desc">Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp. Perfect for collecting references, sending logs, and managing text notes.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp.&lt;/p&gt;" data-ru="&lt;p&gt;Quick Text Drop — утилита для мгновенного сохранения текста из буфера обмена в файл. Нажали Ctrl+C — и текст автоматически сохранён в TXT или DOCX с меткой времени.&lt;/p&gt;"><p>Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/QTD/QuickTextDrop_PRO.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="quick_text_drop-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/YVqgbZS6nUE" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1179,33 +1362,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="maya_comp_grids-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">Maya Compositoon Grids<span class="ver">v1.2</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Maya Compositoon Grids" data-ru="Maya Compositoon Grids">Maya Compositoon Grids</span><span class="ver">v1.2</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-05-17</span>
           </div>
           
-          <div class="news-desc">Update 19.05.2026 ver1.2.  A free composition grids tool for Autodesk Maya that helps artists frame shots using classic composition rules.</div>
+          <div class="news-desc" data-en="&lt;p&gt;A free composition grids tool for Autodesk Maya that helps artists frame shots using classic composition rules.&lt;/p&gt;" data-ru="&lt;p&gt;Бесплатный инструмент композиционных сеток для Autodesk Maya: помогает выстраивать кадр по классическим правилам композиции.&lt;/p&gt;"><p>A free composition grids tool for Autodesk Maya that helps artists frame shots using classic composition rules.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://eu-melnikov.github.io/files/maya_comp_grids.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="maya_comp_grids-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/uEnHM2Hb8Ho" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1221,34 +1411,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-        
-      
       <div class="news-item is-update">
         <div class="news-card clickable" data-href="frames_commander-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🎬</span>
-            <span class="news-title">Frames Commander<span class="ver">v1.13</span></span>
-            <span class="type-badge update">Update</span>
+            <span class="news-title"><span data-en="Frames Commander" data-ru="Frames Commander">Frames Commander</span><span class="ver">v1.13</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
             <span class="news-date">2026-05-14</span>
           </div>
           
-          <div class="news-desc">Auto-fit window to video size, Smooth video scaling, Open file location, Auto-open folder after export, Auto-play after export, Image Mirroring, Playback Speed Control, Curve Speed — Speed Curve Editor, Maya Integration — Retiming Export,</div>
+          <div class="news-desc" data-en="&lt;p&gt;Auto-fit window to video size, Smooth video scaling, Open file location, Auto-open folder after export, Auto-play after export, Image Mirroring, Playback Speed Control, Curve Speed — Speed Curve Editor, Maya Integration — Retiming Export,&lt;/p&gt;" data-ru="&lt;p&gt;Подгонка окна под размер видео, плавное масштабирование, переход к файлу на диске, автооткрытие папки после экспорта, автовоспроизведение после экспорта, зеркальное отражение, управление скоростью воспроизведения, Curve Speed — редактор кривой скорости, интеграция с Maya — экспорт ретайминга&lt;/p&gt;"><p>Auto-fit window to video size, Smooth video scaling, Open file location, Auto-open folder after export, Auto-play after export, Image Mirroring, Playback Speed Control, Curve Speed — Speed Curve Editor, Maya Integration — Retiming Export,</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="frames_commander-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/FramesCommander.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1263,35 +1459,41 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-      
-        
-        
       
       <div class="news-item is-new">
         <div class="news-card clickable" data-href="frames_commander-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🎬</span>
-            <span class="news-title">Frames Commander<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Frames Commander" data-ru="Frames Commander">Frames Commander</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-05-10</span>
           </div>
           
-          <div class="news-desc">Multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software.&lt;/p&gt;" data-ru="&lt;p&gt;Несколько режимов просмотра: сравнение с разделением экрана, сетка 2×2 для одновременного просмотра до четырёх видео и слои видео с настраиваемой прозрачностью. Двусторонняя синхронизация с Maya, инструменты рисования поверх кадра, профессиональные композиционные сетки и режим Overlay Pro — референс поверх любой программы.&lt;/p&gt;"><p>Multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="frames_commander-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/FramesCommander.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="frames_commander-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/SAkuDkx8PXc" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1306,40 +1508,41 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-      
-        
-        
       
       <div class="news-item is-new">
         <div class="news-card clickable" data-href="roadmapper-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">RoadMapper<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="RoadMapper" data-ru="RoadMapper">RoadMapper</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-04-22</span>
           </div>
           
-          <div class="news-desc">Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.&lt;/p&gt;" data-ru="&lt;p&gt;Визуальный планировщик для команд. Заводите дорожки под участников, таскайте задачи по датам и видите весь проект целиком. Поддерживает импорт и экспорт в Excel, расчёт рабочих дней и отслеживание дедлайнов.&lt;/p&gt;"><p>Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
-              <a class="btn-news primary" href="roadmapper-versions.html">
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_v2.3.1.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                VERSIONS
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="roadmapper.html">
+              <a class="btn-news secondary" href="roadmapper-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/9kBVcCbuvjo" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1355,28 +1558,35 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="year_sprint-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">Year Sprint<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Year Sprint" data-ru="Year Sprint">Year Sprint</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-04-22</span>
           </div>
           
-          <div class="news-desc">YearSprint — a minimalist year progress tracker that turns abstract time into a visual picture. Each passed day becomes a colored cell in a 365-day grid, creating a beautiful gradient from red to green. Track your year at a glance, add daily wishes you can't edit later (keeping them honest), and export your thoughts at year's end. Full source code included. A single portable EXE — no installation needed.</div>
+          <div class="news-desc" data-en="&lt;p&gt;YearSprint turns abstract time into a visual picture. Each passed day becomes a coloured cell in a 365-day grid, creating a gradient from red to green — your whole year at a glance.&lt;/p&gt;" data-ru="&lt;p&gt;YearSprint превращает абстрактное время в наглядную картинку. Каждый прошедший день становится цветной клеткой в сетке из 365 дней, складываясь в градиент от красного к зелёному, — год виден одним взглядом.&lt;/p&gt;"><p>YearSprint turns abstract time into a visual picture. Each passed day becomes a coloured cell in a 365-day grid, creating a gradient from red to green — your whole year at a glance.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/YearSprint/YearSprint_v1.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="year_sprint-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
             
@@ -1392,33 +1602,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="camera_shake_tool-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">Сamera Shake Tool<span class="ver">v2.1</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Сamera Shake Tool" data-ru="Сamera Shake Tool">Сamera Shake Tool</span><span class="ver">v2.1</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-04-11</span>
           </div>
           
-          <div class="news-desc">Camera Shake Tool for Maya 2019–2026 — a tool that generates realistic camera shake based on any animated object's movement. Three modes: add shake to static cameras, layer it over existing animation, or stabilize overly shaky mocap-driven cameras like a virtual steadicam. Real-time preview, per-axis control, animation layer output. Perfect for adding that hand-held feel or impact vibrations to your shots.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Camera Shake Tool for Maya 2019–2026 generates realistic camera shake based on any animated object's movement. Perfect for adding that hand-held feel or impact vibrations to your shots.&lt;/p&gt;" data-ru="&lt;p&gt;Camera Shake Tool для Maya 2019–2026 генерирует реалистичную тряску камеры на основе движения любого анимированного объекта. То, что нужно, чтобы добавить кадру ощущение съёмки с рук или вибрацию от удара.&lt;/p&gt;"><p>Camera Shake Tool for Maya 2019–2026 generates realistic camera shake based on any animated object's movement. Perfect for adding that hand-held feel or impact vibrations to your shots.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://eu-melnikov.github.io/files/camera_shake_tool_lite.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="camera_shake_tool-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/o5KfqscD5AE" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1434,33 +1651,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="eu_anim_curve_tools-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">EU Anim Curve Tools<span class="ver">v2.57</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="EU Anim Curve Tools" data-ru="EU Anim Curve Tools">EU Anim Curve Tools</span><span class="ver">v2.57</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-04-07</span>
           </div>
           
-          <div class="news-desc">Updated! EU Anim Curve Tools is a toolkit for manipulating animation curves in Maya. It lets you quickly smooth, scale, time-offset, and ease selected keys using intuitive sliders. Includes 14 tools: Pull/Push, Smooth/Rough, Ease In/Out, Time Offset, Scale, and more. Works with Maya 2019–2026. Currently in open beta — feedback and bug reports are welcome!</div>
+          <div class="news-desc" data-en="&lt;p&gt;EU Anim Curve Tools is a toolkit for manipulating animation curves in Maya. It lets you quickly smooth, scale, time-offset, and ease selected keys using intuitive sliders.&lt;/p&gt;" data-ru="&lt;p&gt;EU Anim Curve Tools — набор инструментов для работы с анимационными кривыми в Maya. Позволяет быстро сглаживать, масштабировать, сдвигать по времени и смягчать выбранные ключи понятными слайдерами.&lt;/p&gt;"><p>EU Anim Curve Tools is a toolkit for manipulating animation curves in Maya. It lets you quickly smooth, scale, time-offset, and ease selected keys using intuitive sliders.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/eu_curve/eu_anim_curve_tools_v2.57_Public_Beta.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="eu_anim_curve_tools-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/wN9r4Zk1cWs" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1476,33 +1700,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="FreeMotionTrail-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">Free Motion Trail 1.4 Public Beta<span class="ver">v1.4</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Free Motion Trail 1.4 Public Beta" data-ru="Free Motion Trail 1.4 Public Beta">Free Motion Trail 1.4 Public Beta</span><span class="ver">v1.4</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2026-04-02</span>
           </div>
           
-          <div class="news-desc">EU FreeMotionTrail v1.4 Public Beta free Maya plugin for visualizing object motion paths. Displays animation trajectory in real-time directly in the viewport with customizable colors, line styles, orientation frets, and velocity-based temperature coloring. Supports Animation Layers. Works in Maya 2019–2026. This is a public beta! Your feedback, bug reports, and feature ideas are very welcome.</div>
+          <div class="news-desc" data-en="&lt;p&gt;EU FreeMotionTrail is a free Maya plugin for visualizing object motion paths. It displays the animation trajectory in real time directly in the viewport. Works in Maya 2019–2026.&lt;/p&gt;" data-ru="&lt;p&gt;EU FreeMotionTrail — бесплатный плагин для Maya, показывающий траекторию движения объекта. Отображает путь анимации в реальном времени прямо во вьюпорте. Работает в Maya 2019–2026.&lt;/p&gt;"><p>EU FreeMotionTrail is a free Maya plugin for visualizing object motion paths. It displays the animation trajectory in real time directly in the viewport. Works in Maya 2019–2026.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_maya_1_4_2019_2026.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="FreeMotionTrail-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/uPMs79yk_5c" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1518,33 +1749,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="maya_batch_converter-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">⚙️</span>
-            <span class="news-title">Maya Batch Converter<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Maya Batch Converter" data-ru="Maya Batch Converter">Maya Batch Converter</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-28</span>
           </div>
           
-          <div class="news-desc">Batch convert Maya scenes between MA, MB, and FBX formats. Supports recursive folder processing, FPS preservation, and works with Maya 2019–2026.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Batch convert Maya scenes between MA, MB, and FBX formats. Supports recursive folder processing, FPS preservation, and works with Maya 2019–2026.&lt;/p&gt;" data-ru="&lt;p&gt;Пакетная конвертация сцен Maya между форматами MA, MB и FBX. Поддерживает обход вложенных папок, сохраняет FPS, работает с Maya 2019–2026.&lt;/p&gt;"><p>Batch convert Maya scenes between MA, MB, and FBX formats. Supports recursive folder processing, FPS preservation, and works with Maya 2019–2026.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://eu-melnikov.github.io/files/maya_batch_converter.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="maya_batch_converter-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/lJlrtSLNBH4" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1560,38 +1798,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card clickable" data-href="flbs.html">
+        <div class="news-card clickable" data-href="flbs-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">💬</span>
-            <span class="news-title">Feedback Like A Boss<span class="ver">v4.62</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Feedback Like A Boss" data-ru="Feedback Like A Boss">Feedback Like A Boss</span><span class="ver">v4.62</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-16</span>
           </div>
           
-          <div class="news-desc">Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. Born in animation production, built for any field.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. Born in animation production, built for any field.&lt;/p&gt;" data-ru="&lt;p&gt;Держите фидбэк, задачи, заметки и референсы в одном месте — привязанными к конкретным элементам проекта и всегда в одном клике. Родилось в анимационном продакшене, подходит любой области.&lt;/p&gt;"><p>Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. Born in animation production, built for any field.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FLBS/Feedback_Like_A_Boss.v4.62.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="flbs.html">
+              <a class="btn-news secondary" href="flbs-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/nTZnjrRuiKc" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1607,38 +1847,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card clickable" data-href="psi.html">
+        <div class="news-card clickable" data-href="psi-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🖼️</span>
-            <span class="news-title">PSI — Pict Snap Index<span class="ver">v1.23</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="PSI — Pict Snap Index" data-ru="PSI — Pict Snap Index">PSI — Pict Snap Index</span><span class="ver">v1.23</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-16</span>
           </div>
           
-          <div class="news-desc">Index your media folders once — then browse the full thumbnail gallery at any time, even with the source drives offline. Thousands of photos and videos, always at hand.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Index your media folders once — then browse the full thumbnail gallery at any time, even with the source drives offline. Thousands of photos and videos, always at hand.&lt;/p&gt;" data-ru="&lt;p&gt;Проиндексируйте папки с медиа один раз — и листайте галерею превью когда угодно, даже если исходные диски отключены. Тысячи фотографий и видео всегда под рукой.&lt;/p&gt;"><p>Index your media folders once — then browse the full thumbnail gallery at any time, even with the source drives offline. Thousands of photos and videos, always at hand.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/PSI/PSI_PictSnapIndex.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
-              
-              <a class="btn-news secondary" href="psi.html">
+              <a class="btn-news secondary" href="psi-versions.html">
                 <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-                DETAILS
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
               </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/fFRkWOJaENs" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1654,33 +1896,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="sortmatic5000-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🗂️</span>
-            <span class="news-title">SortMatic5000<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="SortMatic5000" data-ru="SortMatic5000">SortMatic5000</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-15</span>
           </div>
           
-          <div class="news-desc">If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.</div>
+          <div class="news-desc" data-en="&lt;p&gt;If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.&lt;/p&gt;" data-ru="&lt;p&gt;Если вы работаете с 3D, дизайном или анимацией, у вас на диске наверняка бардак. Текстуры, рендеры, референсы, PDF-файлы, ассеты — всё вперемешку. SortMatic5000 раскладывает этот хаос по порядку автоматически.&lt;/p&gt;"><p>If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.0/SortMatic5000.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="sortmatic5000-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/klBmDmjOjJ8" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1696,28 +1945,35 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="foldertree_collector-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🌳</span>
-            <span class="news-title">FolderTree Collector<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="FolderTree Collector" data-ru="FolderTree Collector">FolderTree Collector</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-15</span>
           </div>
           
-          <div class="news-desc">Scans any folder and builds a full directory tree with timestamps. Export the result to a .txt file in one click. Simple, free, source code included.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Scans any folder and builds a full directory tree with timestamps. Export the result to a .txt file in one click. Simple, free, source code included.&lt;/p&gt;" data-ru="&lt;p&gt;Сканирует любую папку и строит полное дерево каталогов с датами. Результат выгружается в .txt одним кликом. Просто, бесплатно, с исходным кодом.&lt;/p&gt;"><p>Scans any folder and builds a full directory tree with timestamps. Export the result to a .txt file in one click. Simple, free, source code included.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/v1.1/tree_collector.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="foldertree_collector-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
             
@@ -1733,28 +1989,35 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="swap_animation-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🔀</span>
-            <span class="news-title">Swap Animation<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Swap Animation" data-ru="Swap Animation">Swap Animation</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-15</span>
           </div>
           
-          <div class="news-desc">Swaps animation data between two objects on a selected timeline range. Everything outside the range stays untouched. Perfect for fixing mocap mixups, timing experiments or rearranging cycle phases.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Swaps animation data between two objects on a selected timeline range. Everything outside the range stays untouched. Perfect for fixing mocap mixups, timing experiments or rearranging cycle phases.&lt;/p&gt;" data-ru="&lt;p&gt;Меняет местами анимацию двух объектов на выбранном участке таймлайна. Всё, что за пределами участка, остаётся нетронутым. Пригодится, когда мокап перепутали местами, при экспериментах с таймингом или при перестановке фаз цикла.&lt;/p&gt;"><p>Swaps animation data between two objects on a selected timeline range. Everything outside the range stays untouched. Perfect for fixing mocap mixups, timing experiments or rearranging cycle phases.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://eu-melnikov.github.io/files/swap_animation.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="swap_animation-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
             
@@ -1770,33 +2033,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="scene_review_tool-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🎬</span>
-            <span class="news-title">Scene Review Tool<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Scene Review Tool" data-ru="Scene Review Tool">Scene Review Tool</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-15</span>
           </div>
           
-          <div class="news-desc">Batch-review Maya scenes (.mb, .ma, .fbx) from a folder without opening each file manually. Pick a folder, choose format, hit Start — then click Next through every file in order. Nothing gets opened twice.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Batch-review Maya scenes (.mb, .ma, .fbx) from a folder without opening each file manually. Pick a folder, choose format, hit Start — then click Next through every file in order.&lt;/p&gt;" data-ru="&lt;p&gt;Пакетный просмотр сцен Maya (.mb, .ma, .fbx) из папки — без ручного открытия каждого файла. Выбираете папку, задаёте формат, жмёте Start, а дальше просто щёлкаете Next по всем файлам подряд.&lt;/p&gt;"><p>Batch-review Maya scenes (.mb, .ma, .fbx) from a folder without opening each file manually. Pick a folder, choose format, hit Start — then click Next through every file in order.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://eu-melnikov.github.io/files/scene_review_tool.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="scene_review_tool-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/tMx9ndjgFnA" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1812,28 +2082,35 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="quick_save_to_temp-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">💾</span>
-            <span class="news-title">Quick Save to Temp<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Quick Save to Temp" data-ru="Quick Save to Temp">Quick Save to Temp</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-15</span>
           </div>
           
-          <div class="news-desc">One-click save to a fixed temp folder — no dialogs, no hassle. Adds a _QS suffix and auto-increments versions. Works even on unsaved scenes. Perfect for quick experiments and backups.</div>
+          <div class="news-desc" data-en="&lt;p&gt;One-click save to a fixed temp folder — no dialogs, no hassle. Adds a _QS suffix and auto-increments versions. Works even on unsaved scenes.&lt;/p&gt;" data-ru="&lt;p&gt;Сохранение в фиксированную временную папку одним нажатием — без диалогов и лишних движений. Добавляет суффикс _QS и сам увеличивает номер версии. Работает даже с несохранёнными сценами.&lt;/p&gt;"><p>One-click save to a fixed temp folder — no dialogs, no hassle. Adds a _QS suffix and auto-increments versions. Works even on unsaved scenes.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://eu-melnikov.github.io/files/Quick_Save_to_Temp.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="quick_save_to_temp-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
             
@@ -1849,28 +2126,35 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="maya_persp_camera_history-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🎥</span>
-            <span class="news-title">Maya Persp Camera History<span class="ver">v1.0</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="Maya Persp Camera History" data-ru="Maya Persp Camera History">Maya Persp Camera History</span><span class="ver">v1.0</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-15</span>
           </div>
           
-          <div class="news-desc">Adds Undo/Redo history for the Persp camera — including moves triggered by scripts, which Maya's built-in [ ] hotkeys can't track. Stores up to 50 positions, runs silently in the background.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Adds Undo/Redo history for the Persp camera — including moves triggered by scripts, which Maya's built-in [ ] hotkeys can't track. Stores up to 50 positions, runs silently in the background.&lt;/p&gt;" data-ru="&lt;p&gt;Добавляет историю Undo/Redo для камеры Persp — включая перемещения, вызванные скриптами, которые встроенные горячие клавиши [ ] в Maya не отслеживают. Хранит до 50 положений, работает незаметно в фоне.&lt;/p&gt;"><p>Adds Undo/Redo history for the Persp camera — including moves triggered by scripts, which Maya's built-in [ ] hotkeys can't track. Stores up to 50 positions, runs silently in the background.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://eu-melnikov.github.io/files/Maya_Persp_Camera_History.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="maya_persp_camera_history-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
             
@@ -1886,33 +2170,40 @@ brings the open window back, so two copies can't overwrite your notes.</div>
       
       
       
-        
-      
       <div class="news-item is-new">
-        <div class="news-card">
+        <div class="news-card clickable" data-href="boneanim_combo-versions.html">
           <div class="news-body">
           <div class="news-top">
             <span class="news-icon">🦴</span>
-            <span class="news-title">BoneAnim Combo<span class="ver">v1.2</span></span>
-            <span class="type-badge new">New release</span>
+            <span class="news-title"><span data-en="BoneAnim Combo" data-ru="BoneAnim Combo">BoneAnim Combo</span><span class="ver">v1.2</span></span>
+            <span class="type-badge new"><span data-en="New release" data-ru="Новинка">New release</span></span>
             <span class="news-date">2025-03-15</span>
           </div>
           
-          <div class="news-desc">Merges multiple animation files into a single continuous sequence. Built for working with large animation libraries. Copy to shelf and go.</div>
+          <div class="news-desc" data-en="&lt;p&gt;Merges multiple animation files into a single continuous sequence. Built for working with large animation libraries. Copy to shelf and go.&lt;/p&gt;" data-ru="&lt;p&gt;Склеивает несколько файлов анимации в одну непрерывную последовательность. Сделано для работы с большими библиотеками анимации. Скопировал на полку — и вперёд.&lt;/p&gt;"><p>Merges multiple animation files into a single continuous sequence. Built for working with large animation libraries. Copy to shelf and go.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
           
           <div class="news-actions">
             
-              
               <a class="btn-news primary" href="https://eu-melnikov.github.io/files/BoneAnim-Combo.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-                DOWNLOAD
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
               
+              <a class="btn-news secondary" href="boneanim_combo-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
               
               
               <a class="btn-news youtube" href="https://youtu.be/7ddA2nk3jq4" target="_blank">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0d0f14"/></svg>
-                TUTORIAL
+                <span data-en="TUTORIAL" data-ru="УРОК">TUTORIAL</span>
               </a>
               
             
@@ -1929,7 +2220,7 @@ brings the open window back, so two copies can't overwrite your notes.</div>
     <div class="feed-foot">
       <a href="index.html" class="btn-all">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3L1 8l5 5M1 8h14"/></svg>
-        Back to all software
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
       </a>
     </div>
     
@@ -1939,7 +2230,7 @@ brings the open window back, so two copies can't overwrite your notes.</div>
 <!-- Footer -->
 <footer>
   <div class="wrap">
-    <a href="index.html">e.melnikov.dev</a> — free software, no catch
+    <a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span>
   </div>
 </footer>
 
@@ -1948,10 +2239,72 @@ brings the open window back, so two copies can't overwrite your notes.</div>
   // Клики по вложенным ссылкам/кнопкам обрабатываются ими самими.
   document.querySelectorAll('.news-card[data-href]').forEach(function (card) {
     card.addEventListener('click', function (e) {
-      if (e.target.closest('a')) return;
+      if (e.target.closest('a, button')) return;
       window.location.href = card.getAttribute('data-href');
     });
   });
+
+  // Длинный список изменений карточку не растягивает: она подрезана, а низ
+  // растворяется в фоне. Раскрывается на месте — за текстом одного выпуска
+  // не стоит уводить со страницы.
+  function toggleNewsDesc(button) {
+    var opened = !button.previousElementSibling.classList.toggle('clamped');
+    button.classList.toggle('open', opened);
+  }
+
+  // Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+  // ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+  // где под ней правда что-то спрятано.
+  function clampNewsDesc() {
+    document.querySelectorAll('.news-desc').forEach(function (desc) {
+      var button = desc.nextElementSibling;
+      if (!button || !button.classList.contains('news-more')) return;
+
+      var opened = button.classList.contains('open');
+      desc.classList.remove('clamped');
+      // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+      // целиком, чем прятать за кнопкой ради двух строк.
+      var tall = desc.scrollHeight > 230;
+      button.hidden = !tall;
+      if (tall && !opened) desc.classList.add('clamped');
+    });
+  }
+
+  window.addEventListener('load', clampNewsDesc);
+  window.addEventListener('resize', clampNewsDesc);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampNewsDesc);
+
+  // Переключение языка меняет текст — значит, и высоту: меряем заново.
+  ['lang-en', 'lang-ru'].forEach(function (id) {
+    var button = document.getElementById(id);
+    if (button) button.addEventListener('click', clampNewsDesc);
+  });
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
 </script>
 
 </body>

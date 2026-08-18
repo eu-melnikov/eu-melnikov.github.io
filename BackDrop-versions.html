@@ -3,23 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BackDrop — Downloads | e.melnikov.dev</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>BackDrop | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:        #0d0f14;
-    --bg2:       #13161e;
-    --bg3:       #1a1d28;
-    --border:    #252836;
-    --accent:    #00e5ff;
-    --accent2:   #7c3aed;
-    --text:      #e2e8f0;
-    --muted:     #64748b;
-    --green:     #10b981;
-    --mono:      'JetBrains Mono', monospace;
-    --sans:      'Inter', sans-serif;
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
   }
 
   html { scroll-behavior: smooth; }
@@ -31,48 +35,32 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image:
-      linear-gradient(rgba(0,229,255,.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,.025) 1px, transparent 1px);
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
     background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
 
-  .blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: .15;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .blob-1 { width: 500px; height: 500px; background: var(--accent2); top: -150px; right: -150px; }
-  .blob-2 { width: 350px; height: 350px; background: var(--accent); bottom: -100px; left: -100px; }
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
 
-  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 24px; }
-
-  /* nav */
+  /* ── nav ── */
   nav {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(13,15,20,.8);
+    background: rgba(13,15,20,.85);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
   }
-  nav .wrap {
-    display: flex; align-items: center;
-    justify-content: space-between; height: 56px;
-  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
   .nav-logo {
     font-family: var(--mono); font-size: 15px; font-weight: 700;
     color: var(--accent); text-decoration: none; letter-spacing: .04em;
   }
   .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
   .nav-back {
     display: flex; align-items: center; gap: 6px;
     font-family: var(--mono); font-size: 12px; color: var(--muted);
@@ -81,362 +69,555 @@
   .nav-back:hover { color: var(--accent); }
   .nav-back svg { width: 14px; height: 14px; }
 
-  /* hero - release card style */
-  .hero { padding: 64px 0 48px; }
-  .hero-card {
-    background: var(--bg2);
-    border: 1px solid rgba(0,229,255,.25);
-    border-radius: 16px;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    position: relative;
-  }
-  @media (max-width: 700px) {
-    .hero-card { grid-template-columns: 1fr; }
-  }
-  .hero-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-  }
-
-  .hero-image {
-    overflow: hidden;
-    max-height: 300px;
-    display: flex;
-    align-items: center;
-  }
-  .hero-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top left;
-    display: block;
-    opacity: .85;
-    transition: opacity .3s;
-  }
-  .hero-card:hover .hero-image img { opacity: 1; }
-
-  .hero-info {
-    padding: 36px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    justify-content: center;
-  }
-
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
   .hero-meta {
-    display: flex; align-items: center; gap: 10px;
-    flex-wrap: wrap;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
   }
-  .badge {
-    font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
-    padding: 4px 12px; border-radius: 20px;
-  }
-  .badge-version {
-    color: var(--accent);
-    background: rgba(0,229,255,.08);
-    border: 1px solid rgba(0,229,255,.2);
-  }
-  .badge-platform {
-    color: var(--muted);
-    background: var(--bg3);
-    border: 1px solid var(--border);
-  }
-  .badge-free {
-    color: var(--green);
-    background: rgba(16,185,129,.08);
-    border: 1px solid rgba(16,185,129,.25);
-  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
 
   h1 {
-    font-size: clamp(24px, 4vw, 32px);
-    font-weight: 300; line-height: 1.2;
-    letter-spacing: -.02em;
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
   }
   h1 strong {
-    font-weight: 700;
+    font-weight: 600;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
 
-  .hero-desc {
-    font-size: 14px; color: var(--muted);
-    line-height: 1.7;
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
   }
 
-  .hero-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-  .btn-youtube {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(255,0,0,.1);
-    border: 1px solid rgba(255,0,0,.3);
-    color: #ff4444;
-    font-family: var(--mono); font-size: 11px; font-weight: 500;
-    letter-spacing: .06em; padding: 9px 16px; border-radius: 8px;
-    text-decoration: none;
-    transition: background .2s, border-color .2s, transform .15s;
-  }
-  .btn-youtube:hover {
-    background: rgba(255,0,0,.2);
-    border-color: rgba(255,0,0,.5);
-    transform: translateY(-2px);
-  }
-  .btn-youtube svg { width: 14px; height: 14px; }
-
-  /* section */
-  .section { padding: 48px 0; }
-  .section-header {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
-  }
-  .section-header h2 {
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
     font-family: var(--mono); font-size: 13px; font-weight: 500;
-    color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
-    white-space: nowrap;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
   }
-  .section-line {
-    flex: 1; height: 1px;
-    background: linear-gradient(to right, var(--border), transparent);
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
   }
 
-  /* versions list */
-  .versions-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
   }
 
-  .version-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 24px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 20px;
-    align-items: center;
-    transition: border-color .2s;
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
   }
-  .version-card:hover {
-    border-color: rgba(0,229,255,.25);
-  }
-  @media (max-width: 600px) {
-    .version-card {
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
 
-  .version-meta {
-    text-align: center;
-    min-width: 80px;
-  }
-  .version-number {
-    font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 4px;
-  }
-  .version-date {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: .05em;
-  }
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
 
-  .version-desc {
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.6;
-  }
-
-  .btn-download {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: linear-gradient(135deg, rgba(0,229,255,.12), rgba(124,58,237,.12));
-    border: 1px solid rgba(0,229,255,.35);
-    color: var(--accent);
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
     font-family: var(--mono); font-size: 12px; font-weight: 500;
-    letter-spacing: .06em; padding: 10px 18px; border-radius: 6px;
-    text-decoration: none;
-    transition: background .2s, border-color .2s, transform .15s;
-    white-space: nowrap;
-  }
-  .btn-download:hover {
-    background: linear-gradient(135deg, rgba(0,229,255,.22), rgba(124,58,237,.22));
-    border-color: rgba(0,229,255,.6);
-    transform: translateY(-2px);
-  }
-  .btn-download svg { width: 14px; height: 14px; }
-
-  .version-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-  }
-  .version-size {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
   }
 
-  /* latest badge */
-  .version-card.latest {
-    border-color: rgba(0,229,255,.3);
-    background: linear-gradient(135deg, rgba(0,229,255,.03), rgba(124,58,237,.03));
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
   }
-  .version-card.latest .version-number::after {
-    content: 'LATEST';
-    display: block;
-    font-size: 9px;
-    font-weight: 500;
-    color: var(--green);
-    letter-spacing: .1em;
-    margin-top: 4px;
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
   }
 
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
 
-  /* footer */
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
   footer {
     border-top: 1px solid var(--border);
-    padding: 32px 0; text-align: center;
-    font-size: 13px; color: var(--muted);
-    font-family: var(--mono);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
   }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   footer a { color: var(--accent); text-decoration: none; }
   footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+
 </style>
 </head>
 <body>
 
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
 
-<!-- Nav -->
+
+
+
+
+
+
+<!-- ── Nav ── -->
 <nav>
   <div class="wrap">
     <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
-    <a href="index.html" class="nav-back">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10 3L5 8l5 5"/>
-      </svg>
-      Back to all software
-    </a>
+    <div class="nav-right">
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
   </div>
 </nav>
 
-<!-- Hero -->
 <div class="wrap">
-  <div class="hero">
-    <div class="hero-card">
-      
-      <div class="hero-image">
-        <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/Poster_BackDrop.jpg" alt="BackDrop">
-      </div>
-      
-      <div class="hero-info">
-        <div class="hero-meta">
-          <span class="badge badge-version">v1.0</span>
-          <span class="badge badge-platform">Windows</span>
-          <span class="badge badge-free">Free</span>
-        </div>
-        <h1><strong>BackDrop</strong></h1>
-        <p class="hero-desc">BackDrop hides your desktop behind a solid colour or an image while you
-record a tutorial or stream, so icons, folders and personal files never
-reach the frame. You can draw straight on the cover — pencil, lines,
-shapes, arrows and text captions — and the magic pencil leaves strokes
-that fade away by themselves after a few seconds, so you can point at
-things without stopping to clean up. See-through mode turns the program
-into a sheet of tracing paper: the cover disappears and you annotate
-your running applications directly, while putting the tool down hands
-clicks straight back to the app underneath. What you drew saves to PNG
-or JPG, or reaches the clipboard with a single keystroke — and in
-see-through mode that gives you a finished annotated screenshot. It
-needs no installer, keeps its settings beside the executable, and can
-ask for confirmation before minimising or closing, so the desktop never
-appears in the middle of a recording.
 
-At a glance:
-  · Solid colour or your own image — 18 ready-made colours, or any other
-  · Drawing on top: pencil, eraser, line, rectangle, circle, triangle,
-    arrow, text
-  · Magic pencil — strokes fade away on their own after 1–30 seconds
-  · See-through mode — draw over your running applications
-  · Save as PNG/JPG and copy to the clipboard
-  · Guards against uncovering the desktop by accident while recording
-  · Portable: settings and pictures live beside the program</p>
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v1.0</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>90 Mb
+    </div>
+
+    <h1><strong>BackDrop</strong></h1>
+
+    
+    <p class="tagline"><span data-en="Hide your desktop behind a solid colour or an image while you record — and draw straight on top of it." data-ru="Спрячьте рабочий стол за сплошным цветом или картинкой на время записи — и рисуйте прямо поверх.">Hide your desktop behind a solid colour or an image while you record — and draw straight on top of it.</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-08-10</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/Poster_BackDrop.jpg" alt="BackDrop">
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose" data-en="&lt;p&gt;BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame.&lt;/p&gt;
+&lt;h3&gt;Draw straight on the cover&lt;/h3&gt;
+&lt;p&gt;Pencil, lines, shapes, arrows and text captions. The magic pencil leaves strokes that fade away by themselves after a few seconds, so you can point at things without stopping to clean up.&lt;/p&gt;
+&lt;h3&gt;See-through mode&lt;/h3&gt;
+&lt;p&gt;The cover disappears and you annotate your running applications directly, while putting the tool down hands clicks straight back to the app underneath.&lt;/p&gt;
+&lt;h3&gt;Save or copy&lt;/h3&gt;
+&lt;p&gt;What you drew saves to PNG or JPG, or reaches the clipboard with a single keystroke — and in see-through mode that gives you a finished annotated screenshot.&lt;/p&gt;
+&lt;h3&gt;Made for recording&lt;/h3&gt;
+&lt;p&gt;It needs no installer, keeps its settings beside the executable, and can ask for confirmation before minimising or closing, so the desktop never appears in the middle of a recording.&lt;/p&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Solid colour or your own image — 18 ready-made colours, or any other&lt;/li&gt;&lt;li&gt;Drawing on top: pencil, eraser, line, rectangle, circle, triangle, arrow, text&lt;/li&gt;&lt;li&gt;Magic pencil — strokes fade away on their own after 1–30 seconds&lt;/li&gt;&lt;li&gt;See-through mode — draw over your running applications&lt;/li&gt;&lt;li&gt;Save as PNG/JPG and copy to the clipboard&lt;/li&gt;&lt;li&gt;Guards against uncovering the desktop by accident while recording&lt;/li&gt;&lt;li&gt;Portable: settings and pictures live beside the program&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;BackDrop прячет рабочий стол за сплошным цветом или картинкой, пока вы записываете урок или ведёте стрим, — иконки, папки и личные файлы не попадают в кадр.&lt;/p&gt;
+&lt;h3&gt;Рисование поверх заслонки&lt;/h3&gt;
+&lt;p&gt;Карандаш, линии, фигуры, стрелки и текстовые подписи. А «волшебный» карандаш оставляет штрихи, которые через несколько секунд исчезают сами, так что можно показывать на что-то, не отвлекаясь на уборку.&lt;/p&gt;
+&lt;h3&gt;Прозрачный режим&lt;/h3&gt;
+&lt;p&gt;Заслонка пропадает, и вы рисуете прямо поверх работающих приложений, а стоит отложить инструмент — клики снова уходят в программу под ним.&lt;/p&gt;
+&lt;h3&gt;Сохранить или скопировать&lt;/h3&gt;
+&lt;p&gt;Нарисованное сохраняется в PNG или JPG либо одним нажатием попадает в буфер обмена — а в прозрачном режиме это сразу готовый скриншот с пометками.&lt;/p&gt;
+&lt;h3&gt;Сделано для записи&lt;/h3&gt;
+&lt;p&gt;Установщик не нужен, настройки лежат рядом с программой, а перед сворачиванием и закрытием можно включить подтверждение, чтобы рабочий стол не выскочил посреди записи.&lt;/p&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Сплошной цвет или своя картинка — 18 готовых цветов или любой другой&lt;/li&gt;&lt;li&gt;Рисование поверх: карандаш, ластик, линия, прямоугольник, круг, треугольник, стрелка, текст&lt;/li&gt;&lt;li&gt;Волшебный карандаш — штрихи исчезают сами через 1–30 секунд&lt;/li&gt;&lt;li&gt;Прозрачный режим — рисование поверх работающих приложений&lt;/li&gt;&lt;li&gt;Сохранение в PNG/JPG и копирование в буфер обмена&lt;/li&gt;&lt;li&gt;Защита от случайного показа рабочего стола во время записи&lt;/li&gt;&lt;li&gt;Портативность: настройки и картинки лежат рядом с программой&lt;/li&gt;&lt;/ul&gt;">
+      <p>BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame.</p>
+<h3>Draw straight on the cover</h3>
+<p>Pencil, lines, shapes, arrows and text captions. The magic pencil leaves strokes that fade away by themselves after a few seconds, so you can point at things without stopping to clean up.</p>
+<h3>See-through mode</h3>
+<p>The cover disappears and you annotate your running applications directly, while putting the tool down hands clicks straight back to the app underneath.</p>
+<h3>Save or copy</h3>
+<p>What you drew saves to PNG or JPG, or reaches the clipboard with a single keystroke — and in see-through mode that gives you a finished annotated screenshot.</p>
+<h3>Made for recording</h3>
+<p>It needs no installer, keeps its settings beside the executable, and can ask for confirmation before minimising or closing, so the desktop never appears in the middle of a recording.</p>
+<h3>At a glance</h3>
+<ul><li>Solid colour or your own image — 18 ready-made colours, or any other</li><li>Drawing on top: pencil, eraser, line, rectangle, circle, triangle, arrow, text</li><li>Magic pencil — strokes fade away on their own after 1–30 seconds</li><li>See-through mode — draw over your running applications</li><li>Save as PNG/JPG and copy to the clipboard</li><li>Guards against uncovering the desktop by accident while recording</li><li>Portable: settings and pictures live beside the program</li></ul>
+    </div>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+
+  <!-- ── Характеристики ── -->
+  
+
+  <!-- ── Как это делалось ── -->
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
+    </div>
+
+    
+    <div class="versions" id="versions">
+      
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">1.1</span>
+          <span class="ver-date">2026-08-10</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/BackDrop_1.1.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            90 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose" data-en="&lt;p&gt;A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes&lt;/p&gt;" data-ru="&lt;p&gt;ПЛАВАЮЩАЯ ПАНЕЛЬ, ДВЕНАДЦАТЬ МЕСТ ДЛЯ ЕЁ ПАРКОВКИ, КНОПКИ НА САМОЙ ПАНЕЛИ, исправления&lt;/p&gt;"><p>A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes</p></div>
         
       </div>
-    </div>
-  </div>
-
-  <!-- Versions -->
-  <div class="section" style="padding-top: 0;">
-    <div class="section-header">
-      <h2>// All Versions</h2>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="versions-list">
       
-      <div class="version-card latest">
-        <div class="version-meta">
-          <div class="version-number">v1.1</div>
-          <div class="version-date">2026-08-10</div>
-        </div>
-        <div class="version-desc">
-          A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes
-        </div>
-        <div class="version-actions">
-          <a class="btn-download" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/BackDrop_1.1.zip" download>
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
-            </svg>
-            DOWNLOAD
+      <div class="ver-row">
+        <div class="ver-head">
+          <span class="ver-num">1.0</span>
+          <span class="ver-date">2026-08-06</span>
+          
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/BackDrop_1.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            90 Mb
           </a>
-          <span class="version-size">90 Mb</span>
+          
         </div>
-      </div>
-      
-      <div class="version-card">
-        <div class="version-meta">
-          <div class="version-number">v1.0</div>
-          <div class="version-date">2026-08-06</div>
-        </div>
-        <div class="version-desc">
-          Base
-        </div>
-        <div class="version-actions">
-          <a class="btn-download" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/BackDrop_1.0.zip" download>
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 2v8M5 7l3 3 3-3M3 13h10"/>
-            </svg>
-            DOWNLOAD
-          </a>
-          <span class="version-size">90 Mb</span>
-        </div>
+        
+        <div class="ver-what prose" data-en="&lt;p&gt;Base&lt;/p&gt;" data-ru="&lt;p&gt;Базовая версия&lt;/p&gt;"><p>Base</p></div>
+        
       </div>
       
     </div>
-  </div>
+    
+    
 
+    
+    
+  </div>
 
 </div>
 
-<!-- Footer -->
+<!-- ── Footer ── -->
 <footer>
   <div class="wrap">
-    <a href="index.html">e.melnikov.dev</a> — free software, no catch
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>BackDrop v1.0 · 2026-08-10</span>
   </div>
 </footer>
+
+<script>
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+}
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
 
 </body>
 </html>

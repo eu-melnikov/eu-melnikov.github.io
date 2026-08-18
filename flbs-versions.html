@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback Like A Boss | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
+  .hero-meta {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h1 strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
+  }
+
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
+  }
+
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
+
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
+  }
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
+  }
+
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v4.62</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>120 MB
+    </div>
+
+    <h1><strong>Feedback Like A Boss</strong></h1>
+
+    
+    <p class="tagline"><span data-en="Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. No more digging through folders in the middle of a meeting." data-ru="Держите фидбэк, задачи, заметки и референсы в одном месте — привязанными к конкретным элементам проекта и всегда в одном клике. Больше не надо рыться по папкам посреди совещания.">Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. No more digging through folders in the middle of a meeting.</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="TUTORIALS" data-ru="УРОКИ">TUTORIALS</span>
+      </a>
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2025-03-16</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FLBS/Feedback_Like_A_Boss_.jpg" alt="Feedback Like A Boss">
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose" data-en="&lt;p&gt;Feedback Like A Boss is a tool for anyone working with a large number of tasks and assets in production projects. It keeps everything in one place — feedback, tasks, notes, references and files — all linked to a specific project element and always one click away.&lt;/p&gt;
+&lt;p&gt;No more digging through folders, chat histories or sticky notes in the middle of a meeting. Born in animation production, but built for any field where there's a project, a list of elements, and feedback to manage.&lt;/p&gt;
+&lt;p&gt;Free, portable, no installation required.&lt;/p&gt;
+&lt;h3&gt;Features&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;All feedback in one place&lt;/strong&gt; — Tasks, notes, comments and references — all linked to a specific project element. No more scattered sticky notes or chat messages.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Files &amp;amp; references attached&lt;/strong&gt; — Attach files, images and references directly to any task or element. Everything stays where it belongs.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Built for production&lt;/strong&gt; — Designed for animation and VFX pipelines where dozens of assets need feedback simultaneously. Works for any project-based workflow.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;One click away&lt;/strong&gt; — Quick access to any element's full history — no digging through folders or scrolling chat logs during a review session.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Portable, no install&lt;/strong&gt; — Just unzip and run. No installation, no setup. Take it anywhere.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Completely free&lt;/strong&gt; — No license, no subscription, no ads. Free for personal and commercial use.&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;Feedback Like A Boss — инструмент для всех, кто ведёт много задач и ассетов в продакшн-проектах. Он держит всё в одном месте — фидбэк, задачи, заметки, референсы и файлы, — привязанным к конкретному элементу проекта и всегда в одном клике.&lt;/p&gt;
+&lt;p&gt;Больше не надо посреди совещания рыться по папкам, историям переписки и стикерам. Родилось в анимационном продакшене, но сделано для любой области, где есть проект, список элементов и фидбэк, которым надо управлять.&lt;/p&gt;
+&lt;p&gt;Бесплатно, портативно, установка не требуется.&lt;/p&gt;
+&lt;h3&gt;Возможности&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Весь фидбэк в одном месте&lt;/strong&gt; — Задачи, заметки, комментарии и референсы привязаны к конкретному элементу проекта. Никаких разбросанных стикеров и сообщений в чатах.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Файлы и референсы рядом&lt;/strong&gt; — Прикрепляйте файлы, картинки и референсы прямо к любой задаче или элементу. Всё лежит там, где ему место.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Сделано для продакшена&lt;/strong&gt; — Рассчитано на анимационные и VFX-пайплайны, где десяткам ассетов нужен фидбэк одновременно. Подходит любому проектному процессу.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;В одном клике&lt;/strong&gt; — Быстрый доступ ко всей истории элемента: не надо рыться по папкам и листать переписку во время ревью.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Портативно, без установки&lt;/strong&gt; — Распаковал и запустил. Ни установки, ни настройки. Берите с собой куда угодно.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Полностью бесплатно&lt;/strong&gt; — Ни лицензии, ни подписки, ни рекламы. Бесплатно для личного и коммерческого использования.&lt;/li&gt;&lt;/ul&gt;">
+      <p>Feedback Like A Boss is a tool for anyone working with a large number of tasks and assets in production projects. It keeps everything in one place — feedback, tasks, notes, references and files — all linked to a specific project element and always one click away.</p>
+<p>No more digging through folders, chat histories or sticky notes in the middle of a meeting. Born in animation production, but built for any field where there's a project, a list of elements, and feedback to manage.</p>
+<p>Free, portable, no installation required.</p>
+<h3>Features</h3>
+<ul><li><strong>All feedback in one place</strong> — Tasks, notes, comments and references — all linked to a specific project element. No more scattered sticky notes or chat messages.</li><li><strong>Files &amp; references attached</strong> — Attach files, images and references directly to any task or element. Everything stays where it belongs.</li><li><strong>Built for production</strong> — Designed for animation and VFX pipelines where dozens of assets need feedback simultaneously. Works for any project-based workflow.</li><li><strong>One click away</strong> — Quick access to any element's full history — no digging through folders or scrolling chat logs during a review session.</li><li><strong>Portable, no install</strong> — Just unzip and run. No installation, no setup. Take it anywhere.</li><li><strong>Completely free</strong> — No license, no subscription, no ads. Free for personal and commercial use.</li></ul>
+    </div>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Tutorials" data-ru="// Уроки">// Tutorials</span></h2>
+    <div class="links">
+      
+      <a class="link-row" href="https://youtu.be/nTZnjrRuiKc" target="_blank" rel="noopener">
+        <svg class="link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span class="link-title"><span data-en="WATCH ON YOUTUBE" data-ru="СМОТРЕТЬ НА YOUTUBE">WATCH ON YOUTUBE</span></span>
+        <span class="link-meta">YouTube</span>
+      </a>
+      
+    </div>
+  </div>
+  
+
+  <!-- ── Характеристики ── -->
+  
+  
+  <div class="section">
+    <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
+    <div class="specs">
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>4.62</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Windows</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN / RU</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Formats" data-ru="Форматы">Formats</span></div><div class="spec-val">Projects, tasks, feedback, files</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Installation" data-ru="Установка">Installation</span></div><div class="spec-val">Unzip & run</div></div>
+    </div>
+  </div>
+  
+
+  <!-- ── Как это делалось ── -->
+  
+  <div class="section">
+    <h2><span data-en="// Behind the scenes" data-ru="// Как это делалось">// Behind the scenes</span></h2>
+    <details class="story">
+      <summary>
+        <span data-en="The story behind the tool" data-ru="История создания">The story behind the tool</span>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      </summary>
+      <div class="story-content prose" data-en="&lt;h3&gt;Where it all started&lt;/h3&gt;
+&lt;p&gt;I work in animation production for games. At any given time we can have dozens of animation assets in progress — each going through multiple rounds of review and revision with outsource teams. For a long time my workflow was embarrassingly basic: open Notepad, write comments, manually find the right folder, dump in the text along with some screenshots. Multiply that by 80+ weapons and you get pure chaos.&lt;/p&gt;
+&lt;p&gt;At some point I thought: enough, it's time to build a proper tool. That's how Feedback Like A Boss was born.&lt;/p&gt;
+&lt;p&gt;The original idea was dead simple — press a button, a document gets created with the right name in the right folder, ready to edit. I built the first prototype in a day. Already a win.&lt;/p&gt;
+&lt;h3&gt;How the program grew&lt;/h3&gt;
+&lt;p&gt;But then the most interesting part started — I began using it in real work and discovering what was still missing. First I added a &quot;Merge All&quot; button. Then feedbacks got their own subfolder. Then came importing external files, screenshots, videos. Then a trash bin with restore functionality.&lt;/p&gt;
+&lt;p&gt;A few days in I already had a full-blown project manager with multiple document types — feedbacks, meeting notes, personal notes, tasks. Each type gets its own color so you can tell at a glance what's what.&lt;/p&gt;
+&lt;h3&gt;The timeline — the coolest part&lt;/h3&gt;
+&lt;p&gt;At some point I came up with timeline mode. On the left — a list of animations, on the right — a time axis showing when each feedback was created. Click a marker — open the document. You see the whole picture of the project at once.&lt;/p&gt;
+&lt;p&gt;Then I remembered how the time range slider works in Maya. You can drag the edges to change the playback range. I wanted something like that for navigating through time. We built it. Then added double-click — so the slider snaps to the full range and back. A small thing, but it made working with it so much smoother.&lt;/p&gt;
+&lt;h3&gt;The details that matter&lt;/h3&gt;
+&lt;p&gt;When you build a tool for yourself, you start noticing little things that nobody ever bothers fixing in standard software. I removed all confirmation dialogs like &quot;File created — click OK.&quot; I can already see that it was created. Why click OK? Gone.&lt;/p&gt;
+&lt;p&gt;Added document preview on hover with Ctrl held down. Hover over a file — you see the first 20–30 words. No need to open the file just to know what's inside. Card pinning — right-click, &quot;Pin&quot; — the card flies to the top. Card grouping, like groups in Telegram. Collapse a group and it's out of the way.&lt;/p&gt;
+&lt;h3&gt;Thumbnails and video preview&lt;/h3&gt;
+&lt;p&gt;The last thing I added was thumbnail mode for media files. Instead of a card with a plain icon — an actual preview image. For videos, it's the first frame. And more than that: hover over a video card and the video starts playing right inside the thumbnail. You can scrub through it by moving the mouse left and right, like in a proper media manager. The technically trickiest part — but the end result is genuinely satisfying to use.&lt;/p&gt;
+&lt;h3&gt;Two months later&lt;/h3&gt;
+&lt;p&gt;Over roughly two months, the program went from &quot;create a document in a folder&quot; to a full project manager. I originally built it for animation production, but it works for any project where there are tasks, folders with files, and people who need to give notes — VFX, design, 3D modeling, architecture, or anywhere the work revolves around folders and content.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Feedback Like A Boss is completely free.&lt;/strong&gt; Download it, try it, and let me know what you think.&lt;/p&gt;" data-ru="&lt;h3&gt;С чего всё началось&lt;/h3&gt;
+&lt;p&gt;Я работаю в анимационном продакшене для игр. В любой момент времени у нас в работе могут быть десятки анимационных ассетов — и каждый проходит несколько кругов ревью и правок с аутсорс-командами. Долгое время мой рабочий процесс был до неловкости примитивным: открыть блокнот, написать комментарии, вручную найти нужную папку, свалить туда текст вместе со скриншотами. Умножьте это на 80+ единиц оружия — и получите чистый хаос.&lt;/p&gt;
+&lt;p&gt;В какой-то момент я подумал: хватит, пора сделать нормальный инструмент. Так родился Feedback Like A Boss.&lt;/p&gt;
+&lt;p&gt;Изначальная идея была проще некуда — нажал кнопку, и создался документ с правильным именем в правильной папке, готовый к редактированию. Первый прототип я собрал за день. Уже победа.&lt;/p&gt;
+&lt;h3&gt;Как программа росла&lt;/h3&gt;
+&lt;p&gt;А дальше началось самое интересное — я стал пользоваться этим в реальной работе и обнаруживать, чего ещё не хватает. Сначала добавил кнопку «Merge All». Потом фидбэки получили собственную подпапку. Потом появился импорт внешних файлов, скриншотов, видео. Потом корзина с восстановлением.&lt;/p&gt;
+&lt;p&gt;Через несколько дней у меня уже был полноценный проектный менеджер с несколькими типами документов — фидбэки, заметки со встреч, личные заметки, задачи. У каждого типа свой цвет, чтобы одним взглядом понимать, что где.&lt;/p&gt;
+&lt;h3&gt;Таймлайн — самое крутое&lt;/h3&gt;
+&lt;p&gt;В какой-то момент я придумал режим таймлайна. Слева — список анимаций, справа — ось времени, на которой видно, когда какой фидбэк был создан. Кликнул по метке — открылся документ. Вся картина проекта сразу перед глазами.&lt;/p&gt;
+&lt;p&gt;Потом я вспомнил, как в Maya работает ползунок диапазона времени. Края можно тянуть, меняя диапазон воспроизведения. Захотелось такого же для навигации по времени. Сделали. Потом добавили двойной клик — ползунок раскрывается на весь диапазон и обратно. Мелочь, а работать стало заметно приятнее.&lt;/p&gt;
+&lt;h3&gt;Детали, которые решают&lt;/h3&gt;
+&lt;p&gt;Когда делаешь инструмент для себя, начинаешь замечать мелочи, которые в обычных программах никто и не думает чинить. Я убрал все диалоги вида «Файл создан — нажмите ОК». Я и так вижу, что он создан. Зачем нажимать ОК? Убрал.&lt;/p&gt;
+&lt;p&gt;Добавил предпросмотр документа при наведении с зажатым Ctrl. Навёл на файл — видишь первые 20–30 слов. Не надо открывать файл, чтобы понять, что внутри. Закрепление карточек — правый клик, «Закрепить», и карточка улетает наверх. Группировка карточек, как группы в телеграме. Свернул группу — она не мешает.&lt;/p&gt;
+&lt;h3&gt;Миниатюры и предпросмотр видео&lt;/h3&gt;
+&lt;p&gt;Последнее, что я добавил, — режим миниатюр для медиафайлов. Вместо карточки с простой иконкой — настоящее изображение-превью. Для видео это первый кадр. И даже больше: наводишь курсор на карточку с видео — и видео начинает проигрываться прямо внутри миниатюры. Его можно прокручивать движением мыши влево-вправо, как в приличном медиаменеджере. Технически самая заковыристая часть — зато результатом реально приятно пользоваться.&lt;/p&gt;
+&lt;h3&gt;Два месяца спустя&lt;/h3&gt;
+&lt;p&gt;Примерно за два месяца программа прошла путь от «создать документ в папке» до полноценного проектного менеджера. Изначально я делал её для анимационного продакшена, но она работает для любого проекта, где есть задачи, папки с файлами и люди, которым нужно давать замечания, — VFX, дизайн, 3D-моделирование, архитектура и вообще всё, где работа крутится вокруг папок и контента.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Feedback Like A Boss полностью бесплатна.&lt;/strong&gt; Скачивайте, пробуйте и рассказывайте, что думаете.&lt;/p&gt;">
+        <h3>Where it all started</h3>
+<p>I work in animation production for games. At any given time we can have dozens of animation assets in progress — each going through multiple rounds of review and revision with outsource teams. For a long time my workflow was embarrassingly basic: open Notepad, write comments, manually find the right folder, dump in the text along with some screenshots. Multiply that by 80+ weapons and you get pure chaos.</p>
+<p>At some point I thought: enough, it's time to build a proper tool. That's how Feedback Like A Boss was born.</p>
+<p>The original idea was dead simple — press a button, a document gets created with the right name in the right folder, ready to edit. I built the first prototype in a day. Already a win.</p>
+<h3>How the program grew</h3>
+<p>But then the most interesting part started — I began using it in real work and discovering what was still missing. First I added a "Merge All" button. Then feedbacks got their own subfolder. Then came importing external files, screenshots, videos. Then a trash bin with restore functionality.</p>
+<p>A few days in I already had a full-blown project manager with multiple document types — feedbacks, meeting notes, personal notes, tasks. Each type gets its own color so you can tell at a glance what's what.</p>
+<h3>The timeline — the coolest part</h3>
+<p>At some point I came up with timeline mode. On the left — a list of animations, on the right — a time axis showing when each feedback was created. Click a marker — open the document. You see the whole picture of the project at once.</p>
+<p>Then I remembered how the time range slider works in Maya. You can drag the edges to change the playback range. I wanted something like that for navigating through time. We built it. Then added double-click — so the slider snaps to the full range and back. A small thing, but it made working with it so much smoother.</p>
+<h3>The details that matter</h3>
+<p>When you build a tool for yourself, you start noticing little things that nobody ever bothers fixing in standard software. I removed all confirmation dialogs like "File created — click OK." I can already see that it was created. Why click OK? Gone.</p>
+<p>Added document preview on hover with Ctrl held down. Hover over a file — you see the first 20–30 words. No need to open the file just to know what's inside. Card pinning — right-click, "Pin" — the card flies to the top. Card grouping, like groups in Telegram. Collapse a group and it's out of the way.</p>
+<h3>Thumbnails and video preview</h3>
+<p>The last thing I added was thumbnail mode for media files. Instead of a card with a plain icon — an actual preview image. For videos, it's the first frame. And more than that: hover over a video card and the video starts playing right inside the thumbnail. You can scrub through it by moving the mouse left and right, like in a proper media manager. The technically trickiest part — but the end result is genuinely satisfying to use.</p>
+<h3>Two months later</h3>
+<p>Over roughly two months, the program went from "create a document in a folder" to a full project manager. I originally built it for animation production, but it works for any project where there are tasks, folders with files, and people who need to give notes — VFX, design, 3D modeling, architecture, or anywhere the work revolves around folders and content.</p>
+<p><strong>Feedback Like A Boss is completely free.</strong> Download it, try it, and let me know what you think.</p>
+      </div>
+    </details>
+  </div>
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration required." data-ru="Бесплатно для личного и коммерческого использования. Регистрация не нужна.">Free for personal and commercial use. No registration required.</span></p>
+    </div>
+
+    
+
+    
+    
+    <div class="actions" style="margin-top:0">
+      
+      <a class="btn btn-main" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FLBS/Feedback_Like_A_Boss.v4.62.zip" download>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span> · 120 MB
+      </a>
+      
+      
+      
+    </div>
+    
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>Feedback Like A Boss v4.62 · 2025-03-16</span>
+  </div>
+</footer>
+
+<script>
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+}
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+
+</body>
+</html>
