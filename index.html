@@ -282,6 +282,25 @@
     align-items: center;
     justify-content: center;
   }
+  .card-preview { position: relative; }
+  /* Бейдж свежести — те же два цвета, что и типы записей в ленте: голубой
+     значит «вышло», фиолетовый — «обновилось». */
+  .card-badge {
+    position: absolute; top: 10px; right: 10px;
+    font-family: var(--mono); font-size: 9px; font-weight: 500;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 20px; white-space: nowrap;
+    backdrop-filter: blur(6px);
+  }
+  .card-badge.new {
+    color: var(--accent); background: rgba(0,229,255,.12);
+    border: 1px solid rgba(0,229,255,.35);
+  }
+  .card-badge.update {
+    color: #b794f6; background: rgba(124,58,237,.16);
+    border: 1px solid rgba(124,58,237,.4);
+  }
+
   .card-preview img {
     width: 100%;
     height: 100%;
@@ -718,7 +737,7 @@
         <div class="release-title"><strong>BackDrop</strong></div>
         <p class="release-desc"><span data-en="BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame. You can draw straight on the cover — pencil, lines, shapes, arrows and text captions." data-ru="BackDrop прячет рабочий стол за сплошным цветом или картинкой, пока вы записываете урок или ведёте стрим, — иконки, папки и личные файлы не попадают в кадр. По этой заслонке можно рисовать прямо поверх: карандаш, линии, фигуры, стрелки и подписи.">BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame. You can draw straight on the cover — pencil, lines, shapes, arrows and text captions.</span></p>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <span class="tag badge-platform" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">v1.0</span>
+          <span class="tag badge-platform" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">v1.1</span>
           <span class="tag" style="font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;letter-spacing:.05em;">Windows</span>
         </div>
         <div class="release-actions">
@@ -758,16 +777,19 @@
 
 
       
+      
       <a class="card" data-cat="windows" href="BackDrop-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/Poster_BackDrop.jpg" alt="BackDrop" loading="lazy">
           
+          
+          <span class="card-badge update"><span data-en="Updated" data-ru="Обновлено">Updated</span></span>
         </div>
         <div class="card-title">BackDrop</div>
         <div class="card-desc"><span data-en="BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame. You can draw straight on the cover — pencil, lines, shapes, arrows and text captions." data-ru="BackDrop прячет рабочий стол за сплошным цветом или картинкой, пока вы записываете урок или ведёте стрим, — иконки, папки и личные файлы не попадают в кадр. По этой заслонке можно рисовать прямо поверх: карандаш, линии, фигуры, стрелки и подписи.">BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame. You can draw straight on the cover — pencil, lines, shapes, arrows and text captions.</span></div>
         <div class="card-meta">
-          <span class="tag tag-accent">v1.0</span>
+          <span class="tag tag-accent">v1.1</span>
           
           <span class="tag">Windows</span>
           
@@ -780,11 +802,14 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="Scene_Manager-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/Scene_Manager/Scene_Manager_pst.jpg" alt="Scene_Manager" loading="lazy">
           
+          
+          <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
         </div>
         <div class="card-title">Scene_Manager</div>
         <div class="card-desc"><span data-en="Scene Manager is a visual library for your 3D models with a version history: a card with a preview for every asset, instead of a folder full of final_v2_fix_new.mb." data-ru="Scene Manager — визуальная библиотека 3D-моделей с историей версий: у каждого ассета карточка с превью вместо папки, забитой final_v2_fix_new.mb.">Scene Manager is a visual library for your 3D models with a version history: a card with a preview for every asset, instead of a folder full of final_v2_fix_new.mb.</span></div>
@@ -804,11 +829,14 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="MayaMerge-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MayaMerge/MayaMerge_en1.jpg" alt="MayaMerge" loading="lazy">
           
+          
+          <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
         </div>
         <div class="card-title">MayaMerge</div>
         <div class="card-desc"><span data-en="MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects you need from a handy list, and bring only those into your current scene — with no junk." data-ru="MayaMerge открывает любой файл (.mb/.ma/.fbx/.obj), даёт выбрать из удобного списка ровно те объекты, которые нужны, и переносит в текущую сцену только их — без мусора.">MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects you need from a handy list, and bring only those into your current scene — with no junk.</span></div>
@@ -828,20 +856,23 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows" href="FuryNotes-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/Poster_FuryNotes_002.jpg" alt="FuryNotes" loading="lazy">
           
+          
+          <span class="card-badge update"><span data-en="Updated" data-ru="Обновлено">Updated</span></span>
         </div>
         <div class="card-title">FuryNotes</div>
         <div class="card-desc"><span data-en="A fast, distraction-free notepad for Windows with one breakthrough idea: there is nothing to save and nowhere to lose. Every note becomes a real file the moment you start typing and saves itself automatically." data-ru="Быстрый блокнот для Windows без отвлекающих деталей и с одной прорывной идеей: здесь нечего сохранять и негде потерять. Каждая заметка становится настоящим файлом в момент, когда вы начали печатать, и сохраняется сама.">A fast, distraction-free notepad for Windows with one breakthrough idea: there is nothing to save and nowhere to lose. Every note becomes a real file the moment you start typing and saves itself automatically.</span></div>
         <div class="card-meta">
-          <span class="tag tag-accent">v1.1.7</span>
+          <span class="tag tag-accent">v1.2.0</span>
           
           <span class="tag">Windows</span>
           
-          <span class="card-meta-right">47 Mb &nbsp;&bull;&nbsp; 2026-07-30</span>
+          <span class="card-meta-right">47 Mb &nbsp;&bull;&nbsp; 2026-08-18</span>
         </div>
         <span class="card-more">
           <span data-en="MORE" data-ru="ДАЛЕЕ">MORE</span>
@@ -850,10 +881,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows" href="quick_text_drop-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/QTD/qtd_poster2.jpg" alt="Quick Text Drop" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Quick Text Drop</div>
@@ -872,10 +906,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="maya_comp_grids-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/maya_comp_grids.jpg" alt="Maya Compositoon Grids" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Maya Compositoon Grids</div>
@@ -896,10 +933,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="frames_commander-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Frames Commander</div>
@@ -920,11 +960,14 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows" href="roadmapper-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/RoadMapper/RoadMapper_scr.jpg" alt="RoadMapper" loading="lazy">
           
+          
+          <span class="card-badge update"><span data-en="Updated" data-ru="Обновлено">Updated</span></span>
         </div>
         <div class="card-title">RoadMapper</div>
         <div class="card-desc"><span data-en="Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Free desktop app for Windows — no account required." data-ru="Визуальный планировщик для команд. Заводите дорожки под участников, таскайте задачи по датам и видите весь проект целиком. Бесплатное настольное приложение для Windows — аккаунт не нужен.">Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Free desktop app for Windows — no account required.</span></div>
@@ -933,7 +976,7 @@
           
           <span class="tag">Windows</span>
           
-          <span class="card-meta-right">300 Mb &nbsp;&bull;&nbsp; 2026-04-29</span>
+          <span class="card-meta-right">300 Mb &nbsp;&bull;&nbsp; 2026-07-26</span>
         </div>
         <span class="card-more">
           <span data-en="MORE" data-ru="ДАЛЕЕ">MORE</span>
@@ -942,10 +985,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows" href="year_sprint-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/YearSprint/YearSprint_pict.jpg" alt="Year Sprint" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Year Sprint</div>
@@ -964,10 +1010,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="camera_shake_tool-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/camera_shake_tool_poster.jpg" alt="Сamera Shake Tool" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Сamera Shake Tool</div>
@@ -988,10 +1037,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="FreeMotionTrail-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_poster1.jpg" alt="Free Motion Trail 1.4 Public Beta" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Free Motion Trail 1.4 Public Beta</div>
@@ -1012,10 +1064,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="eu_anim_curve_tools-versions.html">
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/eu_curve/eu_anim_curve_tools_poster.jpg" alt="EU Anim Curve Tools" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">EU Anim Curve Tools</div>
@@ -1036,10 +1091,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="maya" href="maya_batch_converter-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/maya_batchconv.jpg" alt="Maya Batch Converter" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Maya Batch Converter</div>
@@ -1058,10 +1116,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows" href="flbs-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/flbs.jpg" alt="Feedback Like A Boss" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Feedback Like A Boss</div>
@@ -1080,10 +1141,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows macos" href="psi-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/psi_app.jpg" alt="PSI — Pict Snap Index" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">PSI — Pict Snap Index</div>
@@ -1104,10 +1168,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows" href="sortmatic5000-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/sort_matic_5000.jpg" alt="SortMatic5000" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">SortMatic5000</div>
@@ -1126,10 +1193,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows" href="foldertree_collector-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/tree_collect.jpg" alt="FolderTree Collector" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">FolderTree Collector</div>
@@ -1148,10 +1218,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="swap_animation-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/swap_anim.jpg" alt="Swap Animation" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Swap Animation</div>
@@ -1172,10 +1245,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="scene_review_tool-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/scene_review_tool.jpg" alt="Scene Review Tool" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Scene Review Tool</div>
@@ -1196,10 +1272,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="quick_save_to_temp-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/quick_save.jpg" alt="Quick Save to Temp" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Quick Save to Temp</div>
@@ -1220,10 +1299,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="maya_persp_camera_history-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/persp_cam_hyst.jpg" alt="Maya Persp Camera History" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">Maya Persp Camera History</div>
@@ -1244,10 +1326,13 @@
       </a>
 
       
+      
       <a class="card" data-cat="windows maya" href="boneanim_combo-versions.html">
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/boneanim_combo1.jpg" alt="BoneAnim Combo" loading="lazy">
+          
+          
           
         </div>
         <div class="card-title">BoneAnim Combo</div>
