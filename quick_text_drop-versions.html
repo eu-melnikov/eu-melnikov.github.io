@@ -311,6 +311,36 @@
   .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
   .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
 
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
   .ver-toggle {
     margin-top: 18px; background: none; border: none; cursor: pointer;
     font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
@@ -430,12 +460,18 @@
   
   <div class="section">
     <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
-    <div class="prose" data-en="&lt;p&gt;Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp.&lt;/p&gt;
+    <div class="prose clampable" data-en="&lt;p&gt;Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp.&lt;/p&gt;
 &lt;p&gt;Perfect for collecting references, sending logs, and managing text notes.&lt;/p&gt;" data-ru="&lt;p&gt;Quick Text Drop — утилита для мгновенного сохранения текста из буфера обмена в файл. Нажали Ctrl+C — и текст автоматически сохранён в TXT или DOCX с меткой времени.&lt;/p&gt;
 &lt;p&gt;Удобно собирать референсы, отправлять логи и разбираться с текстовыми заметками.&lt;/p&gt;">
       <p>Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp.</p>
 <p>Perfect for collecting references, sending logs, and managing text notes.</p>
     </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
   </div>
   
 
@@ -553,7 +589,41 @@ document.addEventListener('DOMContentLoaded', function () {
 function toggleVersions(btn) {
   var list = document.getElementById('versions');
   if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
 }
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
 </script>
 <script>
 /* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
@@ -573,6 +643,10 @@ function setLang(lang) {
   if (en) en.className = lang === 'en' ? 'on' : '';
   if (ru) ru.className = lang === 'ru' ? 'on' : '';
   try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
 }
 (function () {
   var saved = null;

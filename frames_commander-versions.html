@@ -311,6 +311,36 @@
   .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
   .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
 
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
   .ver-toggle {
     margin-top: 18px; background: none; border: none; cursor: pointer;
     font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
@@ -430,7 +460,7 @@
   
   <div class="section">
     <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
-    <div class="prose" data-en="&lt;p&gt;Frames Commander is a specialized video player designed for animators and VFX artists who need precise frame-by-frame control over their references.&lt;/p&gt;
+    <div class="prose clampable" data-en="&lt;p&gt;Frames Commander is a specialized video player designed for animators and VFX artists who need precise frame-by-frame control over their references.&lt;/p&gt;
 &lt;h3&gt;Viewing modes&lt;/h3&gt;
 &lt;p&gt;Split-screen comparison, a 2×2 grid for viewing up to four videos simultaneously, and video layers with adjustable opacity.&lt;/p&gt;
 &lt;h3&gt;Built for animation work&lt;/h3&gt;
@@ -451,6 +481,12 @@
 <h3>Free and portable</h3>
 <p>No installation required.</p>
     </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
   </div>
   
 
@@ -514,7 +550,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing &quot;magic&quot; ink. Offset for Maya. Correct VFR playback. Smooth multi-video.&lt;/p&gt;" data-ru="&lt;p&gt;Единая платформа воспроизведения. Редактор горячих клавиш. Упрощённый трекинг. Гибкий гостинг. Исчезающие «волшебные» чернила. Смещение для Maya. Корректное воспроизведение VFR. Плавное мультивидео.&lt;/p&gt;"><p>Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing "magic" ink. Offset for Maya. Correct VFR playback. Smooth multi-video.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing &quot;magic&quot; ink. Offset for Maya. Correct VFR playback. Smooth multi-video.&lt;/p&gt;" data-ru="&lt;p&gt;Единая платформа воспроизведения. Редактор горячих клавиш. Упрощённый трекинг. Гибкий гостинг. Исчезающие «волшебные» чернила. Смещение для Maya. Корректное воспроизведение VFR. Плавное мультивидео.&lt;/p&gt;"><p>Unified playback platform. Hotkey editor. Easier tracking. Flexible ghosting. Vanishing "magic" ink. Offset for Maya. Correct VFR playback. Smooth multi-video.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -531,7 +572,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.&lt;/p&gt;" data-ru="&lt;p&gt;Трекинг видео, гостинг (onion skinning), смещение кадра, исправления Curve Speed.&lt;/p&gt;"><p>Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.&lt;/p&gt;" data-ru="&lt;p&gt;Трекинг видео, гостинг (onion skinning), смещение кадра, исправления Curve Speed.&lt;/p&gt;"><p>Video tracking, Ghosting (Onion Skinning), Frame Offset, Curve Speed Fixes.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -548,7 +594,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Auto-play on File Open Videos now automatically start playing when opened from Windows Explorer or after export. Playlist Position Memory When switching between files in playlist, your playhead position and in/out points are now remembered. Playlist States Saved to Project In/out points and playhead positions for ALL playlist files are now saved with the project.&lt;/p&gt;" data-ru="&lt;p&gt;Автовоспроизведение при открытии файла Видео теперь запускается само при открытии из проводника Windows или после экспорта. Память позиции в плейлисте При переключении между файлами плейлиста позиция головки и точки in/out теперь запоминаются. Состояния плейлиста в проекте Точки in/out и позиции головки для ВСЕХ файлов плейлиста теперь сохраняются вместе с проектом.&lt;/p&gt;"><p>Auto-play on File Open Videos now automatically start playing when opened from Windows Explorer or after export. Playlist Position Memory When switching between files in playlist, your playhead position and in/out points are now remembered. Playlist States Saved to Project In/out points and playhead positions for ALL playlist files are now saved with the project.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Auto-play on File Open Videos now automatically start playing when opened from Windows Explorer or after export. Playlist Position Memory When switching between files in playlist, your playhead position and in/out points are now remembered. Playlist States Saved to Project In/out points and playhead positions for ALL playlist files are now saved with the project.&lt;/p&gt;" data-ru="&lt;p&gt;Автовоспроизведение при открытии файла Видео теперь запускается само при открытии из проводника Windows или после экспорта. Память позиции в плейлисте При переключении между файлами плейлиста позиция головки и точки in/out теперь запоминаются. Состояния плейлиста в проекте Точки in/out и позиции головки для ВСЕХ файлов плейлиста теперь сохраняются вместе с проектом.&lt;/p&gt;"><p>Auto-play on File Open Videos now automatically start playing when opened from Windows Explorer or after export. Playlist Position Memory When switching between files in playlist, your playhead position and in/out points are now remembered. Playlist States Saved to Project In/out points and playhead positions for ALL playlist files are now saved with the project.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -565,7 +616,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Fix for Paste Image from Clipboard in split/2x2 modes. Fix for QImage processing with padding. Added GIF animation support. Scrub Speed persistence for split modes&lt;/p&gt;" data-ru="&lt;p&gt;Исправлена вставка изображения из буфера в режимах split и 2×2. Исправлена обработка QImage с полями. Добавлена поддержка GIF-анимации. Скорость перемотки запоминается в режимах разделения экрана.&lt;/p&gt;"><p>Fix for Paste Image from Clipboard in split/2x2 modes. Fix for QImage processing with padding. Added GIF animation support. Scrub Speed persistence for split modes</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Fix for Paste Image from Clipboard in split/2x2 modes. Fix for QImage processing with padding. Added GIF animation support. Scrub Speed persistence for split modes&lt;/p&gt;" data-ru="&lt;p&gt;Исправлена вставка изображения из буфера в режимах split и 2×2. Исправлена обработка QImage с полями. Добавлена поддержка GIF-анимации. Скорость перемотки запоминается в режимах разделения экрана.&lt;/p&gt;"><p>Fix for Paste Image from Clipboard in split/2x2 modes. Fix for QImage processing with padding. Added GIF animation support. Scrub Speed persistence for split modes</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -582,7 +638,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Auto-fit window to video size, Smooth video scaling, Open file location, Auto-open folder after export, Auto-play after export, Image Mirroring, Playback Speed Control, Curve Speed — Speed Curve Editor, Maya Integration — Retiming Export,&lt;/p&gt;" data-ru="&lt;p&gt;Подгонка окна под размер видео, плавное масштабирование, переход к файлу на диске, автооткрытие папки после экспорта, автовоспроизведение после экспорта, зеркальное отражение, управление скоростью воспроизведения, Curve Speed — редактор кривой скорости, интеграция с Maya — экспорт ретайминга&lt;/p&gt;"><p>Auto-fit window to video size, Smooth video scaling, Open file location, Auto-open folder after export, Auto-play after export, Image Mirroring, Playback Speed Control, Curve Speed — Speed Curve Editor, Maya Integration — Retiming Export,</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Auto-fit window to video size, Smooth video scaling, Open file location, Auto-open folder after export, Auto-play after export, Image Mirroring, Playback Speed Control, Curve Speed — Speed Curve Editor, Maya Integration — Retiming Export,&lt;/p&gt;" data-ru="&lt;p&gt;Подгонка окна под размер видео, плавное масштабирование, переход к файлу на диске, автооткрытие папки после экспорта, автовоспроизведение после экспорта, зеркальное отражение, управление скоростью воспроизведения, Curve Speed — редактор кривой скорости, интеграция с Maya — экспорт ретайминга&lt;/p&gt;"><p>Auto-fit window to video size, Smooth video scaling, Open file location, Auto-open folder after export, Auto-play after export, Image Mirroring, Playback Speed Control, Curve Speed — Speed Curve Editor, Maya Integration — Retiming Export,</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -599,7 +660,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software.&lt;/p&gt;" data-ru="&lt;p&gt;Несколько режимов просмотра: сравнение с разделением экрана, сетка 2×2 для одновременного просмотра до четырёх видео и слои видео с настраиваемой прозрачностью. Двусторонняя синхронизация с Maya, инструменты рисования поверх кадра, профессиональные композиционные сетки и режим Overlay Pro — референс поверх любой программы.&lt;/p&gt;"><p>Multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software.&lt;/p&gt;" data-ru="&lt;p&gt;Несколько режимов просмотра: сравнение с разделением экрана, сетка 2×2 для одновременного просмотра до четырёх видео и слои видео с настраиваемой прозрачностью. Двусторонняя синхронизация с Maya, инструменты рисования поверх кадра, профессиональные композиционные сетки и режим Overlay Pro — референс поверх любой программы.&lt;/p&gt;"><p>Multiple viewing modes including split-screen comparison, 2x2 grid for viewing up to 4 videos simultaneously, and video layers with adjustable opacity. Includes two-way Maya synchronization, drawing tools for on-frame annotations, professional composition grids, and Overlay Pro mode for floating references over any software.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -684,7 +750,41 @@ document.addEventListener('DOMContentLoaded', function () {
 function toggleVersions(btn) {
   var list = document.getElementById('versions');
   if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
 }
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
 </script>
 <script>
 /* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
@@ -704,6 +804,10 @@ function setLang(lang) {
   if (en) en.className = lang === 'en' ? 'on' : '';
   if (ru) ru.className = lang === 'ru' ? 'on' : '';
   try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
 }
 (function () {
   var saved = null;

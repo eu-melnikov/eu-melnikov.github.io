@@ -311,6 +311,36 @@
   .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
   .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
 
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
   .ver-toggle {
     margin-top: 18px; background: none; border: none; cursor: pointer;
     font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
@@ -425,7 +455,7 @@
   
   <div class="section">
     <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
-    <div class="prose" data-en="&lt;p&gt;BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame.&lt;/p&gt;
+    <div class="prose clampable" data-en="&lt;p&gt;BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame.&lt;/p&gt;
 &lt;h3&gt;Draw straight on the cover&lt;/h3&gt;
 &lt;p&gt;Pencil, lines, shapes, arrows and text captions. The magic pencil leaves strokes that fade away by themselves after a few seconds, so you can point at things without stopping to clean up.&lt;/p&gt;
 &lt;h3&gt;See-through mode&lt;/h3&gt;
@@ -458,6 +488,12 @@
 <h3>At a glance</h3>
 <ul><li>Solid colour or your own image — 18 ready-made colours, or any other</li><li>Drawing on top: pencil, eraser, line, rectangle, circle, triangle, arrow, text</li><li>Magic pencil — strokes fade away on their own after 1–30 seconds</li><li>See-through mode — draw over your running applications</li><li>Save as PNG/JPG and copy to the clipboard</li><li>Guards against uncovering the desktop by accident while recording</li><li>Portable: settings and pictures live beside the program</li></ul>
     </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
   </div>
   
 
@@ -494,7 +530,7 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Over five versions BackDrop stopped being only a cover: it now photographs the screen as well — five ways to capture, each on its own system-wide key, and every one of them works while the program is nowhere to be seen. It lives in the tray, comes up with Windows and speaks Russian as well as English.&lt;/p&gt;
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Over five versions BackDrop stopped being only a cover: it now photographs the screen as well — five ways to capture, each on its own system-wide key, and every one of them works while the program is nowhere to be seen. It lives in the tray, comes up with Windows and speaks Russian as well as English.&lt;/p&gt;
 &lt;h3&gt;Five ways to photograph the screen.&lt;/h3&gt;
 &lt;p&gt;Settings, Capture tab. Each way has its own key field and its own line in the tray menu:&lt;/p&gt;
 &lt;ul&gt;&lt;li&gt;Alt+1 — a piece of the screen, a frame you drag by hand&lt;/li&gt;&lt;li&gt;Alt+2 — the window in front&lt;/li&gt;&lt;li&gt;Alt+3 — the screen under the pointer&lt;/li&gt;&lt;li&gt;Alt+4 — every monitor at once, in a single picture&lt;/li&gt;&lt;li&gt;Alt+5 — the area you set aside, a frame left standing on screen&lt;/li&gt;&lt;/ul&gt;
@@ -594,6 +630,11 @@
 <h3>Fixed.</h3>
 <ul><li>The save button under the selection made the screen flash and did nothing else: the list of recent folders was a drop-down menu, and the menu closed itself the same instant. It is a window now.</li><li>Turning down the save dialog cost you the whole selection — the frame closed before the dialog opened. It now comes back with the selection intact.</li><li>The capture key fired over an open dialog too. The frame then took neither clicks nor Escape, and the only way out was the task manager.</li><li>Pressing the key twice made two frames on top of each other and left a still picture on the screen that answered to nothing.</li><li>Quit in the tray menu ended the program instantly, without asking — the cover vanished, and the session's drawings with it.</li><li>A minimized window would not come back from the tray: a click on the icon offered to put the program away rather than show it.</li><li>Two copies launched at the same moment both carried on — two tray icons and two writers to one settings file.</li><li>With no notification area on the desktop, the program hid into nothing: no window, no icon, no way to get it back.</li><li>A capture picked from the tray menu could catch the menu itself: it was dismissed, but the screen underneath had not been redrawn yet.</li><li>In see-through mode the folder-picking window made it into the saved picture.</li><li>The Russian interface translated the author's signature in the window title; it is "(by e.ov)" everywhere now.</li></ul>
 <p>The About window has been rewritten — it still described the program as a cover and nothing else. The user manual is updated for 1.6, with new sections on the captures, on marking up a picture, on the area you set aside, on the file names and on the new backdrop.ini keys.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -610,7 +651,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes&lt;/p&gt;" data-ru="&lt;p&gt;ПЛАВАЮЩАЯ ПАНЕЛЬ, ДВЕНАДЦАТЬ МЕСТ ДЛЯ ЕЁ ПАРКОВКИ, КНОПКИ НА САМОЙ ПАНЕЛИ, исправления&lt;/p&gt;"><p>A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes&lt;/p&gt;" data-ru="&lt;p&gt;ПЛАВАЮЩАЯ ПАНЕЛЬ, ДВЕНАДЦАТЬ МЕСТ ДЛЯ ЕЁ ПАРКОВКИ, КНОПКИ НА САМОЙ ПАНЕЛИ, исправления&lt;/p&gt;"><p>A FLOATING TOOLBAR, TWELVE PLACES TO PARK IT, BUTTONS ON THE PANEL ITSELF, Fixes</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -627,7 +673,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Base&lt;/p&gt;" data-ru="&lt;p&gt;Базовая версия&lt;/p&gt;"><p>Base</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Base&lt;/p&gt;" data-ru="&lt;p&gt;Базовая версия&lt;/p&gt;"><p>Base</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -706,7 +757,41 @@ document.addEventListener('DOMContentLoaded', function () {
 function toggleVersions(btn) {
   var list = document.getElementById('versions');
   if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
 }
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
 </script>
 <script>
 /* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
@@ -726,6 +811,10 @@ function setLang(lang) {
   if (en) en.className = lang === 'en' ? 'on' : '';
   if (ru) ru.className = lang === 'ru' ? 'on' : '';
   try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
 }
 (function () {
   var saved = null;

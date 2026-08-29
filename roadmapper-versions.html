@@ -311,6 +311,36 @@
   .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
   .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
 
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
   .ver-toggle {
     margin-top: 18px; background: none; border: none; cursor: pointer;
     font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
@@ -430,7 +460,7 @@
   
   <div class="section">
     <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
-    <div class="prose" data-en="&lt;p&gt;A lightweight desktop tool for visual project planning and team workload management. Built for game developers, animation studios, and creative teams who need a clear view of who's doing what and when.&lt;/p&gt;
+    <div class="prose clampable" data-en="&lt;p&gt;A lightweight desktop tool for visual project planning and team workload management. Built for game developers, animation studios, and creative teams who need a clear view of who's doing what and when.&lt;/p&gt;
 &lt;h3&gt;Key features&lt;/h3&gt;
 &lt;ul&gt;&lt;li&gt;Visual timeline with drag &amp;amp; drop tasks&lt;/li&gt;&lt;li&gt;Multi-row tracks for team members&lt;/li&gt;&lt;li&gt;Track collapsing for large projects&lt;/li&gt;&lt;li&gt;Excel import/export&lt;/li&gt;&lt;li&gt;Workdays calculation (excludes weekends)&lt;/li&gt;&lt;li&gt;Color-coded task statuses&lt;/li&gt;&lt;li&gt;Deadline markers&lt;/li&gt;&lt;li&gt;Super Shift mode for batch task moving&lt;/li&gt;&lt;/ul&gt;
 &lt;h3&gt;No cloud, no subscriptions&lt;/h3&gt;
@@ -445,6 +475,12 @@
 <h3>No cloud, no subscriptions</h3>
 <p>Just a simple tool that works. Free to download and use.</p>
     </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
   </div>
   
 
@@ -507,7 +543,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;release-notes - https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html&lt;/p&gt;" data-ru="&lt;p&gt;Список изменений — https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html&lt;/p&gt;"><p>release-notes - https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;release-notes - https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html&lt;/p&gt;" data-ru="&lt;p&gt;Список изменений — https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html&lt;/p&gt;"><p>release-notes - https://eu-melnikov.github.io/files/roadmapper-2.3-release-notes.html</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -524,7 +565,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Optimization. Minor fix.&lt;/p&gt;" data-ru="&lt;p&gt;Оптимизация. Мелкие исправления.&lt;/p&gt;"><p>Optimization. Minor fix.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Optimization. Minor fix.&lt;/p&gt;" data-ru="&lt;p&gt;Оптимизация. Мелкие исправления.&lt;/p&gt;"><p>Optimization. Minor fix.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -541,7 +587,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support&lt;/p&gt;" data-ru="&lt;p&gt;Поиск в выпадающих списках исполнителей, поиск в фильтрах колонок, сортировка по алфавиту, поддержка клавиатуры&lt;/p&gt;"><p>Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support&lt;/p&gt;" data-ru="&lt;p&gt;Поиск в выпадающих списках исполнителей, поиск в фильтрах колонок, сортировка по алфавиту, поддержка клавиатуры&lt;/p&gt;"><p>Search in Worker Dropdowns, Search in Column Filters, Alphabetical Sorting, Keyboard Support</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -558,7 +609,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.&lt;/p&gt;" data-ru="&lt;p&gt;Версия 2.0: зависимости задач с визуальными связями, режим фокуса на цепочках, произвольные статусы любых цветов, система тегов, гибкие колонки с выпадающими списками, перенос задач между дорожками, клонирование задач, навигация в стиле Maya, плавающие окна фильтров, улучшенный экспорт в Excel.&lt;/p&gt;"><p>Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.&lt;/p&gt;" data-ru="&lt;p&gt;Версия 2.0: зависимости задач с визуальными связями, режим фокуса на цепочках, произвольные статусы любых цветов, система тегов, гибкие колонки с выпадающими списками, перенос задач между дорожками, клонирование задач, навигация в стиле Maya, плавающие окна фильтров, улучшенный экспорт в Excel.&lt;/p&gt;"><p>Version 2.0: task dependencies with visual links, focus mode for chains, custom statuses with any colors, tag system, flexible columns with dropdowns, cross-track task movement, task cloning, Maya-style navigation, floating filter windows, enhanced Excel export.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -575,7 +631,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.&lt;/p&gt;" data-ru="&lt;p&gt;Визуальный планировщик для команд. Заводите дорожки под участников, таскайте задачи по датам и видите весь проект целиком. Поддерживает импорт и экспорт в Excel, расчёт рабочих дней и отслеживание дедлайнов.&lt;/p&gt;"><p>Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.&lt;/p&gt;" data-ru="&lt;p&gt;Визуальный планировщик для команд. Заводите дорожки под участников, таскайте задачи по датам и видите весь проект целиком. Поддерживает импорт и экспорт в Excel, расчёт рабочих дней и отслеживание дедлайнов.&lt;/p&gt;"><p>Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Supports Excel import/export, workday calculations, and deadline tracking.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -654,7 +715,41 @@ document.addEventListener('DOMContentLoaded', function () {
 function toggleVersions(btn) {
   var list = document.getElementById('versions');
   if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
 }
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
 </script>
 <script>
 /* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
@@ -674,6 +769,10 @@ function setLang(lang) {
   if (en) en.className = lang === 'en' ? 'on' : '';
   if (ru) ru.className = lang === 'ru' ? 'on' : '';
   try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
 }
 (function () {
   var saved = null;

@@ -372,6 +372,128 @@
       
       
       
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="FuryNotes-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🔧</span>
+            <span class="news-title"><span data-en="FuryNotes" data-ru="FuryNotes">FuryNotes</span><span class="ver">v1.3.0</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
+            <span class="news-date">2026-08-29</span>
+          </div>
+          
+          <div class="news-desc" data-en="&lt;p&gt;Nearly all of this release grew out of one message. Someone built a note full of links to files on their own disk, ran into a few rough edges, and wrote in about them. Here is what came of it.&lt;/p&gt;
+&lt;h3&gt;The program keeps earlier versions of your text.&lt;/h3&gt;
+&lt;p&gt;A note here saves itself, so there is never a &quot;did I save that?&quot;. For the same reason there was never an unsaved version to fall back on either: delete a paragraph, look away for a second, and it is gone from the file; close the program and the undo stack goes with it. FuryNotes now quietly puts copies of the text aside.&lt;/p&gt;
+&lt;p&gt;When a copy is taken: — before you start changing a note. The first keystroke after you open it is the last moment the old text exists anywhere, so that is when the copy is made. Merely opening a note and reading it copies nothing — otherwise one pass through the library would leave a copy of everything you had glanced at; — while you write — at most one copy every ten minutes; — the moment a note is deleted, whatever the clock says. Delete a folder and every note inside it is copied.&lt;/p&gt;
+&lt;p&gt;Getting one back: right-click any note or folder in the tree → &quot;History…&quot;. On the left is every note that has copies kept, deleted ones included — they are marked, and they come back exactly the same way. On the right are its copies by date and the text of whichever you pick, so you can be sure you are taking the right one. &quot;Restore this copy&quot; writes it back into the note.&lt;/p&gt;
+&lt;p&gt;Restoring destroys nothing. What the note says right now is kept as another copy first, so a restore can itself be undone. A note that is gone altogether is written back where it used to live.&lt;/p&gt;
+&lt;p&gt;The copies are ordinary text files — no database, no format of our own. They sit in a &quot;.furynotes-history&quot; folder beside your notes and mirror them: &quot;Work\ideas.md&quot; has its copies in &quot;.furynotes-history\Work\ideas.md\&quot;, one file per copy, named by the date and time. Explorer and Notepad open them; FuryNotes is not needed to read them. Same rule as the notes themselves being plain .md files: a lifebelt only one program can open is a poor lifebelt.&lt;/p&gt;
+&lt;p&gt;Twenty copies of each note are kept, and older ones drop off as new ones arrive. A copy identical to the previous one is never written — change nothing and nothing is put aside. A renamed or moved note takes its copies with it.&lt;/p&gt;
+&lt;p&gt;This does not replace the Recycle Bin. Deleting still sends the file itself to the Windows Recycle Bin, and that is the first place to look. The copies are for the day the Bin has been emptied.&lt;/p&gt;
+&lt;p&gt;All of it can be switched off: settings → &quot;Keep earlier copies of the text&quot;. It is on as the program ships, because a safety net nobody switched on is not a safety net.&lt;/p&gt;
+&lt;h3&gt;Search finds a note by its name, not only by its text.&lt;/h3&gt;
+&lt;p&gt;Ctrl+F now matches what a note is called as well. Those matches come first, on a row of their own: the name itself is highlighted, and a line of the note is shown underneath for context. Enter opens it at the top and highlights nothing — what matched was not a word inside the note but what the note is called.&lt;/p&gt;
+&lt;p&gt;There is nothing to switch: names and text are always searched together. A note still on its date-stamped filename is called by its first line, in the tree and in the search alike, so looking for that finds it either way.&lt;/p&gt;
+&lt;p&gt;A disagreement was fixed on the way. The search used to label a result with the note's first line even when the note had been given a name — a note called &quot;Shopping&quot; read as &quot;Shopping&quot; in the tree and as its first line in the search. Both lists now call it the same thing.&lt;/p&gt;
+&lt;h3&gt;Renaming, with a double click.&lt;/h3&gt;
+&lt;p&gt;Double-click a note and its name opens for editing right there in the row. Enter keeps the new name, Esc leaves it as it was. F2 and right-click → &quot;Rename&quot; do the same thing, for a folder as well: a folder was already edited in its row while a note needed a separate little window, which made the commoner of the two the slower one.&lt;/p&gt;
+&lt;p&gt;Double-clicking a folder still opens and closes it — that gesture is taken there and stays as it was. Rename a folder with F2 or the menu.&lt;/p&gt;
+&lt;p&gt;A rename still carries the pin, favourite, colour and icon over to the new name — and now the kept copies of the text as well.&lt;/p&gt;
+&lt;h3&gt;A link says how to open it.&lt;/h3&gt;
+&lt;p&gt;A link opens on Ctrl+click. It always did, but there was nowhere to learn that: the address is hidden, so on screen a link is just a coloured word. The person who built a page of local links concluded they simply did not work.&lt;/p&gt;
+&lt;p&gt;Now: rest the pointer on a link and a tooltip shows where it points and reminds you about Ctrl+click. Or right-click it — &quot;Open link&quot; is the first thing on the menu, above Cut.&lt;/p&gt;
+&lt;h3&gt;Fixed: stars inside a link.&lt;/h3&gt;
+&lt;p&gt;Ctrl+B on a word inside a link wrote two pairs of stars, and they stayed there in the middle of the line — the word never came out bold. And if you started removing them by hand it was easy to catch the closing bracket, at which point the link stopped being a link and its address showed up in plain sight.&lt;/p&gt;
+&lt;p&gt;The cause was that a link swallowed its own label whole, so formatting inside it was not recognised at all. It is now: Ctrl+B, Ctrl+I and Ctrl+Shift+X work on a link's words like anywhere else, and the stars hide themselves as usual. The address is still protected — underscores and stars inside a path do not format anything.&lt;/p&gt;
+&lt;h3&gt;Smaller things.&lt;/h3&gt;
+&lt;p&gt;Renaming a folder no longer breaks Favourites for the notes inside it. Before, those shortcuts pointed at nothing afterwards and quietly dropped off the list.&lt;/p&gt;
+&lt;p&gt;The manual (docs\manual) has been updated: a new &quot;Note history&quot; section, additions to &quot;Links&quot;, &quot;Search&quot; and &quot;Renaming&quot;, and a 1.3.0 card in &quot;What's new&quot;.&lt;/p&gt;" data-ru="&lt;p&gt;Почти весь этот выпуск вырос из одного письма. Человек собрал в заметке список ссылок на файлы у себя на диске, наткнулся на несколько шероховатостей и написал о них. Ниже — что из этого получилось.&lt;/p&gt;
+&lt;h3&gt;Программа хранит прежние версии текста.&lt;/h3&gt;
+&lt;p&gt;Заметка здесь сохраняется сама, поэтому вопроса «а я сохранил?» не бывает. Но ровно по этой же причине не бывает и несохранённой версии, к которой можно откатиться: удалили абзац, отвлеклись на секунду — и в файле его уже нет, а закрыли программу — вместе с ней ушёл и стек отмены. Теперь FuryNotes тихо откладывает копии текста.&lt;/p&gt;
+&lt;p&gt;Когда снимается копия: — перед тем как вы начнёте править заметку. Первое нажатие после её открытия — последний момент, когда старый текст ещё где-то есть, тогда копия и делается. Просто открыть и почитать заметку — не копирует ничего, иначе один проход по библиотеке оставлял бы копию всего прочитанного; — пока вы пишете — не чаще одной копии в десять минут; — в момент удаления заметки, независимо от времени. Удаляете папку — снимается копия каждой заметки внутри.&lt;/p&gt;
+&lt;p&gt;Как вернуть: правая кнопка на любой заметке или папке в дереве → «History…». Слева — все заметки, у которых есть копии, в том числе удалённые: они помечены и восстанавливаются точно так же. Справа — их копии по датам и текст выбранной, чтобы можно было убедиться, что берёте нужную. Кнопка «Restore this copy» записывает её обратно в заметку.&lt;/p&gt;
+&lt;p&gt;Восстановление ничего не уничтожает. То, что в заметке сейчас, сначала откладывается ещё одной копией, поэтому откатить можно и сам откат. Заметка, которой уже нет, записывается туда, где она жила.&lt;/p&gt;
+&lt;p&gt;Копии — обычные текстовые файлы, не база и не какой-то свой формат. Лежат в папке «.furynotes-history» рядом с вашими заметками и повторяют их расположение: у «Работа\идеи.md» копии лежат в «.furynotes-history\Работа\идеи.md\», по одному файлу на копию, имя — дата и время. Их открывает Проводник и блокнот; FuryNotes для этого не нужен. Это то же правило, по которому сами заметки — обычные .md: спасательный круг, который умеет открыть только одна программа, — плохой круг.&lt;/p&gt;
+&lt;p&gt;Хранится двадцать копий на заметку, лишние вытесняются новыми. Копия, совпадающая с предыдущей, не пишется никогда — если вы ничего не меняли, ничего и не откладывается. Переименованная или перенесённая заметка забирает свои копии с собой.&lt;/p&gt;
+&lt;p&gt;Это не замена Корзине. Удаление по-прежнему отправляет сам файл в Корзину Windows, и смотреть надо сначала туда. А копия — на случай, что Корзину уже очистили.&lt;/p&gt;
+&lt;p&gt;Всё это выключается: настройки → «Keep earlier copies of the text». По умолчанию включено: страховка, которую никто не включил, — не страховка.&lt;/p&gt;
+&lt;h3&gt;Поиск находит заметку по имени, а не только по тексту.&lt;/h3&gt;
+&lt;p&gt;Ctrl+F теперь ищет и по тому, как заметка называется. Такие совпадения идут первыми, отдельной строкой: подсвечено само название, а под ним для контекста показана строка из заметки. Enter открывает её сверху и ничего не выделяет — нашлось-то не слово внутри, а то, как заметка называется.&lt;/p&gt;
+&lt;p&gt;Переключать нечего: имя и текст ищутся всегда вместе. Заметка, оставшаяся с именем-датой, называется по своей первой строке — и в дереве, и в поиске, — так что по ней она найдётся в любом случае.&lt;/p&gt;
+&lt;p&gt;Заодно исправилось расхождение: раньше поиск подписывал результат первой строкой текста, даже если заметке было задано имя. Заметка, названная «Покупки», в дереве значилась «Покупки», а в поиске — своей первой строкой. Теперь оба списка называют её одинаково.&lt;/p&gt;
+&lt;h3&gt;Переименование — двойным кликом.&lt;/h3&gt;
+&lt;p&gt;Двойной клик по заметке открывает её имя на правку прямо в строке дерева. Enter оставляет новое имя, Esc — прежнее. F2 и правая кнопка → «Переименовать» делают то же самое, и для папки тоже: раньше папка правилась в строке, а заметка требовала отдельного окошка — то есть более частое действие было и более долгим.&lt;/p&gt;
+&lt;p&gt;Двойной клик по папке по-прежнему раскрывает и сворачивает её: этот жест там уже занят и остаётся как был. Папку переименовывают через F2 или меню.&lt;/p&gt;
+&lt;p&gt;Переименование, как и раньше, переносит на новое имя закрепление, избранное, цвет и значок — а теперь ещё и сохранённые копии текста.&lt;/p&gt;
+&lt;h3&gt;Ссылка сама говорит, как её открыть.&lt;/h3&gt;
+&lt;p&gt;Ссылка открывается по Ctrl+клик — так было и раньше, но узнать об этом было негде: адрес спрятан, и на экране ссылка выглядит просто цветным словом. Человек, собравший из локальных ссылок страницу-навигацию, решил, что они просто не работают.&lt;/p&gt;
+&lt;p&gt;Теперь: задержите на ссылке курсор — подсказка покажет, куда она ведёт, и напомнит про Ctrl+клик. Либо щёлкните правой кнопкой — «Open link» стоит первым пунктом меню, выше «Вырезать».&lt;/p&gt;
+&lt;h3&gt;Исправлено: звёздочки внутри ссылки.&lt;/h3&gt;
+&lt;p&gt;Ctrl+B на слове внутри ссылки писал две пары звёздочек, и они так и оставались видны посреди строки — слово жирным не становилось. А если начать убирать их вручную, легко было задеть закрывающую скобку, и тогда ссылка переставала быть ссылкой и наружу вылезал её адрес.&lt;/p&gt;
+&lt;p&gt;Причина была в том, что ссылка «проглатывала» собственную подпись целиком и оформление внутри неё не распознавалось вовсе. Теперь распознаётся: Ctrl+B, Ctrl+I и Ctrl+Shift+X работают на словах ссылки как на любых других, звёздочки прячутся как везде. Сам адрес при этом по-прежнему защищён — подчёркивания и звёздочки внутри пути ничего не «оформляют».&lt;/p&gt;
+&lt;h3&gt;Мелочи.&lt;/h3&gt;
+&lt;p&gt;Переименование папки больше не рвёт «Избранное» у заметок внутри неё: раньше ярлыки после этого указывали в никуда и тихо пропадали из списка.&lt;/p&gt;
+&lt;p&gt;Справка (docs\manual) обновлена: новый раздел «История заметок», дополнены «Ссылки», «Поиск» и «Переименование», в «Что нового» добавлена карточка версии 1.3.0.&lt;/p&gt;"><p>Nearly all of this release grew out of one message. Someone built a note full of links to files on their own disk, ran into a few rough edges, and wrote in about them. Here is what came of it.</p>
+<h3>The program keeps earlier versions of your text.</h3>
+<p>A note here saves itself, so there is never a "did I save that?". For the same reason there was never an unsaved version to fall back on either: delete a paragraph, look away for a second, and it is gone from the file; close the program and the undo stack goes with it. FuryNotes now quietly puts copies of the text aside.</p>
+<p>When a copy is taken: — before you start changing a note. The first keystroke after you open it is the last moment the old text exists anywhere, so that is when the copy is made. Merely opening a note and reading it copies nothing — otherwise one pass through the library would leave a copy of everything you had glanced at; — while you write — at most one copy every ten minutes; — the moment a note is deleted, whatever the clock says. Delete a folder and every note inside it is copied.</p>
+<p>Getting one back: right-click any note or folder in the tree → "History…". On the left is every note that has copies kept, deleted ones included — they are marked, and they come back exactly the same way. On the right are its copies by date and the text of whichever you pick, so you can be sure you are taking the right one. "Restore this copy" writes it back into the note.</p>
+<p>Restoring destroys nothing. What the note says right now is kept as another copy first, so a restore can itself be undone. A note that is gone altogether is written back where it used to live.</p>
+<p>The copies are ordinary text files — no database, no format of our own. They sit in a ".furynotes-history" folder beside your notes and mirror them: "Work\ideas.md" has its copies in ".furynotes-history\Work\ideas.md\", one file per copy, named by the date and time. Explorer and Notepad open them; FuryNotes is not needed to read them. Same rule as the notes themselves being plain .md files: a lifebelt only one program can open is a poor lifebelt.</p>
+<p>Twenty copies of each note are kept, and older ones drop off as new ones arrive. A copy identical to the previous one is never written — change nothing and nothing is put aside. A renamed or moved note takes its copies with it.</p>
+<p>This does not replace the Recycle Bin. Deleting still sends the file itself to the Windows Recycle Bin, and that is the first place to look. The copies are for the day the Bin has been emptied.</p>
+<p>All of it can be switched off: settings → "Keep earlier copies of the text". It is on as the program ships, because a safety net nobody switched on is not a safety net.</p>
+<h3>Search finds a note by its name, not only by its text.</h3>
+<p>Ctrl+F now matches what a note is called as well. Those matches come first, on a row of their own: the name itself is highlighted, and a line of the note is shown underneath for context. Enter opens it at the top and highlights nothing — what matched was not a word inside the note but what the note is called.</p>
+<p>There is nothing to switch: names and text are always searched together. A note still on its date-stamped filename is called by its first line, in the tree and in the search alike, so looking for that finds it either way.</p>
+<p>A disagreement was fixed on the way. The search used to label a result with the note's first line even when the note had been given a name — a note called "Shopping" read as "Shopping" in the tree and as its first line in the search. Both lists now call it the same thing.</p>
+<h3>Renaming, with a double click.</h3>
+<p>Double-click a note and its name opens for editing right there in the row. Enter keeps the new name, Esc leaves it as it was. F2 and right-click → "Rename" do the same thing, for a folder as well: a folder was already edited in its row while a note needed a separate little window, which made the commoner of the two the slower one.</p>
+<p>Double-clicking a folder still opens and closes it — that gesture is taken there and stays as it was. Rename a folder with F2 or the menu.</p>
+<p>A rename still carries the pin, favourite, colour and icon over to the new name — and now the kept copies of the text as well.</p>
+<h3>A link says how to open it.</h3>
+<p>A link opens on Ctrl+click. It always did, but there was nowhere to learn that: the address is hidden, so on screen a link is just a coloured word. The person who built a page of local links concluded they simply did not work.</p>
+<p>Now: rest the pointer on a link and a tooltip shows where it points and reminds you about Ctrl+click. Or right-click it — "Open link" is the first thing on the menu, above Cut.</p>
+<h3>Fixed: stars inside a link.</h3>
+<p>Ctrl+B on a word inside a link wrote two pairs of stars, and they stayed there in the middle of the line — the word never came out bold. And if you started removing them by hand it was easy to catch the closing bracket, at which point the link stopped being a link and its address showed up in plain sight.</p>
+<p>The cause was that a link swallowed its own label whole, so formatting inside it was not recognised at all. It is now: Ctrl+B, Ctrl+I and Ctrl+Shift+X work on a link's words like anywhere else, and the stars hide themselves as usual. The address is still protected — underscores and stars inside a path do not format anything.</p>
+<h3>Smaller things.</h3>
+<p>Renaming a folder no longer breaks Favourites for the notes inside it. Before, those shortcuts pointed at nothing afterwards and quietly dropped off the list.</p>
+<p>The manual (docs\manual) has been updated: a new "Note history" section, additions to "Links", "Search" and "Renaming", and a 1.3.0 card in "What's new".</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
+          
+          <div class="news-actions">
+            
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
+              </a>
+              
+              <a class="btn-news secondary" href="FuryNotes-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
+              
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/Poster_FuryNotes_002.jpg" alt="FuryNotes"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
       <div class="news-item is-new">
         <div class="news-card clickable" data-href="Hotkey_Navigator-versions.html">
           <div class="news-body">
@@ -624,7 +746,7 @@
           
           <div class="news-actions">
             
-              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
                 <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
@@ -805,7 +927,7 @@
           
           <div class="news-actions">
             
-              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
                 <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
@@ -898,7 +1020,7 @@
           
           <div class="news-actions">
             
-              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
                 <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
@@ -1001,7 +1123,7 @@
           
           <div class="news-actions">
             
-              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
                 <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
@@ -1045,7 +1167,7 @@
           
           <div class="news-actions">
             
-              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
                 <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
@@ -1089,7 +1211,7 @@
           
           <div class="news-actions">
             
-              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
                 <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
@@ -1133,7 +1255,7 @@
           
           <div class="news-actions">
             
-              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
                 <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>
@@ -2462,10 +2584,7 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampNewsDesc);
 
   // Переключение языка меняет текст — значит, и высоту: меряем заново.
-  ['lang-en', 'lang-ru'].forEach(function (id) {
-    var button = document.getElementById(id);
-    if (button) button.addEventListener('click', clampNewsDesc);
-  });
+  document.addEventListener('langchange', clampNewsDesc);
 </script>
 <script>
 /* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
@@ -2485,6 +2604,10 @@ function setLang(lang) {
   if (en) en.className = lang === 'en' ? 'on' : '';
   if (ru) ru.className = lang === 'ru' ? 'on' : '';
   try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
 }
 (function () {
   var saved = null;

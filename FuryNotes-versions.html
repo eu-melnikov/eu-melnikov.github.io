@@ -311,6 +311,36 @@
   .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
   .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
 
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
   .ver-toggle {
     margin-top: 18px; background: none; border: none; cursor: pointer;
     font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
@@ -381,7 +411,7 @@
   <!-- ── Hero ── -->
   <div class="hero">
     <div class="hero-meta">
-      <b>v1.2.0</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>47 Mb
+      <b>v1.3.0</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>47 Mb
     </div>
 
     <h1><strong>FuryNotes</strong></h1>
@@ -399,7 +429,7 @@
       
       
       
-      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-08-18</span>
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-08-29</span>
       
     </div>
   </div>
@@ -425,27 +455,75 @@
   
   <div class="section">
     <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
-    <div class="prose" data-en="&lt;p&gt;FuryNotes is a simple notepad for Windows, much like the built-in Notepad, but built around one well-considered idea: it takes the eternal hassle out of saving.&lt;/p&gt;
-&lt;h3&gt;The problem&lt;/h3&gt;
-&lt;p&gt;When you need to jot something down quickly, an ordinary notepad makes you — every single time — save the file, come up with a name for it, find a spot for it on disk, and then remember that spot later. Until Windows is shut down, unsaved text is also at risk of being lost. For someone who writes things down often, that's a whole saga over nothing.&lt;/p&gt;
-&lt;h3&gt;How FuryNotes solves it&lt;/h3&gt;
-&lt;p&gt;You launch the program, click New note and start typing. The note already exists as a real file on disk and saves itself as you type. No Save button, no &quot;where should I put it?&quot; dialog. Everything lives in one working folder that you choose in the settings.&lt;/p&gt;
-&lt;h3&gt;Your notes stay yours&lt;/h3&gt;
-&lt;p&gt;The notes are ordinary text files (Markdown in the .md format). You can see them in Explorer, open them in Notepad, on your phone, anywhere. The program doesn't lock your notes away in its own closed format — they stay readable even without FuryNotes.&lt;/p&gt;" data-ru="&lt;p&gt;FuryNotes — простой блокнот для Windows, очень похожий на встроенный «Блокнот», но построенный вокруг одной продуманной идеи: он снимает вечную возню с сохранением.&lt;/p&gt;
-&lt;h3&gt;В чём проблема&lt;/h3&gt;
-&lt;p&gt;Когда нужно быстро что-то записать, обычный блокнот каждый раз заставляет сохранить файл, придумать ему имя, найти для него место на диске, а потом это место вспомнить. Пока Windows не выключена, несохранённый текст ещё и рискует потеряться. Для того, кто записывает часто, это целая сага на ровном месте.&lt;/p&gt;
-&lt;h3&gt;Как это решает FuryNotes&lt;/h3&gt;
-&lt;p&gt;Запускаете программу, нажимаете «Новая заметка» и начинаете печатать. Заметка уже существует как настоящий файл на диске и сохраняется сама по мере набора. Ни кнопки «Сохранить», ни вопроса «а куда это положить?». Всё лежит в одной рабочей папке, которую вы выбираете в настройках.&lt;/p&gt;
-&lt;h3&gt;Заметки остаются вашими&lt;/h3&gt;
-&lt;p&gt;Заметки — это обычные текстовые файлы (Markdown в формате .md). Их видно в проводнике, они открываются в блокноте, на телефоне, где угодно. Программа не запирает записи в собственном закрытом формате — они читаются и без FuryNotes.&lt;/p&gt;">
-      <p>FuryNotes is a simple notepad for Windows, much like the built-in Notepad, but built around one well-considered idea: it takes the eternal hassle out of saving.</p>
-<h3>The problem</h3>
-<p>When you need to jot something down quickly, an ordinary notepad makes you — every single time — save the file, come up with a name for it, find a spot for it on disk, and then remember that spot later. Until Windows is shut down, unsaved text is also at risk of being lost. For someone who writes things down often, that's a whole saga over nothing.</p>
-<h3>How FuryNotes solves it</h3>
-<p>You launch the program, click New note and start typing. The note already exists as a real file on disk and saves itself as you type. No Save button, no "where should I put it?" dialog. Everything lives in one working folder that you choose in the settings.</p>
-<h3>Your notes stay yours</h3>
-<p>The notes are ordinary text files (Markdown in the .md format). You can see them in Explorer, open them in Notepad, on your phone, anywhere. The program doesn't lock your notes away in its own closed format — they stay readable even without FuryNotes.</p>
+    <div class="prose clampable" data-en="&lt;p&gt;A notepad for Windows with no &quot;where do I save this?&quot; question. A note becomes a real file on disk the moment you create it, and writes itself from then on. There is no &quot;save changes?&quot; dialog in the program — and no format of its own, no account and no cloud either: your notes sit as ordinary text files in a folder you chose.&lt;/p&gt;
+&lt;h3&gt;There is nothing to save&lt;/h3&gt;
+&lt;p&gt;The file exists before the first letter does. After that the text reaches it half a second after you stop typing, and again when you leave the window, when you close the program, and when Windows shuts down. There is no Save button and there will not be one: there is nothing to save, it is already saved.&lt;/p&gt;
+&lt;h3&gt;Notes are just files&lt;/h3&gt;
+&lt;p&gt;Ordinary .md and .txt in ordinary folders. Explorer shows them; Notepad, Obsidian, GitHub and your phone open them. Move the folder to another disk or another computer and everything moves with it. Uninstall the program and the notes stay, because they never belonged to it in the first place.&lt;/p&gt;
+&lt;h3&gt;The formatting shows, the marks do not&lt;/h3&gt;
+&lt;p&gt;Markdown, written into the text of the note itself — the same dialect Windows 11 Notepad writes. But the stars and hashes are hidden: &lt;strong&gt;bold&lt;/strong&gt; looks bold, a heading looks like a heading, and a link shows only its words. What stays in the file is plain text, byte for byte what you see on screen. Bold, italic, strikethrough, quote, monospace, six heading levels, numbered and bulleted lists, and today's date on one shortcut.&lt;/p&gt;
+&lt;h3&gt;Links, including to your own disk&lt;/h3&gt;
+&lt;p&gt;A link goes to a web page or to a file or folder on your own computer, and Ctrl+click opens it. Rest the pointer on one and a tooltip says where it points and how to follow it. A file inside your notes folder is remembered by a relative path, so a note and its files travel together. Before running a program — an .exe, .bat or .lnk — FuryNotes asks first, and that prompt can be switched off.&lt;/p&gt;
+&lt;h3&gt;A tree where things are findable&lt;/h3&gt;
+&lt;p&gt;Folders, a pin that lifts a note to the top of its own folder, a Favourites list at the very top, and hand-made order by dragging rows. A row can be given one of eight colours, and a note one of 51 icons with a neon colour of its own: in a column of similar names the eye finds a shape faster than it reads words. Renaming is a double click, right there in the row.&lt;/p&gt;
+&lt;h3&gt;One search across every note&lt;/h3&gt;
+&lt;p&gt;A single box searches the text of every note and their names at once, answering as you type. Matches on a name come first, on a row of their own. Enter opens the note with the word already highlighted, so you never have to find it a second time by eye.&lt;/p&gt;
+&lt;h3&gt;Version history, the last line of defence&lt;/h3&gt;
+&lt;p&gt;Saving itself takes away the &quot;did I save that?&quot; question, and with it the version you could have gone back to. So the program puts copies of the text aside: before you start changing a note, then at most one every ten minutes, and always the moment a note is deleted. Twenty copies per note are kept, as ordinary text files beside your notes. Right-click any row in the tree, choose History, and every copy is there to read and to restore — copies of deleted notes included. Restoring destroys nothing: what the note says now is kept as another copy first.&lt;/p&gt;
+&lt;h3&gt;A theme built from two colours&lt;/h3&gt;
+&lt;p&gt;You pick a background and an accent; the program works out the rest — panels, borders, hover, selection and the three grades of text. A background lighter than mid-grey turns the whole theme light, with no separate switch. Colours and the font apply to the live window while the settings dialog is still open.&lt;/p&gt;
+&lt;h3&gt;What it does not do&lt;/h3&gt;
+&lt;p&gt;It does not sync and it keeps nothing of yours: no account, no cloud, no network — the program never goes online at all, apart from a &quot;check for a newer version&quot; button that simply opens a page in your browser. It does not encrypt notes or put a password on them. It does not show several notes at once: there are no tabs, one note to a window. It does not watch your files — edit a note in another editor while it is open here and the program will not notice, which is why only one copy of it runs at a time. It has no underline and no hidden text: Markdown has neither, and inventing a mark for them would produce a file only this program could read. It runs on Windows only.&lt;/p&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;A note is a file on disk from the first second, saved half a second after you stop typing&lt;/li&gt;&lt;li&gt;Ordinary .md and .txt in ordinary folders — no format of its own, no database&lt;/li&gt;&lt;li&gt;Markdown in the text with the marks hidden: bold, italic, strikethrough, quote, monospace, six heading levels, lists&lt;/li&gt;&lt;li&gt;Links to web pages and to files on disk, Ctrl+click, with a prompt before running a program&lt;/li&gt;&lt;li&gt;Tree: folders, pins, favourites, hand-made order, 8 row colours, 51 icons and 10 neon colours for them&lt;/li&gt;&lt;li&gt;Search across the text and the names of every note at once, landing on the word found&lt;/li&gt;&lt;li&gt;Version history: a copy before editing, one every ten minutes, one at deletion — 20 per note, with a restore window&lt;/li&gt;&lt;li&gt;Deleting goes to the Windows Recycle Bin, not past it&lt;/li&gt;&lt;li&gt;A theme from two colours, the light one derived; English and Russian interface&lt;/li&gt;&lt;li&gt;Windows 10 and 11 (64-bit), no installer, no network, no administrator rights&lt;/li&gt;&lt;li&gt;A 47 Mb archive — unzip and run&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;Блокнот для Windows, у которого нет вопроса «куда сохранить?». Заметка становится настоящим файлом на диске в тот момент, когда её создали, и дальше пишется сама. Диалога «сохранить изменения?» в программе не существует — как и своего формата, аккаунта и облака: ваши заметки лежат обычными текстовыми файлами в папке, которую выбрали вы.&lt;/p&gt;
+&lt;h3&gt;Сохранять нечего&lt;/h3&gt;
+&lt;p&gt;Файл появляется на диске раньше первой буквы. Дальше текст уходит в него через полсекунды после того, как вы перестали печатать, а также при уходе из окна, при закрытии программы и при выключении Windows. Кнопки «Сохранить» здесь нет и не будет: сохранять нечего, всё уже сохранено.&lt;/p&gt;
+&lt;h3&gt;Заметки — это просто файлы&lt;/h3&gt;
+&lt;p&gt;Обычные .md и .txt в обычных папках. Их видно в Проводнике, их открывает блокнот, Obsidian, GitHub и телефон. Перенесите папку на другой диск или на другой компьютер — вместе с ней переедет всё. Удалите программу — заметки останутся, потому что они никогда ей и не принадлежали.&lt;/p&gt;
+&lt;h3&gt;Разметка видна, а значков не видно&lt;/h3&gt;
+&lt;p&gt;Оформление — Markdown прямо в тексте заметки, ровно тот же, что пишет блокнот Windows 11. Но звёздочки и решётки скрыты: &lt;strong&gt;жирное&lt;/strong&gt; выглядит жирным, заголовок — заголовком, у ссылки видны только слова. При этом в файле остаётся обычный текст, побайтно тот же, что вы видите на экране. Жирный, курсив, зачёркнутый, цитата, моноширинный, шесть уровней заголовков, списки нумерованные и маркированные, и сегодняшняя дата одним сочетанием клавиш.&lt;/p&gt;
+&lt;h3&gt;Ссылки, в том числе на ваш собственный диск&lt;/h3&gt;
+&lt;p&gt;Ссылка ведёт на страницу или на файл и папку у вас на компьютере — Ctrl+клик открывает. Наведите указатель, и подсказка скажет, куда ведёт ссылка и каким жестом она открывается. Файл внутри папки заметок запоминается относительным путём, поэтому связка «заметка и её файлы» переезжает целиком. Перед запуском программы — .exe, .bat, .lnk — программа спрашивает подтверждение, и этот вопрос можно выключить.&lt;/p&gt;
+&lt;h3&gt;Дерево, в котором видно нужное&lt;/h3&gt;
+&lt;p&gt;Папки, закрепление заметки в начале своей папки, Избранное отдельным списком наверху, ручной порядок строк перетаскиванием. Строке можно дать один из восьми цветов, а заметке — один из 51 значка и неоновый цвет для него: в столбце похожих названий глаз находит форму быстрее, чем читает слова. Переименование — двойным кликом прямо в строке.&lt;/p&gt;
+&lt;h3&gt;Поиск по всем заметкам сразу&lt;/h3&gt;
+&lt;p&gt;Одно поле ищет и по тексту всех заметок, и по их названиям, показывая результат по мере набора. Совпадения по имени идут первыми, отдельной строкой. Enter открывает заметку и сразу выделяет в ней найденное слово, так что искать второй раз глазами не приходится.&lt;/p&gt;
+&lt;h3&gt;История версий как последняя страховка&lt;/h3&gt;
+&lt;p&gt;Автосохранение снимает вопрос «я сохранил?» и вместе с ним — возможность откатиться. Поэтому программа откладывает копии текста: перед тем как вы начнёте править заметку, затем не чаще одной в десять минут, и обязательно в момент удаления. Хранится двадцать копий на заметку, обычными текстовыми файлами рядом с вашими заметками. Правая кнопка на любой строке дерева, «History…» — и любую копию видно, можно прочитать и вернуть, включая копии удалённых заметок. Восстановление ничего не уничтожает: текущий текст сначала откладывается ещё одной копией.&lt;/p&gt;
+&lt;h3&gt;Тема из двух цветов&lt;/h3&gt;
+&lt;p&gt;Задаются фон и акцент, всё остальное программа выводит сама: панели, границы, наведение, выделение и три градации текста. Фон светлее середины — и тема целиком становится светлой, без отдельного переключателя. Цвета и шрифт применяются сразу, пока диалог настроек открыт.&lt;/p&gt;
+&lt;h3&gt;Чего программа не делает&lt;/h3&gt;
+&lt;p&gt;Не синхронизирует и не хранит ничего у себя: нет аккаунта, нет облака, нет сети — программа вообще не выходит в интернет, кроме кнопки «проверить версию», которая просто открывает страницу в браузере. Не шифрует заметки и не ставит на них пароль. Не показывает несколько заметок одновременно — вкладок нет, одна заметка в окне. Не следит за файлами: если поправить заметку в другом редакторе, пока она открыта здесь, программа этого не заметит — поэтому копия и запускается только одна. Не умеет подчёркивание и «скрытый текст»: в Markdown их не существует, а выдумывать свой значок означало бы получить файл, который читается только этой программой. Работает только на Windows.&lt;/p&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Заметка становится файлом на диске сразу, автосохранение через полсекунды после набора&lt;/li&gt;&lt;li&gt;Формат — обычные .md и .txt в обычных папках, без своего формата и без базы&lt;/li&gt;&lt;li&gt;Markdown в тексте со скрытыми значками: жирный, курсив, зачёркнутый, цитата, моноширинный, шесть уровней заголовков, списки&lt;/li&gt;&lt;li&gt;Ссылки на страницы и на файлы на диске, Ctrl+клик, подтверждение перед запуском программ&lt;/li&gt;&lt;li&gt;Дерево: папки, закрепление, Избранное, ручной порядок, 8 цветов строк, 51 значок и 10 неоновых цветов к ним&lt;/li&gt;&lt;li&gt;Поиск по тексту и по именам всех заметок сразу, с переходом на найденное слово&lt;/li&gt;&lt;li&gt;История версий: копия перед правкой, раз в десять минут и при удалении, 20 на заметку, с окном восстановления&lt;/li&gt;&lt;li&gt;Удаление — в Корзину Windows, а не мимо неё&lt;/li&gt;&lt;li&gt;Тема из двух цветов, светлая выводится сама; интерфейс русский и английский&lt;/li&gt;&lt;li&gt;Windows 10 и 11 (64 бита), без установки, без сети и без прав администратора&lt;/li&gt;&lt;li&gt;Архив 47 Мб, распаковал и запустил&lt;/li&gt;&lt;/ul&gt;">
+      <p>A notepad for Windows with no "where do I save this?" question. A note becomes a real file on disk the moment you create it, and writes itself from then on. There is no "save changes?" dialog in the program — and no format of its own, no account and no cloud either: your notes sit as ordinary text files in a folder you chose.</p>
+<h3>There is nothing to save</h3>
+<p>The file exists before the first letter does. After that the text reaches it half a second after you stop typing, and again when you leave the window, when you close the program, and when Windows shuts down. There is no Save button and there will not be one: there is nothing to save, it is already saved.</p>
+<h3>Notes are just files</h3>
+<p>Ordinary .md and .txt in ordinary folders. Explorer shows them; Notepad, Obsidian, GitHub and your phone open them. Move the folder to another disk or another computer and everything moves with it. Uninstall the program and the notes stay, because they never belonged to it in the first place.</p>
+<h3>The formatting shows, the marks do not</h3>
+<p>Markdown, written into the text of the note itself — the same dialect Windows 11 Notepad writes. But the stars and hashes are hidden: <strong>bold</strong> looks bold, a heading looks like a heading, and a link shows only its words. What stays in the file is plain text, byte for byte what you see on screen. Bold, italic, strikethrough, quote, monospace, six heading levels, numbered and bulleted lists, and today's date on one shortcut.</p>
+<h3>Links, including to your own disk</h3>
+<p>A link goes to a web page or to a file or folder on your own computer, and Ctrl+click opens it. Rest the pointer on one and a tooltip says where it points and how to follow it. A file inside your notes folder is remembered by a relative path, so a note and its files travel together. Before running a program — an .exe, .bat or .lnk — FuryNotes asks first, and that prompt can be switched off.</p>
+<h3>A tree where things are findable</h3>
+<p>Folders, a pin that lifts a note to the top of its own folder, a Favourites list at the very top, and hand-made order by dragging rows. A row can be given one of eight colours, and a note one of 51 icons with a neon colour of its own: in a column of similar names the eye finds a shape faster than it reads words. Renaming is a double click, right there in the row.</p>
+<h3>One search across every note</h3>
+<p>A single box searches the text of every note and their names at once, answering as you type. Matches on a name come first, on a row of their own. Enter opens the note with the word already highlighted, so you never have to find it a second time by eye.</p>
+<h3>Version history, the last line of defence</h3>
+<p>Saving itself takes away the "did I save that?" question, and with it the version you could have gone back to. So the program puts copies of the text aside: before you start changing a note, then at most one every ten minutes, and always the moment a note is deleted. Twenty copies per note are kept, as ordinary text files beside your notes. Right-click any row in the tree, choose History, and every copy is there to read and to restore — copies of deleted notes included. Restoring destroys nothing: what the note says now is kept as another copy first.</p>
+<h3>A theme built from two colours</h3>
+<p>You pick a background and an accent; the program works out the rest — panels, borders, hover, selection and the three grades of text. A background lighter than mid-grey turns the whole theme light, with no separate switch. Colours and the font apply to the live window while the settings dialog is still open.</p>
+<h3>What it does not do</h3>
+<p>It does not sync and it keeps nothing of yours: no account, no cloud, no network — the program never goes online at all, apart from a "check for a newer version" button that simply opens a page in your browser. It does not encrypt notes or put a password on them. It does not show several notes at once: there are no tabs, one note to a window. It does not watch your files — edit a note in another editor while it is open here and the program will not notice, which is why only one copy of it runs at a time. It has no underline and no hidden text: Markdown has neither, and inventing a mark for them would produce a file only this program could read. It runs on Windows only.</p>
+<h3>At a glance</h3>
+<ul><li>A note is a file on disk from the first second, saved half a second after you stop typing</li><li>Ordinary .md and .txt in ordinary folders — no format of its own, no database</li><li>Markdown in the text with the marks hidden: bold, italic, strikethrough, quote, monospace, six heading levels, lists</li><li>Links to web pages and to files on disk, Ctrl+click, with a prompt before running a program</li><li>Tree: folders, pins, favourites, hand-made order, 8 row colours, 51 icons and 10 neon colours for them</li><li>Search across the text and the names of every note at once, landing on the word found</li><li>Version history: a copy before editing, one every ten minutes, one at deletion — 20 per note, with a restore window</li><li>Deleting goes to the Windows Recycle Bin, not past it</li><li>A theme from two colours, the light one derived; English and Russian interface</li><li>Windows 10 and 11 (64-bit), no installer, no network, no administrator rights</li><li>A 47 Mb archive — unzip and run</li></ul>
     </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
   </div>
   
 
@@ -458,7 +536,7 @@
   <div class="section">
     <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
     <div class="specs">
-      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>1.2.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>1.3.0</span></div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Windows</div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free</span></div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN-RU</div></div>
@@ -484,9 +562,109 @@
       
       <div class="ver-row latest">
         <div class="ver-head">
+          <span class="ver-num">1.3.0</span>
+          <span class="ver-date">2026-08-29</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.3.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            47 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Nearly all of this release grew out of one message. Someone built a note full of links to files on their own disk, ran into a few rough edges, and wrote in about them. Here is what came of it.&lt;/p&gt;
+&lt;h3&gt;The program keeps earlier versions of your text.&lt;/h3&gt;
+&lt;p&gt;A note here saves itself, so there is never a &quot;did I save that?&quot;. For the same reason there was never an unsaved version to fall back on either: delete a paragraph, look away for a second, and it is gone from the file; close the program and the undo stack goes with it. FuryNotes now quietly puts copies of the text aside.&lt;/p&gt;
+&lt;p&gt;When a copy is taken: — before you start changing a note. The first keystroke after you open it is the last moment the old text exists anywhere, so that is when the copy is made. Merely opening a note and reading it copies nothing — otherwise one pass through the library would leave a copy of everything you had glanced at; — while you write — at most one copy every ten minutes; — the moment a note is deleted, whatever the clock says. Delete a folder and every note inside it is copied.&lt;/p&gt;
+&lt;p&gt;Getting one back: right-click any note or folder in the tree → &quot;History…&quot;. On the left is every note that has copies kept, deleted ones included — they are marked, and they come back exactly the same way. On the right are its copies by date and the text of whichever you pick, so you can be sure you are taking the right one. &quot;Restore this copy&quot; writes it back into the note.&lt;/p&gt;
+&lt;p&gt;Restoring destroys nothing. What the note says right now is kept as another copy first, so a restore can itself be undone. A note that is gone altogether is written back where it used to live.&lt;/p&gt;
+&lt;p&gt;The copies are ordinary text files — no database, no format of our own. They sit in a &quot;.furynotes-history&quot; folder beside your notes and mirror them: &quot;Work\ideas.md&quot; has its copies in &quot;.furynotes-history\Work\ideas.md\&quot;, one file per copy, named by the date and time. Explorer and Notepad open them; FuryNotes is not needed to read them. Same rule as the notes themselves being plain .md files: a lifebelt only one program can open is a poor lifebelt.&lt;/p&gt;
+&lt;p&gt;Twenty copies of each note are kept, and older ones drop off as new ones arrive. A copy identical to the previous one is never written — change nothing and nothing is put aside. A renamed or moved note takes its copies with it.&lt;/p&gt;
+&lt;p&gt;This does not replace the Recycle Bin. Deleting still sends the file itself to the Windows Recycle Bin, and that is the first place to look. The copies are for the day the Bin has been emptied.&lt;/p&gt;
+&lt;p&gt;All of it can be switched off: settings → &quot;Keep earlier copies of the text&quot;. It is on as the program ships, because a safety net nobody switched on is not a safety net.&lt;/p&gt;
+&lt;h3&gt;Search finds a note by its name, not only by its text.&lt;/h3&gt;
+&lt;p&gt;Ctrl+F now matches what a note is called as well. Those matches come first, on a row of their own: the name itself is highlighted, and a line of the note is shown underneath for context. Enter opens it at the top and highlights nothing — what matched was not a word inside the note but what the note is called.&lt;/p&gt;
+&lt;p&gt;There is nothing to switch: names and text are always searched together. A note still on its date-stamped filename is called by its first line, in the tree and in the search alike, so looking for that finds it either way.&lt;/p&gt;
+&lt;p&gt;A disagreement was fixed on the way. The search used to label a result with the note's first line even when the note had been given a name — a note called &quot;Shopping&quot; read as &quot;Shopping&quot; in the tree and as its first line in the search. Both lists now call it the same thing.&lt;/p&gt;
+&lt;h3&gt;Renaming, with a double click.&lt;/h3&gt;
+&lt;p&gt;Double-click a note and its name opens for editing right there in the row. Enter keeps the new name, Esc leaves it as it was. F2 and right-click → &quot;Rename&quot; do the same thing, for a folder as well: a folder was already edited in its row while a note needed a separate little window, which made the commoner of the two the slower one.&lt;/p&gt;
+&lt;p&gt;Double-clicking a folder still opens and closes it — that gesture is taken there and stays as it was. Rename a folder with F2 or the menu.&lt;/p&gt;
+&lt;p&gt;A rename still carries the pin, favourite, colour and icon over to the new name — and now the kept copies of the text as well.&lt;/p&gt;
+&lt;h3&gt;A link says how to open it.&lt;/h3&gt;
+&lt;p&gt;A link opens on Ctrl+click. It always did, but there was nowhere to learn that: the address is hidden, so on screen a link is just a coloured word. The person who built a page of local links concluded they simply did not work.&lt;/p&gt;
+&lt;p&gt;Now: rest the pointer on a link and a tooltip shows where it points and reminds you about Ctrl+click. Or right-click it — &quot;Open link&quot; is the first thing on the menu, above Cut.&lt;/p&gt;
+&lt;h3&gt;Fixed: stars inside a link.&lt;/h3&gt;
+&lt;p&gt;Ctrl+B on a word inside a link wrote two pairs of stars, and they stayed there in the middle of the line — the word never came out bold. And if you started removing them by hand it was easy to catch the closing bracket, at which point the link stopped being a link and its address showed up in plain sight.&lt;/p&gt;
+&lt;p&gt;The cause was that a link swallowed its own label whole, so formatting inside it was not recognised at all. It is now: Ctrl+B, Ctrl+I and Ctrl+Shift+X work on a link's words like anywhere else, and the stars hide themselves as usual. The address is still protected — underscores and stars inside a path do not format anything.&lt;/p&gt;
+&lt;h3&gt;Smaller things.&lt;/h3&gt;
+&lt;p&gt;Renaming a folder no longer breaks Favourites for the notes inside it. Before, those shortcuts pointed at nothing afterwards and quietly dropped off the list.&lt;/p&gt;
+&lt;p&gt;The manual (docs\manual) has been updated: a new &quot;Note history&quot; section, additions to &quot;Links&quot;, &quot;Search&quot; and &quot;Renaming&quot;, and a 1.3.0 card in &quot;What's new&quot;.&lt;/p&gt;" data-ru="&lt;p&gt;Почти весь этот выпуск вырос из одного письма. Человек собрал в заметке список ссылок на файлы у себя на диске, наткнулся на несколько шероховатостей и написал о них. Ниже — что из этого получилось.&lt;/p&gt;
+&lt;h3&gt;Программа хранит прежние версии текста.&lt;/h3&gt;
+&lt;p&gt;Заметка здесь сохраняется сама, поэтому вопроса «а я сохранил?» не бывает. Но ровно по этой же причине не бывает и несохранённой версии, к которой можно откатиться: удалили абзац, отвлеклись на секунду — и в файле его уже нет, а закрыли программу — вместе с ней ушёл и стек отмены. Теперь FuryNotes тихо откладывает копии текста.&lt;/p&gt;
+&lt;p&gt;Когда снимается копия: — перед тем как вы начнёте править заметку. Первое нажатие после её открытия — последний момент, когда старый текст ещё где-то есть, тогда копия и делается. Просто открыть и почитать заметку — не копирует ничего, иначе один проход по библиотеке оставлял бы копию всего прочитанного; — пока вы пишете — не чаще одной копии в десять минут; — в момент удаления заметки, независимо от времени. Удаляете папку — снимается копия каждой заметки внутри.&lt;/p&gt;
+&lt;p&gt;Как вернуть: правая кнопка на любой заметке или папке в дереве → «History…». Слева — все заметки, у которых есть копии, в том числе удалённые: они помечены и восстанавливаются точно так же. Справа — их копии по датам и текст выбранной, чтобы можно было убедиться, что берёте нужную. Кнопка «Restore this copy» записывает её обратно в заметку.&lt;/p&gt;
+&lt;p&gt;Восстановление ничего не уничтожает. То, что в заметке сейчас, сначала откладывается ещё одной копией, поэтому откатить можно и сам откат. Заметка, которой уже нет, записывается туда, где она жила.&lt;/p&gt;
+&lt;p&gt;Копии — обычные текстовые файлы, не база и не какой-то свой формат. Лежат в папке «.furynotes-history» рядом с вашими заметками и повторяют их расположение: у «Работа\идеи.md» копии лежат в «.furynotes-history\Работа\идеи.md\», по одному файлу на копию, имя — дата и время. Их открывает Проводник и блокнот; FuryNotes для этого не нужен. Это то же правило, по которому сами заметки — обычные .md: спасательный круг, который умеет открыть только одна программа, — плохой круг.&lt;/p&gt;
+&lt;p&gt;Хранится двадцать копий на заметку, лишние вытесняются новыми. Копия, совпадающая с предыдущей, не пишется никогда — если вы ничего не меняли, ничего и не откладывается. Переименованная или перенесённая заметка забирает свои копии с собой.&lt;/p&gt;
+&lt;p&gt;Это не замена Корзине. Удаление по-прежнему отправляет сам файл в Корзину Windows, и смотреть надо сначала туда. А копия — на случай, что Корзину уже очистили.&lt;/p&gt;
+&lt;p&gt;Всё это выключается: настройки → «Keep earlier copies of the text». По умолчанию включено: страховка, которую никто не включил, — не страховка.&lt;/p&gt;
+&lt;h3&gt;Поиск находит заметку по имени, а не только по тексту.&lt;/h3&gt;
+&lt;p&gt;Ctrl+F теперь ищет и по тому, как заметка называется. Такие совпадения идут первыми, отдельной строкой: подсвечено само название, а под ним для контекста показана строка из заметки. Enter открывает её сверху и ничего не выделяет — нашлось-то не слово внутри, а то, как заметка называется.&lt;/p&gt;
+&lt;p&gt;Переключать нечего: имя и текст ищутся всегда вместе. Заметка, оставшаяся с именем-датой, называется по своей первой строке — и в дереве, и в поиске, — так что по ней она найдётся в любом случае.&lt;/p&gt;
+&lt;p&gt;Заодно исправилось расхождение: раньше поиск подписывал результат первой строкой текста, даже если заметке было задано имя. Заметка, названная «Покупки», в дереве значилась «Покупки», а в поиске — своей первой строкой. Теперь оба списка называют её одинаково.&lt;/p&gt;
+&lt;h3&gt;Переименование — двойным кликом.&lt;/h3&gt;
+&lt;p&gt;Двойной клик по заметке открывает её имя на правку прямо в строке дерева. Enter оставляет новое имя, Esc — прежнее. F2 и правая кнопка → «Переименовать» делают то же самое, и для папки тоже: раньше папка правилась в строке, а заметка требовала отдельного окошка — то есть более частое действие было и более долгим.&lt;/p&gt;
+&lt;p&gt;Двойной клик по папке по-прежнему раскрывает и сворачивает её: этот жест там уже занят и остаётся как был. Папку переименовывают через F2 или меню.&lt;/p&gt;
+&lt;p&gt;Переименование, как и раньше, переносит на новое имя закрепление, избранное, цвет и значок — а теперь ещё и сохранённые копии текста.&lt;/p&gt;
+&lt;h3&gt;Ссылка сама говорит, как её открыть.&lt;/h3&gt;
+&lt;p&gt;Ссылка открывается по Ctrl+клик — так было и раньше, но узнать об этом было негде: адрес спрятан, и на экране ссылка выглядит просто цветным словом. Человек, собравший из локальных ссылок страницу-навигацию, решил, что они просто не работают.&lt;/p&gt;
+&lt;p&gt;Теперь: задержите на ссылке курсор — подсказка покажет, куда она ведёт, и напомнит про Ctrl+клик. Либо щёлкните правой кнопкой — «Open link» стоит первым пунктом меню, выше «Вырезать».&lt;/p&gt;
+&lt;h3&gt;Исправлено: звёздочки внутри ссылки.&lt;/h3&gt;
+&lt;p&gt;Ctrl+B на слове внутри ссылки писал две пары звёздочек, и они так и оставались видны посреди строки — слово жирным не становилось. А если начать убирать их вручную, легко было задеть закрывающую скобку, и тогда ссылка переставала быть ссылкой и наружу вылезал её адрес.&lt;/p&gt;
+&lt;p&gt;Причина была в том, что ссылка «проглатывала» собственную подпись целиком и оформление внутри неё не распознавалось вовсе. Теперь распознаётся: Ctrl+B, Ctrl+I и Ctrl+Shift+X работают на словах ссылки как на любых других, звёздочки прячутся как везде. Сам адрес при этом по-прежнему защищён — подчёркивания и звёздочки внутри пути ничего не «оформляют».&lt;/p&gt;
+&lt;h3&gt;Мелочи.&lt;/h3&gt;
+&lt;p&gt;Переименование папки больше не рвёт «Избранное» у заметок внутри неё: раньше ярлыки после этого указывали в никуда и тихо пропадали из списка.&lt;/p&gt;
+&lt;p&gt;Справка (docs\manual) обновлена: новый раздел «История заметок», дополнены «Ссылки», «Поиск» и «Переименование», в «Что нового» добавлена карточка версии 1.3.0.&lt;/p&gt;"><p>Nearly all of this release grew out of one message. Someone built a note full of links to files on their own disk, ran into a few rough edges, and wrote in about them. Here is what came of it.</p>
+<h3>The program keeps earlier versions of your text.</h3>
+<p>A note here saves itself, so there is never a "did I save that?". For the same reason there was never an unsaved version to fall back on either: delete a paragraph, look away for a second, and it is gone from the file; close the program and the undo stack goes with it. FuryNotes now quietly puts copies of the text aside.</p>
+<p>When a copy is taken: — before you start changing a note. The first keystroke after you open it is the last moment the old text exists anywhere, so that is when the copy is made. Merely opening a note and reading it copies nothing — otherwise one pass through the library would leave a copy of everything you had glanced at; — while you write — at most one copy every ten minutes; — the moment a note is deleted, whatever the clock says. Delete a folder and every note inside it is copied.</p>
+<p>Getting one back: right-click any note or folder in the tree → "History…". On the left is every note that has copies kept, deleted ones included — they are marked, and they come back exactly the same way. On the right are its copies by date and the text of whichever you pick, so you can be sure you are taking the right one. "Restore this copy" writes it back into the note.</p>
+<p>Restoring destroys nothing. What the note says right now is kept as another copy first, so a restore can itself be undone. A note that is gone altogether is written back where it used to live.</p>
+<p>The copies are ordinary text files — no database, no format of our own. They sit in a ".furynotes-history" folder beside your notes and mirror them: "Work\ideas.md" has its copies in ".furynotes-history\Work\ideas.md\", one file per copy, named by the date and time. Explorer and Notepad open them; FuryNotes is not needed to read them. Same rule as the notes themselves being plain .md files: a lifebelt only one program can open is a poor lifebelt.</p>
+<p>Twenty copies of each note are kept, and older ones drop off as new ones arrive. A copy identical to the previous one is never written — change nothing and nothing is put aside. A renamed or moved note takes its copies with it.</p>
+<p>This does not replace the Recycle Bin. Deleting still sends the file itself to the Windows Recycle Bin, and that is the first place to look. The copies are for the day the Bin has been emptied.</p>
+<p>All of it can be switched off: settings → "Keep earlier copies of the text". It is on as the program ships, because a safety net nobody switched on is not a safety net.</p>
+<h3>Search finds a note by its name, not only by its text.</h3>
+<p>Ctrl+F now matches what a note is called as well. Those matches come first, on a row of their own: the name itself is highlighted, and a line of the note is shown underneath for context. Enter opens it at the top and highlights nothing — what matched was not a word inside the note but what the note is called.</p>
+<p>There is nothing to switch: names and text are always searched together. A note still on its date-stamped filename is called by its first line, in the tree and in the search alike, so looking for that finds it either way.</p>
+<p>A disagreement was fixed on the way. The search used to label a result with the note's first line even when the note had been given a name — a note called "Shopping" read as "Shopping" in the tree and as its first line in the search. Both lists now call it the same thing.</p>
+<h3>Renaming, with a double click.</h3>
+<p>Double-click a note and its name opens for editing right there in the row. Enter keeps the new name, Esc leaves it as it was. F2 and right-click → "Rename" do the same thing, for a folder as well: a folder was already edited in its row while a note needed a separate little window, which made the commoner of the two the slower one.</p>
+<p>Double-clicking a folder still opens and closes it — that gesture is taken there and stays as it was. Rename a folder with F2 or the menu.</p>
+<p>A rename still carries the pin, favourite, colour and icon over to the new name — and now the kept copies of the text as well.</p>
+<h3>A link says how to open it.</h3>
+<p>A link opens on Ctrl+click. It always did, but there was nowhere to learn that: the address is hidden, so on screen a link is just a coloured word. The person who built a page of local links concluded they simply did not work.</p>
+<p>Now: rest the pointer on a link and a tooltip shows where it points and reminds you about Ctrl+click. Or right-click it — "Open link" is the first thing on the menu, above Cut.</p>
+<h3>Fixed: stars inside a link.</h3>
+<p>Ctrl+B on a word inside a link wrote two pairs of stars, and they stayed there in the middle of the line — the word never came out bold. And if you started removing them by hand it was easy to catch the closing bracket, at which point the link stopped being a link and its address showed up in plain sight.</p>
+<p>The cause was that a link swallowed its own label whole, so formatting inside it was not recognised at all. It is now: Ctrl+B, Ctrl+I and Ctrl+Shift+X work on a link's words like anywhere else, and the stars hide themselves as usual. The address is still protected — underscores and stars inside a path do not format anything.</p>
+<h3>Smaller things.</h3>
+<p>Renaming a folder no longer breaks Favourites for the notes inside it. Before, those shortcuts pointed at nothing afterwards and quietly dropped off the list.</p>
+<p>The manual (docs\manual) has been updated: a new "Note history" section, additions to "Links", "Search" and "Renaming", and a 1.3.0 card in "What's new".</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+      <div class="ver-row">
+        <div class="ver-head">
           <span class="ver-num">1.2.0</span>
           <span class="ver-date">2026-08-18</span>
-          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
           
           <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/FuryNotes_v1.2.0.zip" download>
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
@@ -495,7 +673,7 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;h3&gt;Icons for notes.&lt;/h3&gt;
+        <div class="ver-what prose clampable" data-en="&lt;h3&gt;Icons for notes.&lt;/h3&gt;
 &lt;p&gt;A note can be given a picture, and it stands in front of its name in the tree. Fifty-odd to choose from: an aeroplane, books, a guitar, a lightbulb, a rocket, a heart, smileys, music notes, a calculator and so on. The point is simple — in a column of similar names the eye finds a shape faster than it reads words. Right-click a note → &quot;Icon&quot;, then the grid; one click and it is there. &quot;No icon&quot; in the same menu takes it off. The icon belongs to the note: rename it or move it to another folder and the icon goes along, the way a colour and a pin already do. It also travels to another computer — only the icon's name is kept beside the note, and the picture itself is inside the program at both ends.&lt;/p&gt;
 &lt;h3&gt;A colour of its own for each icon.&lt;/h3&gt;
 &lt;p&gt;Under the grid are ten neon colours. The one you pick paints that icon, not all of them, so you can tell things apart: work in blue, home in green, urgent in red. &quot;Default colour&quot; puts it back. The colour knows about the theme. What is stored is really the hue, and how light to draw it is worked out again for the background in use. That is why the same note looks right on the dark theme and on the light one — a vivid yellow-green that glows on black would otherwise simply vanish on white.&lt;/p&gt;
@@ -541,6 +719,11 @@
 <p>Instead of a stack of per-version documents there is now a single page: docs/manual. English and Russian switch with a button, and it has contents down the side and a search across the text. A "What's new" section carries a card per version, so a minute is enough to see what has appeared since you last updated. And the formatting section opens with a cheat sheet: one picture showing every kind of formatting at once, where each line names the keys that made it.</p>
 <h3>Smaller fixes.</h3>
 <p>Toolbar buttons that cannot be used now look switched off — before this, a "Back" with nowhere to go was as bright as a working one.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -557,7 +740,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Row colours in the note tree. Drag rows: the order is yours. Formats now stack on one word. A star is just a star. Smaller fixes.&lt;/p&gt;" data-ru="&lt;p&gt;Цвета строк в дереве заметок. Перетаскивание строк — порядок ваш. Форматирование теперь накладывается друг на друга на одном слове. Звёздочка — просто звёздочка. Мелкие исправления.&lt;/p&gt;"><p>Row colours in the note tree. Drag rows: the order is yours. Formats now stack on one word. A star is just a star. Smaller fixes.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Row colours in the note tree. Drag rows: the order is yours. Formats now stack on one word. A star is just a star. Smaller fixes.&lt;/p&gt;" data-ru="&lt;p&gt;Цвета строк в дереве заметок. Перетаскивание строк — порядок ваш. Форматирование теперь накладывается друг на друга на одном слове. Звёздочка — просто звёздочка. Мелкие исправления.&lt;/p&gt;"><p>Row colours in the note tree. Drag rows: the order is yours. Formats now stack on one word. A star is just a star. Smaller fixes.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -574,7 +762,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Pin mode bugfix&lt;/p&gt;" data-ru="&lt;p&gt;Исправлен режим закрепления&lt;/p&gt;"><p>Pin mode bugfix</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Pin mode bugfix&lt;/p&gt;" data-ru="&lt;p&gt;Исправлен режим закрепления&lt;/p&gt;"><p>Pin mode bugfix</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -591,11 +784,16 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;Pin, minor fix, update button&lt;/p&gt;" data-ru="&lt;p&gt;Закрепление поверх окон, мелкие исправления, кнопка обновления&lt;/p&gt;"><p>Pin, minor fix, update button</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;Pin, minor fix, update button&lt;/p&gt;" data-ru="&lt;p&gt;Закрепление поверх окон, мелкие исправления, кнопка обновления&lt;/p&gt;"><p>Pin, minor fix, update button</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
-      <div class="ver-row">
+      <div class="ver-row is-old">
         <div class="ver-head">
           <span class="ver-num">1.1.4</span>
           <span class="ver-date">2026-07-20</span>
@@ -608,7 +806,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;turn any word into a shortcut to a local file, Making web links is simpler too, launching one copy app.&lt;/p&gt;" data-ru="&lt;p&gt;любое слово превращается в ссылку на локальный файл, веб-ссылки делаются проще, запуск только одной копии программы&lt;/p&gt;"><p>turn any word into a shortcut to a local file, Making web links is simpler too, launching one copy app.</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;turn any word into a shortcut to a local file, Making web links is simpler too, launching one copy app.&lt;/p&gt;" data-ru="&lt;p&gt;любое слово превращается в ссылку на локальный файл, веб-ссылки делаются проще, запуск только одной копии программы&lt;/p&gt;"><p>turn any word into a shortcut to a local file, Making web links is simpler too, launching one copy app.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -625,7 +828,12 @@
           
         </div>
         
-        <div class="ver-what prose" data-en="&lt;p&gt;base stable&lt;/p&gt;" data-ru="&lt;p&gt;базовая стабильная версия&lt;/p&gt;"><p>base stable</p></div>
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;base stable&lt;/p&gt;" data-ru="&lt;p&gt;базовая стабильная версия&lt;/p&gt;"><p>base stable</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
         
       </div>
       
@@ -633,7 +841,7 @@
     
     <button class="ver-toggle" onclick="toggleVersions(this)">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
-      <span class="on-closed"><span data-en="Show older versions" data-ru="Показать старые версии">Show older versions</span> (1)</span>
+      <span class="on-closed"><span data-en="Show older versions" data-ru="Показать старые версии">Show older versions</span> (2)</span>
       <span class="on-open"><span data-en="Hide older versions" data-ru="Скрыть старые версии">Hide older versions</span></span>
     </button>
     
@@ -649,7 +857,7 @@
 <footer>
   <div class="wrap">
     <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
-    <span>FuryNotes v1.2.0 · 2026-08-18</span>
+    <span>FuryNotes v1.3.0 · 2026-08-29</span>
   </div>
 </footer>
 
@@ -710,7 +918,41 @@ document.addEventListener('DOMContentLoaded', function () {
 function toggleVersions(btn) {
   var list = document.getElementById('versions');
   if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
 }
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
 </script>
 <script>
 /* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
@@ -730,6 +972,10 @@ function setLang(lang) {
   if (en) en.className = lang === 'en' ? 'on' : '';
   if (ru) ru.className = lang === 'ru' ? 'on' : '';
   try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
 }
 (function () {
   var saved = null;
