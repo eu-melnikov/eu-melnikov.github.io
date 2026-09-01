@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animation Loader Limited | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
+  .hero-meta {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h1 strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
+  }
+
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
+  }
+
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
+
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
+  }
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
+  }
+
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v1.0.0</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>1.3 Mb
+    </div>
+
+    <h1><strong>Animation Loader Limited</strong></h1>
+
+    
+    <p class="tagline"><span data-en="your FBX animation library in Maya: load them in a row, review, send back" data-ru="библиотека FBX-анимаций в Maya: загрузить подряд, посмотреть, отдать назад">your FBX animation library in Maya: load them in a row, review, send back</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="TUTORIALS" data-ru="УРОКИ">TUTORIALS</span>
+      </a>
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-09-01</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/AnimLdrLim/animloader_lim_pstr.jpg" alt="Animation Loader Limited">
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose clampable" data-en="&lt;p&gt;Animation Loader Limited is, first of all, a script for working with a library of FBX animations. It loads clips into a Maya scene and writes them back out to files, keeps several libraries at once, helps you add new animations to them, and watches over file versions — almost like Perforce, only there is nothing to set up.&lt;/p&gt;
+&lt;p&gt;It is meant for anyone who has collected a pile of animations on disk and would rather work with them as a library than open one file at a time. The clips go into a single scene one after another along the timeline, and the tool remembers where each of them sits and where it came from.&lt;/p&gt;
+&lt;h3&gt;Clips load in a row, not on top of each other&lt;/h3&gt;
+&lt;p&gt;The usual way to look at an FBX animation is to import it. Import a second one and it lands on top of the first. Import ten and you have a heap.&lt;/p&gt;
+&lt;p&gt;This tool loads them as a &lt;strong&gt;strip&lt;/strong&gt;: the first on frames 0–65, the second from 66, the third next. Pick several files in the tree and they load in the order you picked them — the order is shown right there as numbers. Pick a folder and everything inside it loads, subfolders included.&lt;/p&gt;
+&lt;p&gt;From there it behaves like a strip of film: watch, compare, cut, combine, send back out to files. A double click on a row in the table moves the green playback range onto that clip, which is the fastest way to flip through a whole library.&lt;/p&gt;
+&lt;h3&gt;Several libraries at once&lt;/h3&gt;
+&lt;p&gt;One library is rarely enough: the animations for a character, a separate folder of finds, something downloaded to try out. Each of those becomes a project, and switching is a single choice from a list. The tree, the search and the loading all work inside the chosen project, and its settings travel with it.&lt;/p&gt;
+&lt;p&gt;Adding one is &lt;strong&gt;Settings → Add Project&lt;/strong&gt;, and from then on it is simply there.&lt;/p&gt;
+&lt;h3&gt;The scene remembers what is in it&lt;/h3&gt;
+&lt;p&gt;The list of loaded clips does not live in the program's settings. It lives &lt;strong&gt;in the Maya scene&lt;/strong&gt;, in a node of its own, with a name, a first frame, a last frame and a source path recorded for every clip.&lt;/p&gt;
+&lt;p&gt;Save the scene and the list is saved with it. Open it a week later on another machine and the tool tells you immediately what is in there and where it came from. The FBX files stay clean: the list describes a whole scene, while a file holds a single clip, so carrying it along would be wrong from the first second.&lt;/p&gt;
+&lt;h3&gt;Presets: sets of clips and a bar of characters&lt;/h3&gt;
+&lt;p&gt;The two things that save the most time, because they happen ten times a day.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Animation presets.&lt;/strong&gt; The list you assemble from scratch every time — the same twenty clips for the same job — is remembered under a name and loads in one go, from one button.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The character bar.&lt;/strong&gt; Above the tree sit up to thirty remembered character scenes. A click opens one; a right click loads whatever is selected in the tree onto that character. The buttons are ordered by last use, so whoever you are working with today gathers on the left while the rare ones drift to the end.&lt;/p&gt;
+&lt;h3&gt;Adding animations to the library&lt;/h3&gt;
+&lt;p&gt;The road runs both ways. Select rows in the table and press &lt;strong&gt;Save&lt;/strong&gt;: every clip goes back into its own file over exactly the frame range recorded in the scene. Animated a stretch by hand? Name it, give it a frame range, and it becomes an ordinary clip that &lt;strong&gt;Save&lt;/strong&gt; writes out into a new file.&lt;/p&gt;
+&lt;p&gt;The confirmation window asks what belongs in the file: the skeleton and its keys alone, or the meshes with their skins and blend shapes as well. The first is for a library, where a file should hold one animation and nothing else; the second is for handing over a whole character, so the file opens somewhere else and moves.&lt;/p&gt;
+&lt;p&gt;The scene you are looking at does not change. Whatever the export has to adjust on the way is rolled back the moment the file is written.&lt;/p&gt;
+&lt;h3&gt;The library is hard to ruin&lt;/h3&gt;
+&lt;p&gt;Overwriting a file is where work gets lost for good. A personal library rarely sits under version control: overwrite an animation and the old one is gone, and you may not notice for a week.&lt;/p&gt;
+&lt;p&gt;So there are two lines of defence.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;A copy before every overwrite.&lt;/strong&gt; It goes into a backup folder inside the project, mirroring the library tree. The number grows with each write, older copies are never touched, and the tool removes nothing from there on its own. A right click on a file opens the version history with dates and sizes: any version can be &lt;strong&gt;loaded into the scene without touching the file on disk&lt;/strong&gt;, or restored over it — and the file it replaces is not lost either, it is parked next to it under a marked name. You can pick the wrong version, and you can undo that too.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The read-only flag.&lt;/strong&gt; A flagged file is never overwritten silently: the tool asks first, and says how many files the answer covers. The flag is set straight from the tree, on a file or on a whole folder, and it is the same flag your file manager sets. Permission lasts for one write: the tool lifts the flag while the file is written and puts it straight back, so the library stays protected. Do not use any of it and nothing changes for you.&lt;/p&gt;
+&lt;h3&gt;Build .mb — a library as separate scenes&lt;/h3&gt;
+&lt;p&gt;An FBX is a source; nobody opens it to look at it. Looking and fixing happen in a Maya scene, where the animation already sits on a character. Building those scenes by hand — open, import, save, for every clip — is an evening's work.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Build .mb&lt;/strong&gt; turns it into a queue. Select as much as the whole library, point at a scene holding the character in its T-pose, and every clip gets its own .mb with one character and one animation on it. They are all built on the same base, which is what makes them comparable to each other.&lt;/p&gt;
+&lt;p&gt;The T-pose scene is never written to, not even if you point the output at it. The results can go next to the animations or into a folder of your choosing, repeating the layout of the sources.&lt;/p&gt;
+&lt;h3&gt;The small things a day is made of&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Bulk renaming.&lt;/strong&gt; A batch of clips is renamed through a find-and-replace mask, with a preview: you see what comes out before you commit.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Timings edited&lt;/strong&gt; right in the table, one row at a time or several at once.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Colour in the tree&lt;/strong&gt; separates a plain animation from one already loaded into the current scene, and both from a Maya scene sitting beside them.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Search points at a file&lt;/strong&gt; instead of hiding the rest: the branch opens, the match lights up, and the neighbours stay in view.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;File work without leaving the tool:&lt;/strong&gt; copy, move, rename, duplicate, repeat a folder structure.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;A work log&lt;/strong&gt;, off by default. Turn it on when something went wrong and it records what went out, where, over which range, and why a write did not happen.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;Three places where a plain import trips up&lt;/h3&gt;
+&lt;p&gt;Files come from all sorts of places and are built in all sorts of ways. Three things break a plain import more often than anything else, and the tool handles all three without asking.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Several takes in one file.&lt;/strong&gt; The one you want is not necessarily the first: an empty housekeeping take without a single key often sits next to it. Taking the longest take does not work either, because for a short animation the empty one comes out longer than the real one. The tool tells them apart by name.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;A namespace on the bones.&lt;/strong&gt; Bones are matched by their short name, so the prefix is not in the way: your character may carry one or not.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;A skeleton with no root joint.&lt;/strong&gt; Some of them start at the hips. The tool looks for a root among the usual names, and if there is none it takes the topmost joint of the skeleton.&lt;/p&gt;
+&lt;h3&gt;What it does not do&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;It does not edit animation.&lt;/strong&gt; It loads, arranges and writes it back; the editing is done with Maya's own tools.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It does not retarget.&lt;/strong&gt; The animation's skeleton and the character's must agree on bone names, namespace aside.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;FBX only.&lt;/strong&gt; No other animation format is supported.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It never goes online.&lt;/strong&gt; There is no network code in it at all: no updates, no statistics, no account.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It is not a backup.&lt;/strong&gt; The copies it keeps sit on the same disk next to the originals: that guards against your own mistake, not against a dying drive.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Runs on:&lt;/strong&gt; Autodesk Maya 2019–2026. Checked in seven of them: 2019, 2020, 2022, 2023, 2024, 2025 and 2026&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Dependencies:&lt;/strong&gt; none. Python, PySide and the FBX plugin are already inside Maya&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Installing:&lt;/strong&gt; copy one folder into scripts and start it with two lines from the Script Editor or a shelf button&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Format:&lt;/strong&gt; FBX&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Interface:&lt;/strong&gt; English&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Manual:&lt;/strong&gt; English and Russian in one file, 17 sections, about thirty screenshots&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Licence:&lt;/strong&gt; MIT — free, work included; change it and pass it on&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Shipped as:&lt;/strong&gt; source code&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;Animation Loader Limited — это прежде всего скрипт для работы с библиотекой FBX-анимаций. Он грузит клипы в сцену Maya и отдаёт их обратно в файлы, держит несколько библиотек сразу, помогает заводить в них новые анимации и следит за версиями файлов — почти как Perforce, только разворачивать ничего не надо.&lt;/p&gt;
+&lt;p&gt;Он рассчитан на человека, у которого на диске набралась пачка анимаций и хочется работать с ними как с библиотекой, а не открывать по файлу за раз. Анимации складываются в одну сцену по очереди, друг за другом по таймлайну, и тул помнит, где какая лежит и откуда приехала.&lt;/p&gt;
+&lt;h3&gt;Анимации загружаются подряд, а не друг на друга&lt;/h3&gt;
+&lt;p&gt;Обычный способ посмотреть FBX-анимацию — импортировать её в сцену. Импортировали вторую — она легла поверх первой. Импортировали десять — получилась каша.&lt;/p&gt;
+&lt;p&gt;Тул загружает их &lt;strong&gt;лентой&lt;/strong&gt;: первая на кадрах 0–65, вторая с 66-го, третья следом. Выделите в дереве несколько файлов — они загрузятся в том порядке, в каком вы их выделяли, и порядок видно прямо в дереве цифрами. Выделите папку — загрузится всё, что внутри, включая подпапки.&lt;/p&gt;
+&lt;p&gt;Дальше с этим можно работать как с лентой: смотреть, сравнивать, резать, комбинировать, отдавать обратно в файлы. Двойной клик по строке в таблице переставляет зелёный диапазон таймлайна на этот клип — быстрый способ пролистать всю библиотеку.&lt;/p&gt;
+&lt;h3&gt;Несколько библиотек сразу&lt;/h3&gt;
+&lt;p&gt;Библиотека редко бывает одна: анимации для персонажа, отдельная папка с находками, что-то скачанное на пробу. Всё это заводится проектами, и переключение между ними — один выбор в списке. Дерево, поиск и загрузка работают внутри выбранного проекта, а настройки переезжают вместе с ним.&lt;/p&gt;
+&lt;p&gt;Добавить проект — &lt;strong&gt;Settings → Add Project&lt;/strong&gt;, и дальше он просто есть.&lt;/p&gt;
+&lt;h3&gt;Сцена помнит, что в ней лежит&lt;/h3&gt;
+&lt;p&gt;Список загруженного живёт не в настройках программы, а &lt;strong&gt;в самой сцене Maya&lt;/strong&gt; — в отдельном узле, где на каждый клип записаны имя, первый кадр, последний и путь к файлу-источнику.&lt;/p&gt;
+&lt;p&gt;Сохранили сцену — список сохранился вместе с ней. Открыли через неделю на другой машине — тул сразу показывает, что в этой сцене лежит и откуда приехало. Файл FBX при этом остаётся чистым: список описывает сцену целиком, а в файле лежит один клип, и там он был бы неверен с первой же секунды.&lt;/p&gt;
+&lt;h3&gt;Пресеты: наборы анимаций и строка персонажей&lt;/h3&gt;
+&lt;p&gt;Две вещи, которые экономят больше всего времени, потому что делаются по десять раз на дню.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Наборы анимаций.&lt;/strong&gt; Список, который вы собираете каждый раз заново — те же двадцать клипов для той же задачи, — запоминается под именем и загружается целиком, одной кнопкой.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Строка персонажей.&lt;/strong&gt; Над деревом — до тридцати запомненных сцен с персонажами. Клик открывает сцену, правый клик загружает на этого персонажа то, что выделено в дереве. Порядок кнопок идёт по последнему использованию, так что те, с кем работают сегодня, сами собираются слева, а редкие уезжают в конец.&lt;/p&gt;
+&lt;h3&gt;Добавление анимаций в библиотеку&lt;/h3&gt;
+&lt;p&gt;Дорога работает в обе стороны. Выделите строки в таблице и нажмите &lt;strong&gt;Save&lt;/strong&gt; — каждый клип уезжает обратно в свой файл, ровно тем диапазоном кадров, который записан в сцене. Анимировали кусок руками — назовите его, задайте кадры, и он станет обычным клипом, который &lt;strong&gt;Save&lt;/strong&gt; запишет в новый файл.&lt;/p&gt;
+&lt;p&gt;В окне подтверждения выбирается, что кладём в файл: только скелет с ключами или ещё и меши со скинами и блендшейпами. Первое — для библиотеки, где в файле должна лежать одна анимация; второе — чтобы отдать персонажа целиком, и файл открылся в чужой программе и задвигался.&lt;/p&gt;
+&lt;p&gt;Открытая сцена при этом не меняется: правки, которые экспорт делает по дороге, откатываются сразу после записи.&lt;/p&gt;
+&lt;h3&gt;Библиотеку трудно испортить&lt;/h3&gt;
+&lt;p&gt;Перезапись файла — то место, где работу теряют необратимо. Системы контроля версий над личной библиотекой обычно нет: перезаписал анимацию — и прежней не стало, причём заметить это можно через неделю.&lt;/p&gt;
+&lt;p&gt;Поэтому здесь две линии обороны.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Копия перед каждой перезаписью.&lt;/strong&gt; Она уходит в папку backup внутри проекта, повторяя дерево библиотеки. Номер растёт с каждой записью, старые копии не трогаются, тул сам оттуда ничего не удаляет. Правый клик по файлу открывает историю версий с датой и размером: любую версию можно &lt;strong&gt;посмотреть в сцене, не трогая файл на диске&lt;/strong&gt;, или вернуть на место — причём файл, который она заменяет, тоже не пропадает, а ложится рядом с пометкой. Промахнуться версией можно, откатить это тоже можно.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Флаг «только для чтения».&lt;/strong&gt; Помеченный файл тул не перезаписывает молча — он спрашивает и показывает, скольких файлов это коснётся. Флаг ставится прямо из дерева, на файл или на папку целиком, и это тот же самый флаг, что в проводнике. Разрешение действует на одну отдачу: тул снимает защиту на время записи и возвращает сразу после неё, так что библиотека остаётся защищённой. Не пользуетесь этим — работаете как обычно, ничего не замечая.&lt;/p&gt;
+&lt;h3&gt;Build .mb — библиотека отдельными сценами&lt;/h3&gt;
+&lt;p&gt;FBX — источник, его открывают не для того, чтобы смотреть. Смотрят и правят в сцене Maya, где анимация уже лежит на персонаже. Собирать такие сцены руками — по открытию, импорту и сохранению на каждый клип — работа на весь вечер.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Build .mb&lt;/strong&gt; делает это очередью. Выделите хоть всю библиотеку, укажите сцену с Т-позой — и на каждый клип соберётся своя .mb, где внутри один персонаж и одна анимация на нём. Все сцены строятся на одной и той же базе, так что между собой они сравнимы.&lt;/p&gt;
+&lt;p&gt;Сцена с Т-позой при этом никогда не перезаписывается, даже если указать её же как цель. Результат можно класть рядом с анимациями или в отдельную папку, повторив структуру исходных.&lt;/p&gt;
+&lt;h3&gt;Мелочи, из которых складывается день&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Массовое переименование.&lt;/strong&gt; Пачка клипов переименовывается по маске «найти и заменить», с предпросмотром: видно, что получится, до того как нажали.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Правка таймингов&lt;/strong&gt; прямо в таблице — поштучно или у нескольких строк сразу.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Цвет в дереве&lt;/strong&gt; отличает обычную анимацию от уже загруженной в текущую сцену и от Maya-сцены рядом с ней.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Поиск&lt;/strong&gt; наводит на файл, а не прячет остальные: ветка раскрывается, совпадение подсвечивается, соседи по папке остаются на виду.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Работа с файлами не выходя из тула:&lt;/strong&gt; копировать, перенести, переименовать, продублировать, повторить структуру папок.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Журнал работы&lt;/strong&gt;, выключен по умолчанию. Включается, когда что-то пошло не так, и пишет, что отдано, куда, каким диапазоном и почему запись не состоялась.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;Три места, где спотыкается обычный импорт&lt;/h3&gt;
+&lt;p&gt;Файлы приходят из разных мест и сделаны по-разному. Три вещи ломают обычный импорт чаще всего — тул разбирает их сам, ничего не спрашивая.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Несколько тактов в файле.&lt;/strong&gt; Нужный — не обязательно первый: рядом с ним часто лежит служебный, без единого ключа. Брать самый длинный тоже не годится, потому что у короткой анимации пустой такт оказывается длиннее настоящего. Тул отличает их по имени.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Namespace на костях.&lt;/strong&gt; Кости сопоставляются по короткому имени, так что префикс не мешает: персонаж может быть как с ним, так и без.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Скелет без корневого сустава.&lt;/strong&gt; Бывает, что он начинается прямо от таза. Тул ищет корень по списку расхожих имён, а если не нашёл — берёт верхний сустав скелета.&lt;/p&gt;
+&lt;h3&gt;Чего программа не делает&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Не редактирует анимацию.&lt;/strong&gt; Она её загружает, раскладывает и отдаёт обратно; правки делаются обычными средствами Maya.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не ретаргетит.&lt;/strong&gt; Скелет анимации и скелет персонажа должны совпадать по именам костей — с точностью до namespace.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Работает только с FBX.&lt;/strong&gt; Другие форматы анимации не поддерживаются.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не выходит в сеть.&lt;/strong&gt; Сетевого кода в ней нет вовсе: ни обновлений, ни статистики, ни аккаунта.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не заменяет резервное копирование.&lt;/strong&gt; Копии, которые она делает, лежат на том же диске рядом с оригиналом: это защита от своей ошибки, а не от сломавшегося диска.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Система:&lt;/strong&gt; Autodesk Maya 2019–2026. Проверена в семи версиях: 2019, 2020, 2022, 2023, 2024, 2025 и 2026&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Зависимости:&lt;/strong&gt; никаких. Python, PySide и плагин FBX уже встроены в Maya&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Установка:&lt;/strong&gt; скопировать одну папку в scripts и запустить двумя строками из Script Editor или с кнопки полки&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Формат:&lt;/strong&gt; FBX&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Интерфейс:&lt;/strong&gt; английский&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Руководство:&lt;/strong&gt; русское и английское в одном файле, 17 разделов, около тридцати снимков экрана&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Лицензия:&lt;/strong&gt; MIT — бесплатно, в том числе для работы; можно править и передавать дальше&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Поставка:&lt;/strong&gt; исходным кодом&lt;/li&gt;&lt;/ul&gt;">
+      <p>Animation Loader Limited is, first of all, a script for working with a library of FBX animations. It loads clips into a Maya scene and writes them back out to files, keeps several libraries at once, helps you add new animations to them, and watches over file versions — almost like Perforce, only there is nothing to set up.</p>
+<p>It is meant for anyone who has collected a pile of animations on disk and would rather work with them as a library than open one file at a time. The clips go into a single scene one after another along the timeline, and the tool remembers where each of them sits and where it came from.</p>
+<h3>Clips load in a row, not on top of each other</h3>
+<p>The usual way to look at an FBX animation is to import it. Import a second one and it lands on top of the first. Import ten and you have a heap.</p>
+<p>This tool loads them as a <strong>strip</strong>: the first on frames 0–65, the second from 66, the third next. Pick several files in the tree and they load in the order you picked them — the order is shown right there as numbers. Pick a folder and everything inside it loads, subfolders included.</p>
+<p>From there it behaves like a strip of film: watch, compare, cut, combine, send back out to files. A double click on a row in the table moves the green playback range onto that clip, which is the fastest way to flip through a whole library.</p>
+<h3>Several libraries at once</h3>
+<p>One library is rarely enough: the animations for a character, a separate folder of finds, something downloaded to try out. Each of those becomes a project, and switching is a single choice from a list. The tree, the search and the loading all work inside the chosen project, and its settings travel with it.</p>
+<p>Adding one is <strong>Settings → Add Project</strong>, and from then on it is simply there.</p>
+<h3>The scene remembers what is in it</h3>
+<p>The list of loaded clips does not live in the program's settings. It lives <strong>in the Maya scene</strong>, in a node of its own, with a name, a first frame, a last frame and a source path recorded for every clip.</p>
+<p>Save the scene and the list is saved with it. Open it a week later on another machine and the tool tells you immediately what is in there and where it came from. The FBX files stay clean: the list describes a whole scene, while a file holds a single clip, so carrying it along would be wrong from the first second.</p>
+<h3>Presets: sets of clips and a bar of characters</h3>
+<p>The two things that save the most time, because they happen ten times a day.</p>
+<p><strong>Animation presets.</strong> The list you assemble from scratch every time — the same twenty clips for the same job — is remembered under a name and loads in one go, from one button.</p>
+<p><strong>The character bar.</strong> Above the tree sit up to thirty remembered character scenes. A click opens one; a right click loads whatever is selected in the tree onto that character. The buttons are ordered by last use, so whoever you are working with today gathers on the left while the rare ones drift to the end.</p>
+<h3>Adding animations to the library</h3>
+<p>The road runs both ways. Select rows in the table and press <strong>Save</strong>: every clip goes back into its own file over exactly the frame range recorded in the scene. Animated a stretch by hand? Name it, give it a frame range, and it becomes an ordinary clip that <strong>Save</strong> writes out into a new file.</p>
+<p>The confirmation window asks what belongs in the file: the skeleton and its keys alone, or the meshes with their skins and blend shapes as well. The first is for a library, where a file should hold one animation and nothing else; the second is for handing over a whole character, so the file opens somewhere else and moves.</p>
+<p>The scene you are looking at does not change. Whatever the export has to adjust on the way is rolled back the moment the file is written.</p>
+<h3>The library is hard to ruin</h3>
+<p>Overwriting a file is where work gets lost for good. A personal library rarely sits under version control: overwrite an animation and the old one is gone, and you may not notice for a week.</p>
+<p>So there are two lines of defence.</p>
+<p><strong>A copy before every overwrite.</strong> It goes into a backup folder inside the project, mirroring the library tree. The number grows with each write, older copies are never touched, and the tool removes nothing from there on its own. A right click on a file opens the version history with dates and sizes: any version can be <strong>loaded into the scene without touching the file on disk</strong>, or restored over it — and the file it replaces is not lost either, it is parked next to it under a marked name. You can pick the wrong version, and you can undo that too.</p>
+<p><strong>The read-only flag.</strong> A flagged file is never overwritten silently: the tool asks first, and says how many files the answer covers. The flag is set straight from the tree, on a file or on a whole folder, and it is the same flag your file manager sets. Permission lasts for one write: the tool lifts the flag while the file is written and puts it straight back, so the library stays protected. Do not use any of it and nothing changes for you.</p>
+<h3>Build .mb — a library as separate scenes</h3>
+<p>An FBX is a source; nobody opens it to look at it. Looking and fixing happen in a Maya scene, where the animation already sits on a character. Building those scenes by hand — open, import, save, for every clip — is an evening's work.</p>
+<p><strong>Build .mb</strong> turns it into a queue. Select as much as the whole library, point at a scene holding the character in its T-pose, and every clip gets its own .mb with one character and one animation on it. They are all built on the same base, which is what makes them comparable to each other.</p>
+<p>The T-pose scene is never written to, not even if you point the output at it. The results can go next to the animations or into a folder of your choosing, repeating the layout of the sources.</p>
+<h3>The small things a day is made of</h3>
+<ul><li><strong>Bulk renaming.</strong> A batch of clips is renamed through a find-and-replace mask, with a preview: you see what comes out before you commit.</li><li><strong>Timings edited</strong> right in the table, one row at a time or several at once.</li><li><strong>Colour in the tree</strong> separates a plain animation from one already loaded into the current scene, and both from a Maya scene sitting beside them.</li><li><strong>Search points at a file</strong> instead of hiding the rest: the branch opens, the match lights up, and the neighbours stay in view.</li><li><strong>File work without leaving the tool:</strong> copy, move, rename, duplicate, repeat a folder structure.</li><li><strong>A work log</strong>, off by default. Turn it on when something went wrong and it records what went out, where, over which range, and why a write did not happen.</li></ul>
+<h3>Three places where a plain import trips up</h3>
+<p>Files come from all sorts of places and are built in all sorts of ways. Three things break a plain import more often than anything else, and the tool handles all three without asking.</p>
+<p><strong>Several takes in one file.</strong> The one you want is not necessarily the first: an empty housekeeping take without a single key often sits next to it. Taking the longest take does not work either, because for a short animation the empty one comes out longer than the real one. The tool tells them apart by name.</p>
+<p><strong>A namespace on the bones.</strong> Bones are matched by their short name, so the prefix is not in the way: your character may carry one or not.</p>
+<p><strong>A skeleton with no root joint.</strong> Some of them start at the hips. The tool looks for a root among the usual names, and if there is none it takes the topmost joint of the skeleton.</p>
+<h3>What it does not do</h3>
+<ul><li><strong>It does not edit animation.</strong> It loads, arranges and writes it back; the editing is done with Maya's own tools.</li><li><strong>It does not retarget.</strong> The animation's skeleton and the character's must agree on bone names, namespace aside.</li><li><strong>FBX only.</strong> No other animation format is supported.</li><li><strong>It never goes online.</strong> There is no network code in it at all: no updates, no statistics, no account.</li><li><strong>It is not a backup.</strong> The copies it keeps sit on the same disk next to the originals: that guards against your own mistake, not against a dying drive.</li></ul>
+<h3>At a glance</h3>
+<ul><li><strong>Runs on:</strong> Autodesk Maya 2019–2026. Checked in seven of them: 2019, 2020, 2022, 2023, 2024, 2025 and 2026</li><li><strong>Dependencies:</strong> none. Python, PySide and the FBX plugin are already inside Maya</li><li><strong>Installing:</strong> copy one folder into scripts and start it with two lines from the Script Editor or a shelf button</li><li><strong>Format:</strong> FBX</li><li><strong>Interface:</strong> English</li><li><strong>Manual:</strong> English and Russian in one file, 17 sections, about thirty screenshots</li><li><strong>Licence:</strong> MIT — free, work included; change it and pass it on</li><li><strong>Shipped as:</strong> source code</li></ul>
+    </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Tutorials" data-ru="// Уроки">// Tutorials</span></h2>
+    <div class="links">
+      
+      <a class="link-row" href="https://youtu.be/2OoUVXWcsKs" target="_blank" rel="noopener">
+        <svg class="link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span class="link-title"><span data-en="WATCH ON YOUTUBE" data-ru="СМОТРЕТЬ НА YOUTUBE">WATCH ON YOUTUBE</span></span>
+        <span class="link-meta">YouTube</span>
+      </a>
+      
+    </div>
+  </div>
+  
+
+  <!-- ── Характеристики ── -->
+  
+  
+  <div class="section">
+    <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
+    <div class="specs">
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>1.0.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Autodesk Maya 2019–2026</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free (MIT)</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Formats" data-ru="Форматы">Formats</span></div><div class="spec-val">FBX</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Installation" data-ru="Установка">Installation</span></div><div class="spec-val">Copy to Maya scripts & run</div></div>
+    </div>
+  </div>
+  
+
+  <!-- ── Как это делалось ── -->
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
+    </div>
+
+    
+    <div class="versions" id="versions">
+      
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">1.0.0</span>
+          <span class="ver-date">2026-09-01</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/AnimLdrLim/animation_loader_limited_v1.0.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            1.3 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;First release.&lt;/p&gt;
+&lt;p&gt;The tool lays an FBX animation library out in a single Maya scene — clip after clip along the timeline — and keeps the list of what is loaded in the scene itself, together with frame ranges and source paths. From there any clip goes back out into its own file, bones only or with the geometry.&lt;/p&gt;
+&lt;p&gt;A copy is kept before every overwrite, and any version can be restored. A file flagged read-only is never overwritten silently.&lt;/p&gt;
+&lt;p&gt;Checked in seven versions of Maya: 2019, 2020, 2022, 2023, 2024, 2025 and 2026 — from Python 2.7 with PySide2 through to Python 3.11 with PySide6.&lt;/p&gt;" data-ru="&lt;p&gt;Первый выпуск.&lt;/p&gt;
+&lt;p&gt;Тул складывает библиотеку FBX-анимаций в одну сцену Maya — клип за клипом по таймлайну — и держит список загруженного прямо в сцене, вместе с кадрами и путями к исходным файлам. Оттуда же любой клип уезжает обратно в свой файл, костями или вместе с геометрией.&lt;/p&gt;
+&lt;p&gt;Перед каждой перезаписью откладывается копия, и вернуть можно любую версию. Файл, помеченный «только для чтения», молча не перезаписывается.&lt;/p&gt;
+&lt;p&gt;Проверен в семи версиях Maya: 2019, 2020, 2022, 2023, 2024, 2025 и 2026 — от Python 2.7 с PySide2 до Python 3.11 с PySide6.&lt;/p&gt;"><p>First release.</p>
+<p>The tool lays an FBX animation library out in a single Maya scene — clip after clip along the timeline — and keeps the list of what is loaded in the scene itself, together with frame ranges and source paths. From there any clip goes back out into its own file, bones only or with the geometry.</p>
+<p>A copy is kept before every overwrite, and any version can be restored. A file flagged read-only is never overwritten silently.</p>
+<p>Checked in seven versions of Maya: 2019, 2020, 2022, 2023, 2024, 2025 and 2026 — from Python 2.7 with PySide2 through to Python 3.11 with PySide6.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+    </div>
+    
+    
+
+    
+    
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>Animation Loader Limited v1.0.0 · 2026-09-01</span>
+  </div>
+</footer>
+
+<script>
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
+}
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+
+</body>
+</html>
