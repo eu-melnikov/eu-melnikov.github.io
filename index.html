@@ -145,7 +145,13 @@
   .update-row:hover .update-arrow { color: var(--accent2); }
   @media (max-width: 560px) {
     .update-date { width: auto; }
-    .update-desc { white-space: normal; }
+    /* На телефоне строка переносится, но не больше двух: в описании версии
+       бывает весь список изменений, и лента превращалась в простыню. */
+    .update-desc {
+      white-space: normal;
+      display: -webkit-box; -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2; line-clamp: 2;
+    }
   }
 
   /* ── hero ── */
