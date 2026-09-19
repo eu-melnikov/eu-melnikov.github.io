@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wavebar-Phonogramm | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
+  .hero-meta {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h1 strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
+  }
+
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
+  }
+
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
+
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
+  }
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
+  }
+
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v1.8.0</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>5.7 Mb
+    </div>
+
+    <h1><strong>Wavebar-Phonogramm</strong></h1>
+
+    
+    <p class="tagline"><span data-en="sound for lip-sync right in Maya: a wave above the time slider, 8 tracks, editing, mixing" data-ru="звук для липсинка прямо в Maya: волна над таймслайдером, 8 дорожек, монтаж и микс">sound for lip-sync right in Maya: a wave above the time slider, 8 tracks, editing, mixing</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="TUTORIALS" data-ru="УРОКИ">TUTORIALS</span>
+      </a>
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-09-19</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/Wavebar-Phonogramm/Wavebar-Phonogramm_poster_1_recording.jpg" alt="Wavebar-Phonogramm">
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose clampable" data-en="&lt;p&gt;Wavebar-Phonogramm is a free panel for Maya: a big, readable waveform right above the time slider, up to eight tracks, and real sound editing without leaving the scene. Made for lip-sync, and for any animation that has to hit the track.&lt;/p&gt;
+&lt;p&gt;Sound in Maya is usually a thin line in the time slider, one file per scene, and no mp3 at all. The second character's line, the footsteps, the music get mixed somewhere else, and you keep going back and forth. The panel brings that work inside Maya.&lt;/p&gt;
+&lt;h3&gt;A wave that stays frame-for-frame with Maya&lt;/h3&gt;
+&lt;p&gt;The strip always shows exactly the frames the time slider shows. Zoom the timeline and the wave zooms with it; roll the wheel on the wave and the playback range zooms. It is one range seen from two sides, so the two can never drift apart.&lt;/p&gt;
+&lt;p&gt;Park the panel right above the time slider, stretch it, turn it down to a ghost over the viewport, and lock it once it sits where you want it.&lt;/p&gt;
+&lt;h3&gt;Scrubbing syllable by syllable&lt;/h3&gt;
+&lt;p&gt;Drag across the wave: the playhead follows the cursor and you hear the sound syllable by syllable. Pick how much sound a frame plays: one frame to catch the lips closing on an &quot;m&quot;, two or three to recognise a word faster. The arrow keys step frame by frame with sound, Space plays.&lt;/p&gt;
+&lt;h3&gt;Up to eight tracks&lt;/h3&gt;
+&lt;p&gt;Each track has its own colour, name, level, mute, and a lock against accidental moves. A track holds as many clips from as many files as you like: a character's steps, a door, a line of dialogue, side by side. Maya plays them all together: the panel mixes the tracks into one file itself, since the time slider holds a single sound.&lt;/p&gt;
+&lt;h3&gt;The sound library&lt;/h3&gt;
+&lt;p&gt;Your sound library, inside Maya. Favourite folders, every file with its wave as a list or as big cards, a name filter, a heart and a colour mark for the good ones. Add puts a sound on the track at the playhead, or just drag it there.&lt;/p&gt;
+&lt;p&gt;From a long recording or a video you take only the piece you need: drag across its wave and only that stretch goes on the track. The file itself is never cut.&lt;/p&gt;
+&lt;h3&gt;Editing right in the panel&lt;/h3&gt;
+&lt;p&gt;Split a phrase at the playhead, open a pause, swap two lines, move a piece over to another character's track, copy it, combine pieces back into one file. Pieces snap to their neighbours' edges, and sound trimmed off too eagerly can be pulled back out.&lt;/p&gt;
+&lt;p&gt;Fades are drawn with handles on a clip's corners, and where clips overlap they cross-fade. Everything is undoable, with an undo of its own: Ctrl+Z in the viewport undoes animation, on the panel it undoes sound.&lt;/p&gt;
+&lt;h3&gt;Volume and balance over the frames&lt;/h3&gt;
+&lt;p&gt;Every track has a volume curve and a balance curve. Duck the music under a line, fade a voice out, walk it from the left speaker to the right. The curves are edited in a mixer window of their own and drawn over the wave.&lt;/p&gt;
+&lt;h3&gt;Export and a playblast with sound&lt;/h3&gt;
+&lt;p&gt;Export any track, or the whole dialogue as one master track, to WAV or MP3. When the shot is done, one button makes a playblast with the sound in it: an MP4 that opens anywhere, the director's phone included.&lt;/p&gt;
+&lt;h3&gt;A scene you can carry away&lt;/h3&gt;
+&lt;p&gt;The whole edit lives in the scene itself: save the scene and the sound is saved. The scene plays even where the panel isn't installed.&lt;/p&gt;
+&lt;p&gt;Project Manager gathers every sound the scene uses into a folder beside it, so the scene can move to another computer, one without your sound libraries. From an hour-long recording it can take just what the clips play, with a little to spare. The panel's working files sit beside the scene too; it never writes anything into your sound libraries.&lt;/p&gt;
+&lt;h3&gt;What it doesn't do&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;It doesn't do lip-sync for you: no speech recognition, no mouth keys. It helps you hear and see the sound; the animator animates.&lt;/li&gt;&lt;li&gt;It isn't a sound editor: no EQ, effects or noise removal. Volume, balance, fades and editing only.&lt;/li&gt;&lt;li&gt;Without ffmpeg it opens plain 16-bit WAV only. mp3, other formats and sound from video need ffmpeg, which is free and installed once.&lt;/li&gt;&lt;li&gt;Tested on Windows. Not tested on macOS or Linux.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Maya:&lt;/strong&gt; 2019, 2020, 2022, 2023, 2024, 2025, 2026&lt;/li&gt;&lt;li&gt;&lt;strong&gt;System:&lt;/strong&gt; Windows&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Formats:&lt;/strong&gt; WAV, AIFF, MP3, AAC, M4A, FLAC, OGG, sound from video (via ffmpeg); export to WAV and MP3, playblast to MP4&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Install:&lt;/strong&gt; copy a folder into Maya's scripts and add a shelf button&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Needs:&lt;/strong&gt; ffmpeg for everything except WAV&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Interface:&lt;/strong&gt; English; manual in English and Russian in the archive&lt;/li&gt;&lt;li&gt;&lt;strong&gt;License:&lt;/strong&gt; free, MIT, open source&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Tutorial:&lt;/strong&gt; &lt;a href=&quot;https://youtu.be/YSnoYsUr3WM&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;video on YouTube&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;Wavebar-Phonogramm — бесплатная панель для Maya: крупная звуковая волна прямо над таймслайдером, до восьми дорожек и монтаж звука, не выходя из сцены. Сделана для липсинка и для любой анимации, которая должна попадать в звук.&lt;/p&gt;
+&lt;p&gt;Обычно звук в Maya — тонкая полоска в таймслайдере, один файл на сцену, и mp3 она не берёт. Реплику второго персонажа, шаги и музыку приходится сводить где-то снаружи и возвращаться обратно. Панель забирает эту работу внутрь Maya.&lt;/p&gt;
+&lt;h3&gt;Волна кадр в кадр с Maya&lt;/h3&gt;
+&lt;p&gt;Полоса показывает ровно те кадры, что таймслайдер. Зумите таймлайн — зумится волна; крутите колесо на волне — меняется диапазон проигрывания. Это один и тот же диапазон, увиденный с двух сторон, поэтому разъехаться они не могут.&lt;/p&gt;
+&lt;p&gt;Панель можно поставить прямо над таймслайдером, растянуть, сделать полупрозрачной поверх вьюпорта и закрепить замком, чтобы не сдвинуть случайно.&lt;/p&gt;
+&lt;h3&gt;Скраб по слогам&lt;/h3&gt;
+&lt;p&gt;Ведёте мышью по волне — плейхед едет за курсором, и звук слышно по слогам. Длина звука на кадр выбирается: один кадр, чтобы поймать смыкание губ на «м», два-три — чтобы быстрее узнать слово на слух. Стрелки шагают по кадру со звуком, пробел запускает проигрывание.&lt;/p&gt;
+&lt;h3&gt;До восьми дорожек&lt;/h3&gt;
+&lt;p&gt;У каждой дорожки свой цвет, имя, громкость, кнопка mute и замок от случайного сдвига. На одной дорожке сколько угодно клипов из сколько угодно файлов: шаги персонажа, дверь, реплика — рядом. Maya играет всё вместе: панель сама сводит дорожки в один файл, потому что таймслайдер держит только один звук.&lt;/p&gt;
+&lt;h3&gt;Окно звуков&lt;/h3&gt;
+&lt;p&gt;Библиотека звуков прямо в Maya. Избранные папки, каждый файл со своей волной, списком или крупными карточками, фильтр по имени, сердечко и цветная метка для удачных. Кнопка Add ставит звук на дорожку у плейхеда, можно и просто перетащить.&lt;/p&gt;
+&lt;p&gt;Из длинной записи или видео берётся только нужный кусок: протянули мышью по волне — и на дорожку встаёт только он. Сам файл не режется.&lt;/p&gt;
+&lt;h3&gt;Монтаж прямо в панели&lt;/h3&gt;
+&lt;p&gt;Разрезать фразу у плейхеда, раздвинуть паузу, поменять реплики местами, перенести кусок на дорожку другого персонажа, скопировать, склеить куски обратно в один файл. Куски прилипают к краям соседних, отрезанное можно вытянуть обратно.&lt;/p&gt;
+&lt;p&gt;Фейды тянутся ручками на углах клипа, а где клипы наезжают друг на друга — получается плавный переход. Всё с отменой, и она своя: Ctrl+Z во вьюпорте отменяет анимацию, на панели — звук.&lt;/p&gt;
+&lt;h3&gt;Громкость и баланс по кадрам&lt;/h3&gt;
+&lt;p&gt;У каждой дорожки кривая громкости и кривая баланса. Приглушить музыку под реплику, увести голос в тишину, провести его из левой колонки в правую. Кривые правятся в отдельном окне микшера и рисуются поверх волны.&lt;/p&gt;
+&lt;h3&gt;Выгрузка и плейбласт со звуком&lt;/h3&gt;
+&lt;p&gt;Каждую дорожку или весь диалог одной мастер-дорожкой можно выгрузить в WAV или MP3. А когда шот готов, одна кнопка делает плейбласт со звуком — MP4, который откроется где угодно, хоть на телефоне у режиссёра.&lt;/p&gt;
+&lt;h3&gt;Сцену можно унести&lt;/h3&gt;
+&lt;p&gt;Весь монтаж хранится в самой сцене: сохранили сцену — сохранили звук. Сцена звучит даже там, где панель не установлена.&lt;/p&gt;
+&lt;p&gt;Project Manager собирает все звуки сцены в папку рядом с ней, чтобы перенести сцену на другой компьютер, где нет ваших библиотек. Из часовой записи можно взять только то, что играют клипы, с небольшим запасом. Рабочие файлы панели тоже лежат рядом со сценой, а в библиотеки звуков она ничего не пишет.&lt;/p&gt;
+&lt;h3&gt;Чего программа не делает&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Не делает липсинк за вас: не распознаёт речь и не ставит ключи рту. Она помогает услышать и увидеть звук, анимирует аниматор.&lt;/li&gt;&lt;li&gt;Не заменяет звуковой редактор: нет эквалайзера, эффектов, шумоподавления. Только громкость, баланс, фейды и монтаж.&lt;/li&gt;&lt;li&gt;Без ffmpeg открывает только обычный 16-битный WAV. Для mp3, других форматов и звука из видео нужен ffmpeg — он бесплатный и ставится один раз.&lt;/li&gt;&lt;li&gt;Проверена на Windows. На macOS и Linux не проверялась.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Maya:&lt;/strong&gt; 2019, 2020, 2022, 2023, 2024, 2025, 2026&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Система:&lt;/strong&gt; Windows&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Форматы:&lt;/strong&gt; WAV, AIFF, MP3, AAC, M4A, FLAC, OGG, звук из видео (через ffmpeg); выгрузка в WAV и MP3, плейбласт в MP4&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Установка:&lt;/strong&gt; скопировать папку в scripts у Maya и сделать кнопку на полке&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Нужно:&lt;/strong&gt; ffmpeg для всего, кроме WAV&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Интерфейс:&lt;/strong&gt; английский; справка на русском и английском в архиве&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Лицензия:&lt;/strong&gt; бесплатно, MIT, открытый код&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Урок:&lt;/strong&gt; &lt;a href=&quot;https://youtu.be/YSnoYsUr3WM&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;видео на YouTube&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;">
+      <p>Wavebar-Phonogramm is a free panel for Maya: a big, readable waveform right above the time slider, up to eight tracks, and real sound editing without leaving the scene. Made for lip-sync, and for any animation that has to hit the track.</p>
+<p>Sound in Maya is usually a thin line in the time slider, one file per scene, and no mp3 at all. The second character's line, the footsteps, the music get mixed somewhere else, and you keep going back and forth. The panel brings that work inside Maya.</p>
+<h3>A wave that stays frame-for-frame with Maya</h3>
+<p>The strip always shows exactly the frames the time slider shows. Zoom the timeline and the wave zooms with it; roll the wheel on the wave and the playback range zooms. It is one range seen from two sides, so the two can never drift apart.</p>
+<p>Park the panel right above the time slider, stretch it, turn it down to a ghost over the viewport, and lock it once it sits where you want it.</p>
+<h3>Scrubbing syllable by syllable</h3>
+<p>Drag across the wave: the playhead follows the cursor and you hear the sound syllable by syllable. Pick how much sound a frame plays: one frame to catch the lips closing on an "m", two or three to recognise a word faster. The arrow keys step frame by frame with sound, Space plays.</p>
+<h3>Up to eight tracks</h3>
+<p>Each track has its own colour, name, level, mute, and a lock against accidental moves. A track holds as many clips from as many files as you like: a character's steps, a door, a line of dialogue, side by side. Maya plays them all together: the panel mixes the tracks into one file itself, since the time slider holds a single sound.</p>
+<h3>The sound library</h3>
+<p>Your sound library, inside Maya. Favourite folders, every file with its wave as a list or as big cards, a name filter, a heart and a colour mark for the good ones. Add puts a sound on the track at the playhead, or just drag it there.</p>
+<p>From a long recording or a video you take only the piece you need: drag across its wave and only that stretch goes on the track. The file itself is never cut.</p>
+<h3>Editing right in the panel</h3>
+<p>Split a phrase at the playhead, open a pause, swap two lines, move a piece over to another character's track, copy it, combine pieces back into one file. Pieces snap to their neighbours' edges, and sound trimmed off too eagerly can be pulled back out.</p>
+<p>Fades are drawn with handles on a clip's corners, and where clips overlap they cross-fade. Everything is undoable, with an undo of its own: Ctrl+Z in the viewport undoes animation, on the panel it undoes sound.</p>
+<h3>Volume and balance over the frames</h3>
+<p>Every track has a volume curve and a balance curve. Duck the music under a line, fade a voice out, walk it from the left speaker to the right. The curves are edited in a mixer window of their own and drawn over the wave.</p>
+<h3>Export and a playblast with sound</h3>
+<p>Export any track, or the whole dialogue as one master track, to WAV or MP3. When the shot is done, one button makes a playblast with the sound in it: an MP4 that opens anywhere, the director's phone included.</p>
+<h3>A scene you can carry away</h3>
+<p>The whole edit lives in the scene itself: save the scene and the sound is saved. The scene plays even where the panel isn't installed.</p>
+<p>Project Manager gathers every sound the scene uses into a folder beside it, so the scene can move to another computer, one without your sound libraries. From an hour-long recording it can take just what the clips play, with a little to spare. The panel's working files sit beside the scene too; it never writes anything into your sound libraries.</p>
+<h3>What it doesn't do</h3>
+<ul><li>It doesn't do lip-sync for you: no speech recognition, no mouth keys. It helps you hear and see the sound; the animator animates.</li><li>It isn't a sound editor: no EQ, effects or noise removal. Volume, balance, fades and editing only.</li><li>Without ffmpeg it opens plain 16-bit WAV only. mp3, other formats and sound from video need ffmpeg, which is free and installed once.</li><li>Tested on Windows. Not tested on macOS or Linux.</li></ul>
+<h3>At a glance</h3>
+<ul><li><strong>Maya:</strong> 2019, 2020, 2022, 2023, 2024, 2025, 2026</li><li><strong>System:</strong> Windows</li><li><strong>Formats:</strong> WAV, AIFF, MP3, AAC, M4A, FLAC, OGG, sound from video (via ffmpeg); export to WAV and MP3, playblast to MP4</li><li><strong>Install:</strong> copy a folder into Maya's scripts and add a shelf button</li><li><strong>Needs:</strong> ffmpeg for everything except WAV</li><li><strong>Interface:</strong> English; manual in English and Russian in the archive</li><li><strong>License:</strong> free, MIT, open source</li><li><strong>Tutorial:</strong> <a href="https://youtu.be/YSnoYsUr3WM" target="_blank" rel="noopener">video on YouTube</a></li></ul>
+    </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Tutorials" data-ru="// Уроки">// Tutorials</span></h2>
+    <div class="links">
+      
+      <a class="link-row" href="https://youtu.be/YSnoYsUr3WM" target="_blank" rel="noopener">
+        <svg class="link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span class="link-title"><span data-en="WATCH ON YOUTUBE" data-ru="СМОТРЕТЬ НА YOUTUBE">WATCH ON YOUTUBE</span></span>
+        <span class="link-meta">YouTube</span>
+      </a>
+      
+    </div>
+  </div>
+  
+
+  <!-- ── Характеристики ── -->
+  
+  
+  <div class="section">
+    <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
+    <div class="specs">
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>1.8.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Autodesk Maya 2019–2026</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free (MIT)</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Formats" data-ru="Форматы">Formats</span></div><div class="spec-val">WAV, MP3, AIFF, FLAC, OGG, M4A, video</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Installation" data-ru="Установка">Installation</span></div><div class="spec-val">Copy to Maya scripts & run</div></div>
+    </div>
+  </div>
+  
+
+  <!-- ── Как это делалось ── -->
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
+    </div>
+
+    
+    <div class="versions" id="versions">
+      
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">1.8.0</span>
+          <span class="ver-date">2026-09-19</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/Wavebar-Phonogramm/Wavebar-Phonogramm-1.8.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            5.7 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;First public release.&lt;/p&gt;
+&lt;p&gt;A waveform above the time slider, frame-for-frame with Maya; syllable scrubbing; up to eight tracks; a sound library window; editing with fades and cross-fades; volume and balance curves; export to WAV and MP3; a playblast with sound; and a Project Manager that carries the scene to another computer together with its sounds.&lt;/p&gt;
+&lt;p&gt;Checked in seven versions of Maya: 2019, 2020, 2022, 2023, 2024, 2025 and 2026. The archive holds the manual in English and Russian and two posters.&lt;/p&gt;" data-ru="&lt;p&gt;Первый публичный выпуск.&lt;/p&gt;
+&lt;p&gt;Волна над таймслайдером кадр в кадр с Maya, скраб по слогам, до восьми дорожек, окно звуков, монтаж с фейдами и плавными переходами, кривые громкости и баланса, выгрузка в WAV и MP3, плейбласт со звуком и Project Manager, который переносит сцену на другой компьютер вместе со звуками.&lt;/p&gt;
+&lt;p&gt;Проверена в семи версиях Maya: 2019, 2020, 2022, 2023, 2024, 2025 и 2026. В архиве справка на русском и английском и два постера.&lt;/p&gt;"><p>First public release.</p>
+<p>A waveform above the time slider, frame-for-frame with Maya; syllable scrubbing; up to eight tracks; a sound library window; editing with fades and cross-fades; volume and balance curves; export to WAV and MP3; a playblast with sound; and a Project Manager that carries the scene to another computer together with its sounds.</p>
+<p>Checked in seven versions of Maya: 2019, 2020, 2022, 2023, 2024, 2025 and 2026. The archive holds the manual in English and Russian and two posters.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+    </div>
+    
+    
+
+    
+    
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>Wavebar-Phonogramm v1.8.0 · 2026-09-19</span>
+  </div>
+</footer>
+
+<script>
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
+}
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+
+</body>
+</html>
