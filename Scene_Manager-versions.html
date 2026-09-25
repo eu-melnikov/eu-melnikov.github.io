@@ -523,13 +523,25 @@
   <div class="section" id="tutorials">
     <h2><span data-en="// Tutorials" data-ru="// Уроки">// Tutorials</span></h2>
     
-    <div class="links">
+    
+    
+    
+    <div class="tuts">
       
-      <a class="link-row" href="https://youtu.be/R1bEpwRtzXw" target="_blank" rel="noopener">
-        <svg class="link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
-        <span class="link-title"><span data-en="WATCH ON YOUTUBE" data-ru="СМОТРЕТЬ НА YOUTUBE">WATCH ON YOUTUBE</span></span>
-        <span class="link-meta">YouTube</span>
-      </a>
+      <figure class="tut">
+        <button class="tut-player" type="button" data-yt="R1bEpwRtzXw" aria-label="Scene_Manager">
+          <img src="https://i.ytimg.com/vi/R1bEpwRtzXw/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="Video overview" data-ru="Видеообзор">Video overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/R1bEpwRtzXw" target="_blank" rel="noopener">YouTube ↗</a>
+        </figcaption>
+      </figure>
+      
+    </div>
+    <div class="links">
       
     </div>
   </div>
