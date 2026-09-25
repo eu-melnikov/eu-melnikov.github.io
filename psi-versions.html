@@ -247,6 +247,8 @@
     overflow: hidden; background: var(--bg2); cursor: pointer;
   }
   .tut { margin: 0; }
+  /* Ролик на одном языке виден только в своей версии сайта */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
   .tut-live { cursor: default; }
   .tut-player img, .tut-player iframe {
     position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
@@ -614,7 +616,15 @@ document.querySelectorAll('.tut-player').forEach(function (box) {
     var live = document.createElement('div');
     live.className = 'tut-player tut-live';
     live.appendChild(frame);
+    live.cover = box;
     box.replaceWith(live);
+  });
+});
+// Язык переключили во время просмотра: скрытый ролик не должен играть
+// дальше — возвращаем ему обложку.
+document.addEventListener('langchange', function () {
+  document.querySelectorAll('.tut-live').forEach(function (live) {
+    if (live.offsetParent === null) live.replaceWith(live.cover);
   });
 });
 

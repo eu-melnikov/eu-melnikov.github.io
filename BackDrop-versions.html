@@ -247,6 +247,8 @@
     overflow: hidden; background: var(--bg2); cursor: pointer;
   }
   .tut { margin: 0; }
+  /* Ролик на одном языке виден только в своей версии сайта */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
   .tut-live { cursor: default; }
   .tut-player img, .tut-player iframe {
     position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
@@ -439,7 +441,7 @@
   <!-- ── Hero ── -->
   <div class="hero">
     <div class="hero-meta">
-      <b>v1.6</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>89 Mb
+      <b>v1.7</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>96 Mb
     </div>
 
     <h1><strong>BackDrop</strong></h1>
@@ -456,8 +458,13 @@
       </a>
       
       
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="TUTORIALS" data-ru="УРОКИ">TUTORIALS</span>
+      </a>
       
-      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-08-22</span>
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-09-25</span>
       
     </div>
   </div>
@@ -483,38 +490,74 @@
   
   <div class="section">
     <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
-    <div class="prose clampable" data-en="&lt;p&gt;BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame.&lt;/p&gt;
-&lt;h3&gt;Draw straight on the cover&lt;/h3&gt;
-&lt;p&gt;Pencil, lines, shapes, arrows and text captions. The magic pencil leaves strokes that fade away by themselves after a few seconds, so you can point at things without stopping to clean up.&lt;/p&gt;
-&lt;h3&gt;See-through mode&lt;/h3&gt;
-&lt;p&gt;The cover disappears and you annotate your running applications directly, while putting the tool down hands clicks straight back to the app underneath.&lt;/p&gt;
-&lt;h3&gt;Save or copy&lt;/h3&gt;
-&lt;p&gt;What you drew saves to PNG or JPG, or reaches the clipboard with a single keystroke — and in see-through mode that gives you a finished annotated screenshot.&lt;/p&gt;
-&lt;h3&gt;Made for recording&lt;/h3&gt;
-&lt;p&gt;It needs no installer, keeps its settings beside the executable, and can ask for confirmation before minimising or closing, so the desktop never appears in the middle of a recording.&lt;/p&gt;
+    <div class="prose clampable" data-en="&lt;p&gt;BackDrop is a cover for your desktop and a board to draw on. While you stream, record a lesson or give a presentation, it hides your desktop behind a plain colour or a picture, so your icons, documents and personal folders never reach your viewers. And you can draw over the cover - or right over any program.&lt;/p&gt;
+&lt;h3&gt;A cover for your desktop&lt;/h3&gt;
+&lt;p&gt;One of eighteen ready colours or your own, a picture stretched or tiled - you can simply drag it onto the window. The cover fills the screen, but the Windows taskbar stays in sight: the clock, the tray and the way to your other programs are all still there. An optional prompt before minimising or closing keeps the desktop from popping up in the middle of a take.&lt;/p&gt;
+&lt;h3&gt;A board, like in a classroom&lt;/h3&gt;
+&lt;p&gt;Pen, eraser, line, box, circle, triangle, arrow and text caption - each tool on its own letter key. Shift makes a shape straight, Alt slides it before you let go of the mouse. Vanishing ink leaves strokes that fade away on their own after a few seconds, so you can point at things without stopping to clean up.&lt;/p&gt;
+&lt;h3&gt;Drawing over a live program&lt;/h3&gt;
+&lt;p&gt;In see-through mode the cover goes away and you draw right over your running applications - a browser, a drawing, someone else's slide deck. No screenshot needed. Put the pen down, and your clicks go straight to the program under the marks again.&lt;/p&gt;
+&lt;h3&gt;The cover in one click&lt;/h3&gt;
+&lt;p&gt;The eye on the panel, or the F10 key, takes the cover off and puts it back, any time, and your drawings stay where they are. What it brings back is your choice: the cover over the whole screen, or the ordinary window.&lt;/p&gt;
+&lt;h3&gt;Bonus: screen captures&lt;/h3&gt;
+&lt;p&gt;Five ways, each on its own system-wide key, and all of them work over any program, even with BackDrop away in the tray:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Alt+1 - part of the screen: frame it, put an arrow and a caption right on the picture, copy it or save it;&lt;/li&gt;&lt;li&gt;Alt+2 - the window in front;&lt;/li&gt;&lt;li&gt;Alt+3 - the screen under the pointer;&lt;/li&gt;&lt;li&gt;Alt+4 - every monitor in one picture;&lt;/li&gt;&lt;li&gt;Alt+5 - the area you set aside: frame it once, capture it as often as you like.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;The mouse pointer can go into the picture if you want it there. Quick captures file themselves into a folder with no dialog, and a file name can say what the picture is of.&lt;/p&gt;
+&lt;h3&gt;Where to save - in one click&lt;/h3&gt;
+&lt;p&gt;The save window remembers your last fifty folders. Star the ones that matter and they stay on top, drop the ones you no longer need, and find any of them by a couple of words from its path. After a save the clipboard gets, as you choose, the picture itself or a link to the file it wrote.&lt;/p&gt;
+&lt;h3&gt;Always at hand&lt;/h3&gt;
+&lt;p&gt;BackDrop lives in the tray and can start with Windows - no administrator rights needed. The icon's menu has see-through mode, every capture, the pictures folder, the settings, the manual and a restart in one click.&lt;/p&gt;
+&lt;h3&gt;A manual in two languages&lt;/h3&gt;
+&lt;p&gt;A thorough user manual in English and Russian, with pictures of every window and a callout on every button. It opens right from the program on F1 and sits in the manual folder beside it.&lt;/p&gt;
+&lt;h3&gt;What it does not do&lt;/h3&gt;
+&lt;p&gt;BackDrop does not record or broadcast video - that is still your OBS or other recorder's job; BackDrop prepares what goes into the frame. There is no cloud and no account: your pictures and settings stay on your computer.&lt;/p&gt;
 &lt;h3&gt;At a glance&lt;/h3&gt;
-&lt;ul&gt;&lt;li&gt;Solid colour or your own image — 18 ready-made colours, or any other&lt;/li&gt;&lt;li&gt;Drawing on top: pencil, eraser, line, rectangle, circle, triangle, arrow, text&lt;/li&gt;&lt;li&gt;Magic pencil — strokes fade away on their own after 1–30 seconds&lt;/li&gt;&lt;li&gt;See-through mode — draw over your running applications&lt;/li&gt;&lt;li&gt;Save as PNG/JPG and copy to the clipboard&lt;/li&gt;&lt;li&gt;Guards against uncovering the desktop by accident while recording&lt;/li&gt;&lt;li&gt;Portable: settings and pictures live beside the program&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;BackDrop прячет рабочий стол за сплошным цветом или картинкой, пока вы записываете урок или ведёте стрим, — иконки, папки и личные файлы не попадают в кадр.&lt;/p&gt;
-&lt;h3&gt;Рисование поверх заслонки&lt;/h3&gt;
-&lt;p&gt;Карандаш, линии, фигуры, стрелки и текстовые подписи. А «волшебный» карандаш оставляет штрихи, которые через несколько секунд исчезают сами, так что можно показывать на что-то, не отвлекаясь на уборку.&lt;/p&gt;
-&lt;h3&gt;Прозрачный режим&lt;/h3&gt;
-&lt;p&gt;Заслонка пропадает, и вы рисуете прямо поверх работающих приложений, а стоит отложить инструмент — клики снова уходят в программу под ним.&lt;/p&gt;
-&lt;h3&gt;Сохранить или скопировать&lt;/h3&gt;
-&lt;p&gt;Нарисованное сохраняется в PNG или JPG либо одним нажатием попадает в буфер обмена — а в прозрачном режиме это сразу готовый скриншот с пометками.&lt;/p&gt;
-&lt;h3&gt;Сделано для записи&lt;/h3&gt;
-&lt;p&gt;Установщик не нужен, настройки лежат рядом с программой, а перед сворачиванием и закрытием можно включить подтверждение, чтобы рабочий стол не выскочил посреди записи.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Windows 10 / 11, 64-bit&lt;/li&gt;&lt;li&gt;Free, no installer: unzip and run&lt;/li&gt;&lt;li&gt;Settings live in one backdrop.ini file beside the program&lt;/li&gt;&lt;li&gt;English and Russian interface and manual&lt;/li&gt;&lt;li&gt;Archive size - 96 Mb&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;BackDrop - ширма для рабочего стола и доска для рисования. Пока вы ведёте стрим, записываете урок или показываете презентацию, программа прячет рабочий стол за сплошным цветом или картинкой: значки, документы и личные папки не попадают к зрителям. А поверх ширмы - или прямо поверх любой программы - можно рисовать.&lt;/p&gt;
+&lt;h3&gt;Ширма для рабочего стола&lt;/h3&gt;
+&lt;p&gt;Цвет из восемнадцати готовых или свой, картинка растянутая или замощённая - её можно просто перетащить на окно. Ширма закрывает весь экран, но панель задач Windows остаётся на виду: часы, трей и путь к другим программам никуда не деваются. Подтверждение перед сворачиванием и закрытием не даст рабочему столу выскочить посреди записи.&lt;/p&gt;
+&lt;h3&gt;Доска, как в классе&lt;/h3&gt;
+&lt;p&gt;Перо, ластик, линия, рамка, круг, треугольник, стрелка и текстовая подпись - у каждого инструмента своя буква на клавиатуре. Shift делает фигуру ровной, Alt сдвигает её, не отпуская мыши. Тающие чернила оставляют штрих, который через несколько секунд исчезает сам: можно показывать, не отвлекаясь на уборку.&lt;/p&gt;
+&lt;h3&gt;Рисование поверх живой программы&lt;/h3&gt;
+&lt;p&gt;В сквозном режиме ширма уходит, и вы рисуете прямо поверх работающих приложений - браузера, чертежа, чужой презентации. Скриншот для этого не нужен. Отложили перо - и щелчки снова идут в программу под пометками.&lt;/p&gt;
+&lt;h3&gt;Ширма в один щелчок&lt;/h3&gt;
+&lt;p&gt;Глазик на панели или клавиша F10 убирает ширму и возвращает её обратно, в любой момент, и нарисованное остаётся на месте. Возвращает он по выбору либо ширму на весь экран, либо обычное окно.&lt;/p&gt;
+&lt;h3&gt;Бонус: снимки экрана&lt;/h3&gt;
+&lt;p&gt;Пять способов, у каждого своя системная клавиша, и все работают поверх любой программы, даже когда BackDrop убран в трей:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Alt+1 - часть экрана: обвели рамкой, поставили стрелку и подпись прямо на снимке, скопировали или сохранили;&lt;/li&gt;&lt;li&gt;Alt+2 - окно на переднем плане;&lt;/li&gt;&lt;li&gt;Alt+3 - экран под курсором;&lt;/li&gt;&lt;li&gt;Alt+4 - все мониторы одной картинкой;&lt;/li&gt;&lt;li&gt;Alt+5 - заданная область: рамку обводят один раз, а снимают сколько угодно.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;Курсор мыши по желанию попадает на снимок. Быстрые снимки ложатся в папку сами, без диалогов, а имя файла может говорить, что на нём снято.&lt;/p&gt;
+&lt;h3&gt;Куда сохранить - одним щелчком&lt;/h3&gt;
+&lt;p&gt;Окно сохранения помнит пятьдесят последних папок. Нужные отмечаются звёздочкой и всегда стоят наверху, лишние убираются из списка, а любая находится поиском по паре слов из пути. В буфер обмена после сохранения уходит на выбор сама картинка или ссылка на записанный файл.&lt;/p&gt;
+&lt;h3&gt;Всегда под рукой&lt;/h3&gt;
+&lt;p&gt;BackDrop живёт в трее и может запускаться вместе с Windows - права администратора не нужны. Из меню значка доступны сквозной режим, все способы съёмки, папка со снимками, настройки, справка и перезапуск в один щелчок.&lt;/p&gt;
+&lt;h3&gt;Справка на двух языках&lt;/h3&gt;
+&lt;p&gt;Подробное руководство на русском и английском, со снимками окон и выносками к каждой кнопке. Открывается прямо из программы по F1 и лежит в папке manual рядом с ней.&lt;/p&gt;
+&lt;h3&gt;Чего программа не делает&lt;/h3&gt;
+&lt;p&gt;BackDrop не записывает видео и не транслирует - для этого остаётся ваш OBS или другой рекордер, а BackDrop готовит то, что попадёт в кадр. Облака и учётной записи нет: снимки и настройки остаются на вашем компьютере.&lt;/p&gt;
 &lt;h3&gt;Коротко&lt;/h3&gt;
-&lt;ul&gt;&lt;li&gt;Сплошной цвет или своя картинка — 18 готовых цветов или любой другой&lt;/li&gt;&lt;li&gt;Рисование поверх: карандаш, ластик, линия, прямоугольник, круг, треугольник, стрелка, текст&lt;/li&gt;&lt;li&gt;Волшебный карандаш — штрихи исчезают сами через 1–30 секунд&lt;/li&gt;&lt;li&gt;Прозрачный режим — рисование поверх работающих приложений&lt;/li&gt;&lt;li&gt;Сохранение в PNG/JPG и копирование в буфер обмена&lt;/li&gt;&lt;li&gt;Защита от случайного показа рабочего стола во время записи&lt;/li&gt;&lt;li&gt;Портативность: настройки и картинки лежат рядом с программой&lt;/li&gt;&lt;/ul&gt;">
-      <p>BackDrop hides your desktop behind a solid colour or an image while you record a tutorial or stream, so icons, folders and personal files never reach the frame.</p>
-<h3>Draw straight on the cover</h3>
-<p>Pencil, lines, shapes, arrows and text captions. The magic pencil leaves strokes that fade away by themselves after a few seconds, so you can point at things without stopping to clean up.</p>
-<h3>See-through mode</h3>
-<p>The cover disappears and you annotate your running applications directly, while putting the tool down hands clicks straight back to the app underneath.</p>
-<h3>Save or copy</h3>
-<p>What you drew saves to PNG or JPG, or reaches the clipboard with a single keystroke — and in see-through mode that gives you a finished annotated screenshot.</p>
-<h3>Made for recording</h3>
-<p>It needs no installer, keeps its settings beside the executable, and can ask for confirmation before minimising or closing, so the desktop never appears in the middle of a recording.</p>
+&lt;ul&gt;&lt;li&gt;Windows 10 / 11, 64 бита&lt;/li&gt;&lt;li&gt;Бесплатно, без установки: распаковал и работает&lt;/li&gt;&lt;li&gt;Настройки - в одном файле backdrop.ini рядом с программой&lt;/li&gt;&lt;li&gt;Интерфейс и справка на русском и английском&lt;/li&gt;&lt;li&gt;Размер архива - 96 Mb&lt;/li&gt;&lt;/ul&gt;">
+      <p>BackDrop is a cover for your desktop and a board to draw on. While you stream, record a lesson or give a presentation, it hides your desktop behind a plain colour or a picture, so your icons, documents and personal folders never reach your viewers. And you can draw over the cover - or right over any program.</p>
+<h3>A cover for your desktop</h3>
+<p>One of eighteen ready colours or your own, a picture stretched or tiled - you can simply drag it onto the window. The cover fills the screen, but the Windows taskbar stays in sight: the clock, the tray and the way to your other programs are all still there. An optional prompt before minimising or closing keeps the desktop from popping up in the middle of a take.</p>
+<h3>A board, like in a classroom</h3>
+<p>Pen, eraser, line, box, circle, triangle, arrow and text caption - each tool on its own letter key. Shift makes a shape straight, Alt slides it before you let go of the mouse. Vanishing ink leaves strokes that fade away on their own after a few seconds, so you can point at things without stopping to clean up.</p>
+<h3>Drawing over a live program</h3>
+<p>In see-through mode the cover goes away and you draw right over your running applications - a browser, a drawing, someone else's slide deck. No screenshot needed. Put the pen down, and your clicks go straight to the program under the marks again.</p>
+<h3>The cover in one click</h3>
+<p>The eye on the panel, or the F10 key, takes the cover off and puts it back, any time, and your drawings stay where they are. What it brings back is your choice: the cover over the whole screen, or the ordinary window.</p>
+<h3>Bonus: screen captures</h3>
+<p>Five ways, each on its own system-wide key, and all of them work over any program, even with BackDrop away in the tray:</p>
+<ul><li>Alt+1 - part of the screen: frame it, put an arrow and a caption right on the picture, copy it or save it;</li><li>Alt+2 - the window in front;</li><li>Alt+3 - the screen under the pointer;</li><li>Alt+4 - every monitor in one picture;</li><li>Alt+5 - the area you set aside: frame it once, capture it as often as you like.</li></ul>
+<p>The mouse pointer can go into the picture if you want it there. Quick captures file themselves into a folder with no dialog, and a file name can say what the picture is of.</p>
+<h3>Where to save - in one click</h3>
+<p>The save window remembers your last fifty folders. Star the ones that matter and they stay on top, drop the ones you no longer need, and find any of them by a couple of words from its path. After a save the clipboard gets, as you choose, the picture itself or a link to the file it wrote.</p>
+<h3>Always at hand</h3>
+<p>BackDrop lives in the tray and can start with Windows - no administrator rights needed. The icon's menu has see-through mode, every capture, the pictures folder, the settings, the manual and a restart in one click.</p>
+<h3>A manual in two languages</h3>
+<p>A thorough user manual in English and Russian, with pictures of every window and a callout on every button. It opens right from the program on F1 and sits in the manual folder beside it.</p>
+<h3>What it does not do</h3>
+<p>BackDrop does not record or broadcast video - that is still your OBS or other recorder's job; BackDrop prepares what goes into the frame. There is no cloud and no account: your pictures and settings stay on your computer.</p>
 <h3>At a glance</h3>
-<ul><li>Solid colour or your own image — 18 ready-made colours, or any other</li><li>Drawing on top: pencil, eraser, line, rectangle, circle, triangle, arrow, text</li><li>Magic pencil — strokes fade away on their own after 1–30 seconds</li><li>See-through mode — draw over your running applications</li><li>Save as PNG/JPG and copy to the clipboard</li><li>Guards against uncovering the desktop by accident while recording</li><li>Portable: settings and pictures live beside the program</li></ul>
+<ul><li>Windows 10 / 11, 64-bit</li><li>Free, no installer: unzip and run</li><li>Settings live in one backdrop.ini file beside the program</li><li>English and Russian interface and manual</li><li>Archive size - 96 Mb</li></ul>
     </div>
     
     <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
@@ -526,6 +569,44 @@
   
 
   <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Tutorials" data-ru="// Уроки">// Tutorials</span></h2>
+    
+    
+    
+    
+    <div class="tuts">
+      
+      <figure class="tut" data-only="en">
+        <button class="tut-player" type="button" data-yt="X0iAZUKxf-c" aria-label="BackDrop 1.7 overview">
+          <img src="https://i.ytimg.com/vi/X0iAZUKxf-c/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="BackDrop 1.7 overview" data-ru="Обзор BackDrop 1.7">BackDrop 1.7 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/X0iAZUKxf-c" target="_blank" rel="noopener">YouTube · v1.7 ↗</a>
+        </figcaption>
+      </figure>
+      
+      <figure class="tut" data-only="ru">
+        <button class="tut-player" type="button" data-yt="R3EnMcKDaKo" aria-label="BackDrop 1.7 overview">
+          <img src="https://i.ytimg.com/vi/R3EnMcKDaKo/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="BackDrop 1.7 overview" data-ru="Обзор BackDrop 1.7">BackDrop 1.7 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/R3EnMcKDaKo" target="_blank" rel="noopener">YouTube · v1.7 ↗</a>
+        </figcaption>
+      </figure>
+      
+    </div>
+    <div class="links">
+      
+    </div>
+  </div>
   
 
   <!-- ── Характеристики ── -->
@@ -547,9 +628,76 @@
       
       <div class="ver-row latest">
         <div class="ver-head">
+          <span class="ver-num">1.7</span>
+          <span class="ver-date">2026-09-25</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/BackDrop_1.7.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            96 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;A release about the small things that eat time every day, and a new user manual.&lt;/p&gt;
+&lt;h3&gt;The pointer in the picture.&lt;/h3&gt;
+&lt;p&gt;&quot;Capture the mouse pointer&quot; - on the Capture tab of Settings and in the tray menu. The pointer goes into the picture where it stood, in all five kinds of capture. Off to begin with.&lt;/p&gt;
+&lt;h3&gt;Favorite folders in the save window.&lt;/h3&gt;
+&lt;p&gt;Star a folder and it moves up into Favorites, where no new folder will push it out. &quot;Remove from the list&quot;, the Delete key or a right-click drops a line; the folder on the disk stays put. Fifty folders are remembered instead of thirty, shared by both lists. A favorite on a drive that is not plugged in is shown greyed out.&lt;/p&gt;
+&lt;h3&gt;Searching the folders.&lt;/h3&gt;
+&lt;p&gt;A search field above the list keeps only the folders whose path has every word you type, in any order. You can type right on the list. The first Esc clears the search, the second closes the window.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;The save window remembers its size, and which list the last picture went into.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;The eye brings the cover back over the whole screen.&lt;/h3&gt;
+&lt;p&gt;It used to lead to the ordinary window, which then had to be arranged again. The choice is on the Toolbar tab, &quot;What the eye brings back&quot;. F10 and Esc in see-through mode do the same.&lt;/p&gt;
+&lt;h3&gt;A restart in one click.&lt;/h3&gt;
+&lt;p&gt;&quot;Restart BackDrop&quot; in the tray menu, and a &quot;Restart now&quot; button under the language choice.&lt;/p&gt;
+&lt;h3&gt;A new user manual.&lt;/h3&gt;
+&lt;p&gt;Two pages, English and Russian, window pictures with a callout on every button, and a search. It opens on F1, from the tray menu and with the &quot;User manual&quot; button in the ordinary window, and lives in the manual folder beside the program. Checked against the program line by line.&lt;/p&gt;
+&lt;h3&gt;Fixed.&lt;/h3&gt;
+&lt;p&gt;The Windows 11 taskbar no longer turns darker in see-through mode. A text caption lands exactly the size it was in the box. Colour names and the panel place picker are translated into Russian. Turning on autostart from the tray no longer announces that it worked.&lt;/p&gt;" data-ru="&lt;p&gt;Версия про мелочи, которые съедают время каждый день, и про новую справку.&lt;/p&gt;
+&lt;h3&gt;Курсор на снимке.&lt;/h3&gt;
+&lt;p&gt;Флажок «Захватывать курсор» - в Настройках → Съёмка и в меню трея. Курсор попадает на картинку там, где стоял, во всех пяти видах съёмки. Изначально выключено.&lt;/p&gt;
+&lt;h3&gt;Избранные папки в окне сохранения.&lt;/h3&gt;
+&lt;p&gt;Папку можно отметить звёздочкой - она уходит наверх, в «Избранное», и новые папки её не вытеснят. Лишнюю строчку убирает кнопка «Убрать из списка», клавиша Delete или правый щелчок; сама папка на диске не трогается. Запоминается пятьдесят папок вместо тридцати, общее число на оба списка. Избранная папка на отключённом диске показана серым.&lt;/p&gt;
+&lt;h3&gt;Поиск по папкам.&lt;/h3&gt;
+&lt;p&gt;Над списком - поле поиска: остаются папки, в пути которых есть все введённые слова, в любом порядке. Печатать можно прямо на списке. Первый Esc очищает поиск, второй закрывает окно.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Окно сохранения помнит свой размер и то, в какой из двух списков ушла последняя картинка.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;Глазик возвращает ширму на весь экран.&lt;/h3&gt;
+&lt;p&gt;Раньше он выводил в обычное окно, которое приходилось расставлять заново. Выбор - в Настройках → Панель, «Куда возвращает глазик». F10 и Esc в сквозном режиме делают то же.&lt;/p&gt;
+&lt;h3&gt;Перезапуск в один щелчок.&lt;/h3&gt;
+&lt;p&gt;«Перезапустить BackDrop» в меню трея и кнопка «Перезапустить сейчас» под выбором языка.&lt;/p&gt;
+&lt;h3&gt;Новая справка.&lt;/h3&gt;
+&lt;p&gt;Две страницы, русская и английская, снимки окон с выносками к каждой кнопке, поиск. Открывается по F1, из меню трея и кнопкой «Справка» в обычном окне; лежит в папке manual рядом с программой. Сверена с программой строка за строкой.&lt;/p&gt;
+&lt;h3&gt;Исправлено.&lt;/h3&gt;
+&lt;p&gt;В сквозном режиме панель задач Windows 11 больше не темнеет. Подпись текстом ложится ровно того размера, что в поле ввода. Названия цветов и схема мест для панели переведены на русский. Включение автозапуска из трея больше не сообщает об успехе.&lt;/p&gt;"><p>A release about the small things that eat time every day, and a new user manual.</p>
+<h3>The pointer in the picture.</h3>
+<p>"Capture the mouse pointer" - on the Capture tab of Settings and in the tray menu. The pointer goes into the picture where it stood, in all five kinds of capture. Off to begin with.</p>
+<h3>Favorite folders in the save window.</h3>
+<p>Star a folder and it moves up into Favorites, where no new folder will push it out. "Remove from the list", the Delete key or a right-click drops a line; the folder on the disk stays put. Fifty folders are remembered instead of thirty, shared by both lists. A favorite on a drive that is not plugged in is shown greyed out.</p>
+<h3>Searching the folders.</h3>
+<p>A search field above the list keeps only the folders whose path has every word you type, in any order. You can type right on the list. The first Esc clears the search, the second closes the window.</p>
+<ul><li>The save window remembers its size, and which list the last picture went into.</li></ul>
+<h3>The eye brings the cover back over the whole screen.</h3>
+<p>It used to lead to the ordinary window, which then had to be arranged again. The choice is on the Toolbar tab, "What the eye brings back". F10 and Esc in see-through mode do the same.</p>
+<h3>A restart in one click.</h3>
+<p>"Restart BackDrop" in the tray menu, and a "Restart now" button under the language choice.</p>
+<h3>A new user manual.</h3>
+<p>Two pages, English and Russian, window pictures with a callout on every button, and a search. It opens on F1, from the tray menu and with the "User manual" button in the ordinary window, and lives in the manual folder beside the program. Checked against the program line by line.</p>
+<h3>Fixed.</h3>
+<p>The Windows 11 taskbar no longer turns darker in see-through mode. A text caption lands exactly the size it was in the box. Colour names and the panel place picker are translated into Russian. Turning on autostart from the tray no longer announces that it worked.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+      <div class="ver-row">
+        <div class="ver-head">
           <span class="ver-num">1.6</span>
           <span class="ver-date">2026-08-22</span>
-          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
           
           <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/BackDrop_1.6.zip" download>
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
@@ -724,7 +872,7 @@
 <footer>
   <div class="wrap">
     <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
-    <span>BackDrop v1.6 · 2026-08-22</span>
+    <span>BackDrop v1.7 · 2026-09-25</span>
   </div>
 </footer>
 
@@ -742,7 +890,15 @@ document.querySelectorAll('.tut-player').forEach(function (box) {
     var live = document.createElement('div');
     live.className = 'tut-player tut-live';
     live.appendChild(frame);
+    live.cover = box;
     box.replaceWith(live);
+  });
+});
+// Язык переключили во время просмотра: скрытый ролик не должен играть
+// дальше — возвращаем ему обложку.
+document.addEventListener('langchange', function () {
+  document.querySelectorAll('.tut-live').forEach(function (live) {
+    if (live.offsetParent === null) live.replaceWith(live.cover);
   });
 });
 
