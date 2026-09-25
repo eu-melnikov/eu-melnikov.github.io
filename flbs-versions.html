@@ -238,6 +238,34 @@
     opacity: .6; margin-left: auto; white-space: nowrap;
   }
 
+  /* Встроенные ролики: пока не нажали — обложка с кнопкой, плеер YouTube
+     грузится только по клику, иначе каждый ролик тянул бы мегабайт скриптов. */
+  .tuts { max-width: var(--text-col); display: flex; flex-direction: column; gap: 36px; }
+  .tut-player {
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 9;
+    padding: 0; border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); cursor: pointer;
+  }
+  .tut { margin: 0; }
+  .tut-live { cursor: default; }
+  .tut-player img, .tut-player iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+  }
+  .tut-player img { object-fit: cover; opacity: .82; transition: opacity .2s; }
+  .tut-player:hover img { opacity: 1; }
+  .tut-play {
+    position: absolute; left: 50%; top: 50%; width: 64px; height: 64px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: rgba(13,15,20,.72); border: 1px solid rgba(0,229,255,.45);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, border-color .2s;
+  }
+  .tut-play svg { width: 22px; height: 22px; margin-left: 3px; }
+  .tut-player:hover .tut-play { transform: translate(-50%, -50%) scale(1.08); border-color: var(--accent); }
+  .tut-cap { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; }
+  .tut-yt { text-decoration: none; }
+  .tut-yt:hover { color: var(--accent); opacity: 1; }
+
   /* ── характеристики ── */
   .specs { max-width: var(--text-col); }
   .spec-row {
@@ -488,6 +516,7 @@
   
   <div class="section" id="tutorials">
     <h2><span data-en="// Tutorials" data-ru="// Уроки">// Tutorials</span></h2>
+    
     <div class="links">
       
       <a class="link-row" href="https://youtu.be/nTZnjrRuiKc" target="_blank" rel="noopener">
@@ -619,6 +648,23 @@
 </footer>
 
 <script>
+/* ── уроки: по клику обложка меняется на плеер YouTube ── */
+document.querySelectorAll('.tut-player').forEach(function (box) {
+  box.addEventListener('click', function () {
+    var frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + box.dataset.yt + '?autoplay=1&rel=0';
+    frame.title = box.getAttribute('aria-label');
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    // YouTube не играет встроенный ролик без Referer (ошибка 153).
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    var live = document.createElement('div');
+    live.className = 'tut-player tut-live';
+    live.appendChild(frame);
+    box.replaceWith(live);
+  });
+});
+
 /* ── галерея ── */
 var galIndex = 0;
 
