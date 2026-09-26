@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP Rollout Shelf | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
+  .hero-meta {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h1 strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
+  }
+
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
+  }
+
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
+
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
+  }
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
+  }
+
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  /* Встроенные ролики: пока не нажали — обложка с кнопкой, плеер YouTube
+     грузится только по клику, иначе каждый ролик тянул бы мегабайт скриптов. */
+  .tuts { max-width: var(--text-col); display: flex; flex-direction: column; gap: 36px; }
+  .tut-player {
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 9;
+    padding: 0; border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); cursor: pointer;
+  }
+  .tut { margin: 0; }
+  /* Ролик на одном языке виден только в своей версии сайта */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
+  .tut-live { cursor: default; }
+  .tut-player img, .tut-player iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+  }
+  .tut-player img { object-fit: cover; opacity: .82; transition: opacity .2s; }
+  .tut-player:hover img { opacity: 1; }
+  .tut-play {
+    position: absolute; left: 50%; top: 50%; width: 64px; height: 64px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: rgba(13,15,20,.72); border: 1px solid rgba(0,229,255,.45);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, border-color .2s;
+  }
+  .tut-play svg { width: 22px; height: 22px; margin-left: 3px; }
+  .tut-player:hover .tut-play { transform: translate(-50%, -50%) scale(1.08); border-color: var(--accent); }
+  .tut-cap { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; }
+  .tut-yt { text-decoration: none; }
+  .tut-yt:hover { color: var(--accent); opacity: 1; }
+
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v2.0.1</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>0.32 Mb
+    </div>
+
+    <h1><strong>MP Rollout Shelf</strong></h1>
+
+    
+    <p class="tagline"><span data-en="a script shelf for Maya: rollouts, per-project profiles, favorite folders" data-ru="полка скриптов для Maya: свитки, профили под проекты, избранные папки">a script shelf for Maya: rollouts, per-project profiles, favorite folders</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="TUTORIALS" data-ru="УРОКИ">TUTORIALS</span>
+      </a>
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-09-26</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MP_Rollout_Shelf/MP_Rollout_Shelf_poster.jpg" alt="MP Rollout Shelf">
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose clampable" data-en="&lt;p&gt;MP Rollout Shelf is a free script shelf for Maya: a narrow column of buttons beside the viewport, grouped into collapsible rollouts, with a separate set of buttons for every project. On top of that, your favorite folders and recent scene files are one click away.&lt;/p&gt;
+&lt;p&gt;Maya's stock shelf is a long strip of icons on tabs. To reach a script you have to remember which tab it's on and what its icon looks like, and moving to another project means rebuilding the shelf. Here everything is labelled with words and stays where you put it.&lt;/p&gt;
+&lt;h3&gt;Labelled buttons and rollouts&lt;/h3&gt;
+&lt;p&gt;Every button carries a label, and can have its own colour and tooltip. Buttons are grouped into rollouts, 3ds Max style: click a header and the rollout collapses, and it stays collapsed. What you rarely need gets out of the way without being deleted.&lt;/p&gt;
+&lt;p&gt;A button runs Python or MEL exactly the way a stock Maya shelf button does, sharing imports and variables with the Script Editor. A script from Maya's shelf moves over by copying its command text.&lt;/p&gt;
+&lt;h3&gt;Rearrange by dragging&lt;/h3&gt;
+&lt;p&gt;Hold Ctrl and drag a button to another spot, in any rollout, or drag a rollout with all its buttons. The Ctrl is there so a click with a shaky hand runs the script instead of carrying the button away.&lt;/p&gt;
+&lt;h3&gt;Profiles per project&lt;/h3&gt;
+&lt;p&gt;A profile is its own set of rollouts and buttons. The easy way is to build a common set, then copy it for a new project and change what differs: Duplicate copies the profile with every button. You switch profiles in Settings and the shelf rebuilds at once.&lt;/p&gt;
+&lt;h3&gt;Floating or docked&lt;/h3&gt;
+&lt;p&gt;The shelf is a small floating window or a panel docked to Maya on the left or right. Switch in Settings, no restart needed. The docked shelf remembers its width and comes back in place after a Maya restart; the floating one remembers where it stood.&lt;/p&gt;
+&lt;h3&gt;Favorite folders&lt;/h3&gt;
+&lt;p&gt;The Favorites button opens a list of your project folders beside the shelf. Each has four buttons: open a scene, save the scene, import a file, export the selection — each opening the usual dialog right in that folder. Import takes Maya scenes, FBX and OBJ and gathers them into one group; export picks the format from the extension and loads the plug-in it needs. Folders can be grouped under headers and separators.&lt;/p&gt;
+&lt;h3&gt;Recent files&lt;/h3&gt;
+&lt;p&gt;The Recent button lists the files you opened and imported lately — open or import one again with a click. Maya's own File &amp;gt; Recent Files list is merged in.&lt;/p&gt;
+&lt;h3&gt;Your buttons live apart from the tool&lt;/h3&gt;
+&lt;p&gt;Buttons, profiles and favorites sit in their own folder in Maya's documents, apart from the tool and shared by every Maya version. Updating the tool never touches them, and a backup is a copy of one folder.&lt;/p&gt;
+&lt;h3&gt;What it doesn't do&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;It doesn't import Maya's stock shelves automatically: buttons move over by copying their command text.&lt;/li&gt;&lt;li&gt;It doesn't keep icons: buttons are told apart by words and colour.&lt;/li&gt;&lt;li&gt;It doesn't sync your buttons between computers by itself: put the data folder on a network drive or copy it over.&lt;/li&gt;&lt;li&gt;Tested on Windows. Not tested on macOS or Linux.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Maya:&lt;/strong&gt; 2019, 2020, 2022, 2023, 2024, 2025, 2026&lt;/li&gt;&lt;li&gt;&lt;strong&gt;System:&lt;/strong&gt; Windows&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Python:&lt;/strong&gt; 2.7 and 3.x, PySide2 and PySide6&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Install:&lt;/strong&gt; copy one folder into Maya's scripts and make a shelf button&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Size:&lt;/strong&gt; 0.32 MB&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Interface:&lt;/strong&gt; English; manual in English and Russian, opens from Settings&lt;/li&gt;&lt;li&gt;&lt;strong&gt;License:&lt;/strong&gt; free, MIT, open source&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;MP Rollout Shelf — бесплатная полка скриптов для Maya: узкая колонка кнопок сбоку от вьюпорта, разложенных по сворачиваемым свиткам, с отдельным набором кнопок под каждый проект. В придачу — избранные папки и недавние файлы сцены в один щелчок.&lt;/p&gt;
+&lt;p&gt;Штатная полка Maya — длинная лента иконок на вкладках. Чтобы добраться до скрипта, надо помнить, на какой он вкладке и как выглядит его иконка, а при переходе на другой проект полку приходится перестраивать. Здесь всё подписано словами и лежит там, где вы это положили.&lt;/p&gt;
+&lt;h3&gt;Кнопки со словами и свитки&lt;/h3&gt;
+&lt;p&gt;Каждая кнопка подписана, может иметь свой цвет и подсказку. Кнопки собраны в свитки, как в 3ds Max: щелчок по заголовку сворачивает свиток, и это запоминается. Редко нужное убирается с глаз, не удаляясь.&lt;/p&gt;
+&lt;p&gt;Скрипт на кнопке — Python или MEL, и выполняется он ровно так же, как с обычной полки Maya: импорты и переменные общие со Script Editor. Скрипт с полки Maya переносится простым копированием текста команды.&lt;/p&gt;
+&lt;h3&gt;Перестановка перетаскиванием&lt;/h3&gt;
+&lt;p&gt;С зажатым Ctrl кнопка перетаскивается на другое место, в том числе в другой свиток, а свиток — вместе со всеми кнопками. Ctrl нужен, чтобы щелчок дрогнувшей рукой запускал скрипт, а не уносил кнопку.&lt;/p&gt;
+&lt;h3&gt;Профили под проекты&lt;/h3&gt;
+&lt;p&gt;Профиль — отдельный набор свитков и кнопок. Удобнее всего собрать общий набор, а для нового проекта сделать копию и поменять то, что отличается: Duplicate копирует профиль со всеми кнопками. Переключение — в окне настроек, шелф перестраивается сразу.&lt;/p&gt;
+&lt;h3&gt;Плавающий или пристыкованный&lt;/h3&gt;
+&lt;p&gt;Шелф бывает маленьким плавающим окном или панелью, пристыкованной к Maya слева или справа. Режим меняется в настройках без перезапуска. Пристыкованный шелф помнит ширину и после перезапуска Maya встаёт на своё место сам; плавающий помнит, где стоял.&lt;/p&gt;
+&lt;h3&gt;Избранные папки&lt;/h3&gt;
+&lt;p&gt;Кнопка Favorites открывает рядом с шелфом список папок проекта. У каждой — четыре кнопки: открыть сцену, сохранить сцену, импортировать файл и экспортировать выделенное. Каждая открывает обычный диалог сразу в этой папке. Импорт принимает сцены Maya, FBX и OBJ и собирает всё в одну группу; экспорт выбирает формат по расширению и сам подключает нужный плагин. Папки группируются заголовками и разделителями.&lt;/p&gt;
+&lt;h3&gt;Недавние файлы&lt;/h3&gt;
+&lt;p&gt;Кнопка Recent показывает последние открытые и импортированные файлы — открыть или импортировать снова одним щелчком. В список подтягивается и обычный File → Recent Files самой Maya.&lt;/p&gt;
+&lt;h3&gt;Ваши кнопки отдельно от тула&lt;/h3&gt;
+&lt;p&gt;Кнопки, профили и избранное лежат в своей папке в документах Maya, отдельно от самого тула, и общие для всех версий Maya. Обновление тула их не трогает, резервная копия — это копия одной папки.&lt;/p&gt;
+&lt;h3&gt;Чего программа не делает&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Не импортирует штатные полки Maya автоматически: кнопки переносятся копированием текста команды.&lt;/li&gt;&lt;li&gt;Не хранит иконки: кнопки подписываются словами и цветом.&lt;/li&gt;&lt;li&gt;Не синхронизирует кнопки между компьютерами сама: папку данных можно положить на сетевой диск или скопировать вручную.&lt;/li&gt;&lt;li&gt;Проверена на Windows. На macOS и Linux не проверялась.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Maya:&lt;/strong&gt; 2019, 2020, 2022, 2023, 2024, 2025, 2026&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Система:&lt;/strong&gt; Windows&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Python:&lt;/strong&gt; 2.7 и 3.x, PySide2 и PySide6&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Установка:&lt;/strong&gt; скопировать папку в scripts у Maya и сделать кнопку на полке&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Размер:&lt;/strong&gt; 0,32 МБ&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Интерфейс:&lt;/strong&gt; английский; справка на русском и английском, открывается из настроек&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Лицензия:&lt;/strong&gt; бесплатно, MIT, открытый код&lt;/li&gt;&lt;/ul&gt;">
+      <p>MP Rollout Shelf is a free script shelf for Maya: a narrow column of buttons beside the viewport, grouped into collapsible rollouts, with a separate set of buttons for every project. On top of that, your favorite folders and recent scene files are one click away.</p>
+<p>Maya's stock shelf is a long strip of icons on tabs. To reach a script you have to remember which tab it's on and what its icon looks like, and moving to another project means rebuilding the shelf. Here everything is labelled with words and stays where you put it.</p>
+<h3>Labelled buttons and rollouts</h3>
+<p>Every button carries a label, and can have its own colour and tooltip. Buttons are grouped into rollouts, 3ds Max style: click a header and the rollout collapses, and it stays collapsed. What you rarely need gets out of the way without being deleted.</p>
+<p>A button runs Python or MEL exactly the way a stock Maya shelf button does, sharing imports and variables with the Script Editor. A script from Maya's shelf moves over by copying its command text.</p>
+<h3>Rearrange by dragging</h3>
+<p>Hold Ctrl and drag a button to another spot, in any rollout, or drag a rollout with all its buttons. The Ctrl is there so a click with a shaky hand runs the script instead of carrying the button away.</p>
+<h3>Profiles per project</h3>
+<p>A profile is its own set of rollouts and buttons. The easy way is to build a common set, then copy it for a new project and change what differs: Duplicate copies the profile with every button. You switch profiles in Settings and the shelf rebuilds at once.</p>
+<h3>Floating or docked</h3>
+<p>The shelf is a small floating window or a panel docked to Maya on the left or right. Switch in Settings, no restart needed. The docked shelf remembers its width and comes back in place after a Maya restart; the floating one remembers where it stood.</p>
+<h3>Favorite folders</h3>
+<p>The Favorites button opens a list of your project folders beside the shelf. Each has four buttons: open a scene, save the scene, import a file, export the selection — each opening the usual dialog right in that folder. Import takes Maya scenes, FBX and OBJ and gathers them into one group; export picks the format from the extension and loads the plug-in it needs. Folders can be grouped under headers and separators.</p>
+<h3>Recent files</h3>
+<p>The Recent button lists the files you opened and imported lately — open or import one again with a click. Maya's own File &gt; Recent Files list is merged in.</p>
+<h3>Your buttons live apart from the tool</h3>
+<p>Buttons, profiles and favorites sit in their own folder in Maya's documents, apart from the tool and shared by every Maya version. Updating the tool never touches them, and a backup is a copy of one folder.</p>
+<h3>What it doesn't do</h3>
+<ul><li>It doesn't import Maya's stock shelves automatically: buttons move over by copying their command text.</li><li>It doesn't keep icons: buttons are told apart by words and colour.</li><li>It doesn't sync your buttons between computers by itself: put the data folder on a network drive or copy it over.</li><li>Tested on Windows. Not tested on macOS or Linux.</li></ul>
+<h3>At a glance</h3>
+<ul><li><strong>Maya:</strong> 2019, 2020, 2022, 2023, 2024, 2025, 2026</li><li><strong>System:</strong> Windows</li><li><strong>Python:</strong> 2.7 and 3.x, PySide2 and PySide6</li><li><strong>Install:</strong> copy one folder into Maya's scripts and make a shelf button</li><li><strong>Size:</strong> 0.32 MB</li><li><strong>Interface:</strong> English; manual in English and Russian, opens from Settings</li><li><strong>License:</strong> free, MIT, open source</li></ul>
+    </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Tutorials" data-ru="// Уроки">// Tutorials</span></h2>
+    
+    
+    
+    
+    <div class="tuts">
+      
+      <figure class="tut" data-only="en">
+        <button class="tut-player" type="button" data-yt="havPu0rb-C0" aria-label="MP Rollout Shelf 2.0 overview">
+          <img src="https://i.ytimg.com/vi/havPu0rb-C0/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="MP Rollout Shelf 2.0 overview" data-ru="Обзор MP Rollout Shelf 2.0">MP Rollout Shelf 2.0 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/havPu0rb-C0" target="_blank" rel="noopener">YouTube · v2.0.1 ↗</a>
+        </figcaption>
+      </figure>
+      
+      <figure class="tut" data-only="ru">
+        <button class="tut-player" type="button" data-yt="JWr4Sevbv9M" aria-label="MP Rollout Shelf 2.0 overview">
+          <img src="https://i.ytimg.com/vi/JWr4Sevbv9M/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="MP Rollout Shelf 2.0 overview" data-ru="Обзор MP Rollout Shelf 2.0">MP Rollout Shelf 2.0 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/JWr4Sevbv9M" target="_blank" rel="noopener">YouTube · v2.0.1 ↗</a>
+        </figcaption>
+      </figure>
+      
+    </div>
+    <div class="links">
+      
+    </div>
+  </div>
+  
+
+  <!-- ── Характеристики ── -->
+  
+  
+  <div class="section">
+    <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
+    <div class="specs">
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>2.0.1</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Autodesk Maya 2019–2026</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free (MIT)</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN</div></div>
+      
+      <div class="spec-row"><div class="spec-key"><span data-en="Installation" data-ru="Установка">Installation</span></div><div class="spec-val">Copy to Maya scripts & run</div></div>
+    </div>
+  </div>
+  
+
+  <!-- ── Как это делалось ── -->
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
+    </div>
+
+    
+    <div class="versions" id="versions">
+      
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">2.0.1</span>
+          <span class="ver-date">2026-09-26</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MP_Rollout_Shelf/MP_Rollout_Shelf-2.0.1.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            0.32 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;First public release.&lt;/p&gt;
+&lt;p&gt;A script shelf with labelled buttons in collapsible rollouts and a profile per project; floating or docked to Maya on the left or right; favorite folders with open, save, import and export; and a recent files list.&lt;/p&gt;
+&lt;p&gt;Checked in seven versions of Maya: 2019, 2020, 2022, 2023, 2024, 2025 and 2026. The archive holds the manual in English and Russian and a ready line for a shelf button.&lt;/p&gt;" data-ru="&lt;p&gt;Первый публичный выпуск.&lt;/p&gt;
+&lt;p&gt;Полка скриптов с подписанными кнопками в сворачиваемых свитках и профилем под каждый проект; плавающая или пристыкованная к Maya слева или справа; избранные папки с открытием, сохранением, импортом и экспортом; список недавних файлов.&lt;/p&gt;
+&lt;p&gt;Проверена в семи версиях Maya: 2019, 2020, 2022, 2023, 2024, 2025 и 2026. В архиве справка на русском и английском и готовая строка для кнопки на полке.&lt;/p&gt;"><p>First public release.</p>
+<p>A script shelf with labelled buttons in collapsible rollouts and a profile per project; floating or docked to Maya on the left or right; favorite folders with open, save, import and export; and a recent files list.</p>
+<p>Checked in seven versions of Maya: 2019, 2020, 2022, 2023, 2024, 2025 and 2026. The archive holds the manual in English and Russian and a ready line for a shelf button.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+    </div>
+    
+    
+
+    
+    
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>MP Rollout Shelf v2.0.1 · 2026-09-26</span>
+  </div>
+</footer>
+
+<script>
+/* ── уроки: по клику обложка меняется на плеер YouTube ── */
+document.querySelectorAll('.tut-player').forEach(function (box) {
+  box.addEventListener('click', function () {
+    var frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + box.dataset.yt + '?autoplay=1&rel=0';
+    frame.title = box.getAttribute('aria-label');
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    // YouTube не играет встроенный ролик без Referer (ошибка 153).
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    var live = document.createElement('div');
+    live.className = 'tut-player tut-live';
+    live.appendChild(frame);
+    live.cover = box;
+    box.replaceWith(live);
+  });
+});
+// Язык переключили во время просмотра: скрытый ролик не должен играть
+// дальше — возвращаем ему обложку.
+document.addEventListener('langchange', function () {
+  document.querySelectorAll('.tut-live').forEach(function (live) {
+    if (live.offsetParent === null) live.replaceWith(live.cover);
+  });
+});
+
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
+}
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+
+</body>
+</html>
