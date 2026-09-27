@@ -253,8 +253,6 @@
     overflow: hidden; background: var(--bg2); cursor: pointer;
   }
   .tut { margin: 0; }
-  /* Ролик на одном языке виден только в своей версии сайта */
-  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
   .tut-live { cursor: default; }
   .tut-player img, .tut-player iframe {
     position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
@@ -413,6 +411,8 @@
   }
   .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
   .langsw button:hover:not(.on) { color: var(--text); }
+  /* то, что есть только на одном языке: ролик, русский постер */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
 
 </style>
 </head>
@@ -483,7 +483,9 @@
   <div class="shot">
     <div class="shot-frame">
       
+      
       <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander">
+      
       
     </div>
 

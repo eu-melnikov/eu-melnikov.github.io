@@ -599,6 +599,8 @@
   }
   .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
   .langsw button:hover:not(.on) { color: var(--text); }
+  /* то, что есть только на одном языке: ролик, русский постер */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
 
 </style>
 </head>
@@ -736,7 +738,10 @@
     </div>
     <div class="release-card">
       <div class="release-screenshot">
-        <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVSoundPanel/EOVSoundPanel_poster.jpg" alt="EOV Sound Panel interface">
+        <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVSoundPanel/EOVSoundPanel_poster.jpg" alt="EOV Sound Panel interface" data-only="en">
+        
+        <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVSoundPanel/EOVSoundPanel_poster_ru.jpg" alt="EOV Sound Panel interface" data-only="ru">
+        
       </div>
       <div class="release-info">
         <span class="release-badge"><span data-en="Just released" data-ru="Только что вышло">Just released</span></span>
@@ -787,7 +792,10 @@
       <a class="card" data-cat="windows" href="EOVSoundPanel-versions.html">
         <div class="card-preview">
           
-          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVSoundPanel/EOVSoundPanel_poster.jpg" alt="EOV Sound Panel" loading="lazy">
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVSoundPanel/EOVSoundPanel_poster.jpg" alt="EOV Sound Panel" loading="lazy" data-only="en">
+          
+          <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVSoundPanel/EOVSoundPanel_poster_ru.jpg" alt="EOV Sound Panel" loading="lazy" data-only="ru">
+          
           
           
           <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
@@ -815,6 +823,7 @@
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/IconSaver/IconSaver_poster.jpg" alt="IconSaver" loading="lazy">
           
           
+          
           <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
         </div>
         <div class="card-title">IconSaver</div>
@@ -838,6 +847,7 @@
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MP_Rollout_Shelf/MP_Rollout_Shelf_poster.jpg" alt="MP Rollout Shelf" loading="lazy">
+          
           
           
           <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
@@ -873,6 +883,7 @@ Free, MIT, open source. Maya 2019–2026.</span></div>
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/Wavebar-Phonogramm/Wavebar-Phonogramm_poster_1_recording.jpg" alt="Wavebar-Phonogramm" loading="lazy">
           
           
+          
           <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
         </div>
         <div class="card-title">Wavebar-Phonogramm</div>
@@ -904,6 +915,7 @@ Free, MIT, open source. Maya 2019–2026.</span></div>
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/AnimLdrLim/animloader_lim_pstr.jpg" alt="Animation Loader Limited" loading="lazy">
+          
           
           
           <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
@@ -940,6 +952,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">Hotkey Navigator</div>
         <div class="card-desc"><span data-en="Windows never shows which key combinations are already taken, or by which program. Hotkey Navigator probes nearly fifteen hundred combinations in under a second and shows the result as a table and as a keyboard map: what is taken, by what exactly, and what is left free." data-ru="Windows нигде не показывает, какие сочетания клавиш уже заняты и какой программой. Hotkey Navigator проверяет почти полторы тысячи комбинаций меньше чем за секунду и показывает результат таблицей и раскладкой клавиатуры: где занято, кем именно и что осталось свободным.">Windows never shows which key combinations are already taken, or by which program. Hotkey Navigator probes nearly fifteen hundred combinations in under a second and shows the result as a table and as a keyboard map: what is taken, by what exactly, and what is left free.</span></div>
@@ -962,6 +975,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/BackDrop/Poster_BackDrop.jpg" alt="BackDrop" loading="lazy">
+          
           
           
           <span class="card-badge update"><span data-en="Updated" data-ru="Обновлено">Updated</span></span>
@@ -987,6 +1001,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/Scene_Manager/Scene_Manager_pst.jpg" alt="Scene_Manager" loading="lazy">
+          
           
           
           
@@ -1017,6 +1032,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">MayaMerge</div>
         <div class="card-desc"><span data-en="MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects you need from a handy list, and bring only those into your current scene — with no junk." data-ru="MayaMerge открывает любой файл (.mb/.ma/.fbx/.obj), даёт выбрать из удобного списка ровно те объекты, которые нужны, и переносит в текущую сцену только их — без мусора.">MayaMerge lets you open any file (.mb/.ma/.fbx/.obj), pick exactly the objects you need from a handy list, and bring only those into your current scene — with no junk.</span></div>
@@ -1041,6 +1057,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/FN/Poster_FuryNotes_002.jpg" alt="FuryNotes" loading="lazy">
+          
           
           
           <span class="card-badge update"><span data-en="Updated" data-ru="Обновлено">Updated</span></span>
@@ -1069,6 +1086,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">Quick Text Drop</div>
         <div class="card-desc"><span data-en="Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp." data-ru="Quick Text Drop — утилита для мгновенного сохранения текста из буфера обмена в файл. Нажали Ctrl+C — и текст автоматически сохранён в TXT или DOCX с меткой времени.">Quick Text Drop is a utility for instantly saving clipboard text to a file. Press Ctrl+C — and the text is automatically saved as TXT or DOCX with a timestamp.</span></div>
@@ -1091,6 +1109,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/maya_comp_grids.jpg" alt="Maya Compositoon Grids" loading="lazy">
+          
           
           
           
@@ -1118,6 +1137,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fcmd/fc_poster.jpg" alt="Frames Commander" loading="lazy">
+          
           
           
           <span class="card-badge update"><span data-en="Updated" data-ru="Обновлено">Updated</span></span>
@@ -1148,6 +1168,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">RoadMapper</div>
         <div class="card-desc"><span data-en="Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Free desktop app for Windows — no account required." data-ru="Визуальный планировщик для команд. Заводите дорожки под участников, таскайте задачи по датам и видите весь проект целиком. Бесплатное настольное приложение для Windows — аккаунт не нужен.">Visual timeline planner for teams. Create tracks for team members, drag tasks across dates, and see your entire project at a glance. Free desktop app for Windows — no account required.</span></div>
@@ -1173,6 +1194,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">Year Sprint</div>
         <div class="card-desc"><span data-en="YearSprint turns abstract time into a visual picture. Each passed day becomes a coloured cell in a 365-day grid, creating a gradient from red to green — your whole year at a glance." data-ru="YearSprint превращает абстрактное время в наглядную картинку. Каждый прошедший день становится цветной клеткой в сетке из 365 дней, складываясь в градиент от красного к зелёному, — год виден одним взглядом.">YearSprint turns abstract time into a visual picture. Each passed day becomes a coloured cell in a 365-day grid, creating a gradient from red to green — your whole year at a glance.</span></div>
@@ -1195,6 +1217,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/camera_shake_tool_poster.jpg" alt="Сamera Shake Tool" loading="lazy">
+          
           
           
           
@@ -1225,6 +1248,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">Free Motion Trail 1.4 Public Beta</div>
         <div class="card-desc"><span data-en="EU FreeMotionTrail is a free Maya plugin for visualizing object motion paths. It displays the animation trajectory in real time directly in the viewport. Works in Maya 2019–2026." data-ru="EU FreeMotionTrail — бесплатный плагин для Maya, показывающий траекторию движения объекта. Отображает путь анимации в реальном времени прямо во вьюпорте. Работает в Maya 2019–2026.">EU FreeMotionTrail is a free Maya plugin for visualizing object motion paths. It displays the animation trajectory in real time directly in the viewport. Works in Maya 2019–2026.</span></div>
@@ -1249,6 +1273,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/eu_curve/eu_anim_curve_tools_poster.jpg" alt="EU Anim Curve Tools" loading="lazy">
+          
           
           
           
@@ -1279,6 +1304,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">Maya Batch Converter</div>
         <div class="card-desc"><span data-en="Batch convert Maya scenes between MA, MB, and FBX formats. Supports recursive folder processing, FPS preservation, and works with Maya 2019–2026." data-ru="Пакетная конвертация сцен Maya между форматами MA, MB и FBX. Поддерживает обход вложенных папок, сохраняет FPS, работает с Maya 2019–2026.">Batch convert Maya scenes between MA, MB, and FBX formats. Supports recursive folder processing, FPS preservation, and works with Maya 2019–2026.</span></div>
@@ -1304,6 +1330,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">Feedback Like A Boss</div>
         <div class="card-desc"><span data-en="Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. Born in animation production, built for any field." data-ru="Держите фидбэк, задачи, заметки и референсы в одном месте — привязанными к конкретным элементам проекта и всегда в одном клике. Родилось в анимационном продакшене, подходит любой области.">Keep feedback, tasks, notes and references all in one place — linked to specific project elements and always one click away. Born in animation production, built for any field.</span></div>
@@ -1326,6 +1353,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/psi_app.jpg" alt="PSI — Pict Snap Index" loading="lazy">
+          
           
           
           
@@ -1356,6 +1384,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">SortMatic5000</div>
         <div class="card-desc"><span data-en="If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically." data-ru="Если вы работаете с 3D, дизайном или анимацией, у вас на диске наверняка бардак. Текстуры, рендеры, референсы, PDF-файлы, ассеты — всё вперемешку. SortMatic5000 раскладывает этот хаос по порядку автоматически.">If you work in 3D, design or animation, your hard drive is probably a mess. Textures, renders, references, PDFs, assets — all mixed together. SortMatic5000 sorts the chaos into order automatically.</span></div>
@@ -1381,6 +1410,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">FolderTree Collector</div>
         <div class="card-desc"><span data-en="Scans any folder and builds a full directory tree with timestamps. Export the result to a .txt file in one click. Simple, free, source code included." data-ru="Сканирует любую папку и строит полное дерево каталогов с датами. Результат выгружается в .txt одним кликом. Просто, бесплатно, с исходным кодом.">Scans any folder and builds a full directory tree with timestamps. Export the result to a .txt file in one click. Simple, free, source code included.</span></div>
@@ -1403,6 +1433,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/swap_anim.jpg" alt="Swap Animation" loading="lazy">
+          
           
           
           
@@ -1433,6 +1464,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">Scene Review Tool</div>
         <div class="card-desc"><span data-en="Batch-review Maya scenes (.mb, .ma, .fbx) from a folder without opening each file manually. Pick a folder, choose format, hit Start — then click Next through every file in order." data-ru="Пакетный просмотр сцен Maya (.mb, .ma, .fbx) из папки — без ручного открытия каждого файла. Выбираете папку, задаёте формат, жмёте Start, а дальше просто щёлкаете Next по всем файлам подряд.">Batch-review Maya scenes (.mb, .ma, .fbx) from a folder without opening each file manually. Pick a folder, choose format, hit Start — then click Next through every file in order.</span></div>
@@ -1457,6 +1489,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/quick_save.jpg" alt="Quick Save to Temp" loading="lazy">
+          
           
           
           
@@ -1487,6 +1520,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
           
           
           
+          
         </div>
         <div class="card-title">Maya Persp Camera History</div>
         <div class="card-desc"><span data-en="Adds Undo/Redo history for the Persp camera — including moves triggered by scripts, which Maya's built-in [ ] hotkeys can't track. Stores up to 50 positions, runs silently in the background." data-ru="Добавляет историю Undo/Redo для камеры Persp — включая перемещения, вызванные скриптами, которые встроенные горячие клавиши [ ] в Maya не отслеживают. Хранит до 50 положений, работает незаметно в фоне.">Adds Undo/Redo history for the Persp camera — including moves triggered by scripts, which Maya's built-in [ ] hotkeys can't track. Stores up to 50 positions, runs silently in the background.</span></div>
@@ -1511,6 +1545,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
         <div class="card-preview">
           
           <img src="https://eu-melnikov.github.io/files/boneanim_combo1.jpg" alt="BoneAnim Combo" loading="lazy">
+          
           
           
           
