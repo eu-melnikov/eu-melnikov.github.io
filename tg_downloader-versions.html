@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telegram Media Downloader | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
+  .hero-meta {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h1 strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
+  }
+
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
+  }
+
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
+
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
+  }
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
+  }
+
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  /* метка промо-ролика, когда он стоит среди уроков */
+  .tut-tag {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--accent); border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 6px; margin-left: 6px; vertical-align: 2px;
+  }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  /* Встроенные ролики: пока не нажали — обложка с кнопкой, плеер YouTube
+     грузится только по клику, иначе каждый ролик тянул бы мегабайт скриптов. */
+  .tuts { max-width: var(--text-col); display: flex; flex-direction: column; gap: 36px; }
+  .tut-player {
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 9;
+    padding: 0; border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); cursor: pointer;
+  }
+  .tut { margin: 0; }
+  .tut-live { cursor: default; }
+  .tut-player img, .tut-player iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+  }
+  .tut-player img { object-fit: cover; opacity: .82; transition: opacity .2s; }
+  .tut-player:hover img { opacity: 1; }
+  .tut-play {
+    position: absolute; left: 50%; top: 50%; width: 64px; height: 64px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: rgba(13,15,20,.72); border: 1px solid rgba(0,229,255,.45);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, border-color .2s;
+  }
+  .tut-play svg { width: 22px; height: 22px; margin-left: 3px; }
+  .tut-player:hover .tut-play { transform: translate(-50%, -50%) scale(1.08); border-color: var(--accent); }
+  .tut-cap { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; }
+  .tut-yt { text-decoration: none; }
+  .tut-yt:hover { color: var(--accent); opacity: 1; }
+
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+  /* то, что есть только на одном языке: ролик, русский постер */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v2.20.0</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>54 Mb
+    </div>
+
+    <h1><strong>Telegram Media Downloader</strong></h1>
+
+    
+    <p class="tagline"><span data-en="Free and open source (MIT): downloads your Telegram files and turns your chats into one searchable archive" data-ru="бесплатно и с открытым кодом (MIT): скачивает файлы из Telegram и собирает переписку в один поисковый архив">Free and open source (MIT): downloads your Telegram files and turns your chats into one searchable archive</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="PROMO" data-ru="ПРОМО">PROMO</span>
+      </a>
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-09-30</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/tg_downloader/TelegramMediaDownloader_poster.jpg" alt="Telegram Media Downloader" data-only="en">
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/tg_downloader/TelegramMediaDownloader_poster_ru.jpg" alt="Telegram Media Downloader" data-only="ru">
+      
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose clampable" data-en="&lt;p&gt;&lt;strong&gt;Free and open source under the MIT licence: the source code ships in the same archive as the program.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Telegram Media Downloader logs in to your Telegram account and saves files from your chats to disk — once, when you ask, or on its own, on a timer, from the people you pick. Along the way it records the text of your conversations and builds them into a single, searchable report. It is a tool for people who get their work sent to them over Telegram: files stop getting buried in chats, and the message you need turns up in a second.&lt;/p&gt;
+&lt;h3&gt;Open source&lt;/h3&gt;
+&lt;p&gt;A program that logs in to your Telegram account should not be a black box. Telegram Media Downloader is open source under the MIT licence, and the source code ships in the same archive as the program, together with a one-click build script (build.bat). Anyone can read what it does with the account and build the exe themselves. There is no telemetry: the program talks only to Telegram's servers, using your own API keys.&lt;/p&gt;
+&lt;h3&gt;What it downloads&lt;/h3&gt;
+&lt;p&gt;Choose a chat, channel or group, set the dates and the file types — video, photos, documents, archives, audio — and press Scan. The program shows how much is there and how much is new; Download fetches it, several files at a time. Each chat's files go into their own folder, sorted into a folder per day, with a mark for who sent each file — you or the other person. You can save the conversation text as well: one HTML page per day, sitting next to that day's files.&lt;/p&gt;
+&lt;h3&gt;Monitoring: incoming files that collect themselves&lt;/h3&gt;
+&lt;p&gt;The second tab is a list of people and groups the program watches by itself. Every few minutes — anything from 1 to 60, five by default — it checks them and fetches new files of the ticked types, each contact into its own folder. This earns its keep when a job has many people on it and they all send files to your private chat: revisions, source files, renders pile up on disk without you lifting a finger. The program can start with Windows and run from the tray, so the newest files are already downloaded by the time you reach your desktop.&lt;/p&gt;
+&lt;h3&gt;A conversation report, and search across every chat at once&lt;/h3&gt;
+&lt;p&gt;The History Machine button gathers your conversations with monitored contacts over a chosen period into one HTML page. It opens in a browser with a double-click and needs no internet. Inside are the conversations by contact, a feed of every day at once, and — the part Telegram itself lacks — search across all your conversations together. Telegram only searches inside one chat; here you type a word and see every match across every person, each with a jump to that point in the talk. The report is built from a local journal that fills up while monitoring runs.&lt;/p&gt;
+&lt;h3&gt;Loading past history — new in 2.20.0&lt;/h3&gt;
+&lt;p&gt;The journal starts filling from the moment you begin watching a contact, so anything earlier does not reach the report by default. Version 2.20.0 fixes that: right-click a contact, choose Load chat history into the journal, and pick a start date or tick From the very beginning of the chat. The program reads the conversation from Telegram and writes only the text and message details into the journal. No files are downloaded, the monitoring start date is left alone, and loading again spoils nothing. After that, the report and its search reach back to well before you ever installed the program.&lt;/p&gt;
+&lt;h3&gt;Replacements, edits and deletions — nothing is lost&lt;/h3&gt;
+&lt;p&gt;The program never wipes what it has already saved. If someone swaps a file — sends a different one under the same name — the new file is downloaded and the old one stays beside it, renamed with an &lt;em&gt;_old&lt;/em&gt; suffix. An edited message is marked &quot;edited&quot; (hover over the mark to see the first version of the text); a deleted one is marked &quot;deleted&quot;, struck through and outlined with a dashed line, but kept in the archive. What you end up with is an honest record of the conversation, not the version left behind after someone else's edits.&lt;/p&gt;
+&lt;h3&gt;Your session is kept safely&lt;/h3&gt;
+&lt;p&gt;The credentials for your Telegram login do not sit next to the program — they live in your private Windows profile, and the authorization key is encrypted by Windows itself (DPAPI) for your account on this computer. You can zip up the program folder and hand it to someone else without your account access travelling with it. On another machine, or under another user, a copy of the key is useless.&lt;/p&gt;
+&lt;h3&gt;What it does not do&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;It sends nothing and posts nothing to Telegram on your behalf — it only reads your account and saves files to disk.&lt;/li&gt;&lt;li&gt;It deletes no files and no messages: deletions are only marked, replacements are kept alongside.&lt;/li&gt;&lt;li&gt;It uploads nothing to the cloud and hands your data to no one — reports live on your disk and search works offline.&lt;/li&gt;&lt;li&gt;It does not carry your session to another computer: after a Windows reinstall or a new PC you log in again. That is on purpose.&lt;/li&gt;&lt;li&gt;It runs on Windows only and works with your own account only (you need free API keys and a one-time login by phone number).&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;System: Windows 10 and 11&lt;/li&gt;&lt;li&gt;Format: portable, no installer&lt;/li&gt;&lt;li&gt;Size: 54 MB&lt;/li&gt;&lt;li&gt;Interface languages: Russian and English (switched in Settings, applied after a restart)&lt;/li&gt;&lt;li&gt;Licence: free, open source (MIT), source code in the archive&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;&lt;strong&gt;Бесплатно и с открытым кодом под лицензией MIT: исходники лежат в том же архиве, что и программа.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Telegram Media Downloader входит в ваш аккаунт Telegram и сохраняет на диск файлы из чатов — разово по вашей команде или сам, по таймеру, от выбранных людей. Заодно он записывает текст переписки, из которого потом собирает единый поисковый отчёт. Программа для тех, кому в Telegram присылают работу: файлы перестают теряться в чатах, а нужное сообщение находится за секунду.&lt;/p&gt;
+&lt;h3&gt;Открытый код&lt;/h3&gt;
+&lt;p&gt;Программа, которая входит в ваш аккаунт Telegram, не должна быть чёрным ящиком. Telegram Media Downloader распространяется с открытым кодом под лицензией MIT: исходники лежат в том же архиве, что и программа, вместе с батником сборки (build.bat) в один щелчок. Любой может проверить, что она делает с аккаунтом, и собрать exe сам. Никакой телеметрии: связь только с серверами Telegram, на ваших собственных ключах API.&lt;/p&gt;
+&lt;h3&gt;Что она скачивает&lt;/h3&gt;
+&lt;p&gt;Выбираете чат, канал или группу, задаёте даты и типы файлов — видео, фото, документы, архивы, аудио — и нажимаете «Сканировать». Программа показывает, сколько там всего и сколько нового, а «Загрузить» забирает всё в несколько потоков. Файлы каждого чата ложатся в свою папку, разложенные по дням, с пометкой, кто прислал файл — вы или собеседник. Кроме файлов можно сохранить и сам текст переписки: по одной HTML-странице на день, рядом с файлами этого дня.&lt;/p&gt;
+&lt;h3&gt;Мониторинг: сбор входящих файлов сам собой&lt;/h3&gt;
+&lt;p&gt;Вторая вкладка — список людей и групп, за которыми программа следит сама. Раз в несколько минут (от 1 до 60, по умолчанию 5) она проверяет их и докачивает новые файлы отмеченных типов, каждому контакту — в отдельную папку. Это удобно, когда над задачей работает много людей и все шлют файлы в личку: правки, исходники, рендеры собираются на диск без вашего участия. Программа может стартовать вместе с Windows и работать из трея — к моменту, когда вы дошли до рабочего стола, свежие файлы уже скачаны.&lt;/p&gt;
+&lt;h3&gt;Отчёт по переписке и поиск сразу по всем чатам&lt;/h3&gt;
+&lt;p&gt;Кнопка «History Machine» собирает переписку с отслеживаемыми контактами за выбранный период в одну HTML-страницу. Она открывается двойным щелчком в браузере и не требует интернета. Внутри — переписка по контактам, лента всех дней разом и, главное, поиск сразу по всем перепискам. В самом Telegram такого нет: он ищет внутри одного чата. Здесь вы задаёте слово — и видите все совпадения у всех людей, с переходом к нужному месту разговора. Отчёт строится из локального журнала, который наполняется во время мониторинга.&lt;/p&gt;
+&lt;h3&gt;Догрузка старой переписки — новое в 2.20.0&lt;/h3&gt;
+&lt;p&gt;Журнал наполняется с момента, как вы включили слежение за контактом, — а более раннее по умолчанию в отчёт не попадает. В версии 2.20.0 это поправимо: правым щелчком по контакту выбираете «Загрузить переписку в журнал», указываете дату или ставите «С самого начала переписки». Программа прочитает разговор из Telegram и запишет в журнал только текст и сведения о сообщениях. Файлы при этом не скачиваются, дата начала мониторинга не меняется, а повторная загрузка ничего не портит. После этого отчёт и поиск видят и то, что было задолго до установки программы.&lt;/p&gt;
+&lt;h3&gt;Замены, правки и удаления — ничего не пропадает&lt;/h3&gt;
+&lt;p&gt;Программа не стирает то, что уже сохранила. Если собеседник заменил файл — прислал другой под тем же именем, — новый скачивается, а прежний остаётся рядом с пометкой &lt;em&gt;_old&lt;/em&gt;. Изменённое сообщение помечается «ред.» (при наведении всплывает первый вариант текста), удалённое — «удалено», зачёркнутым и обведённым пунктиром, но остаётся в архиве. Так у вас на руках оказывается честная история переписки, а не та, что осталась в чате после чужих правок.&lt;/p&gt;
+&lt;h3&gt;Сеанс хранится безопасно&lt;/h3&gt;
+&lt;p&gt;Данные для входа в Telegram лежат не рядом с программой, а в вашем личном профиле Windows, и ключ авторизации зашифрован средствами системы (DPAPI) под вашу учётную запись на этом компьютере. Папку с программой можно заархивировать и отдать другому человеку — доступ к вашему аккаунту при этом не уедет вместе с ней. На другой машине или под другим пользователем копия ключа бесполезна.&lt;/p&gt;
+&lt;h3&gt;Чего программа не делает&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Ничего не отправляет и не пишет в Telegram от вашего имени — только читает ваш аккаунт и сохраняет файлы на диск.&lt;/li&gt;&lt;li&gt;Не удаляет файлы и сообщения: удаления только помечаются, замены сохраняются рядом.&lt;/li&gt;&lt;li&gt;Не заливает ничего в облако и никуда не передаёт ваши данные — отчёты живут локально, поиск работает офлайн.&lt;/li&gt;&lt;li&gt;Не переносит сеанс на другой компьютер: после переустановки Windows или смены ПК нужно войти заново. Это сделано намеренно.&lt;/li&gt;&lt;li&gt;Работает только на Windows и только с вашим собственным аккаунтом (нужны бесплатные ключи API и вход по номеру телефона — один раз).&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Система: Windows 10 и 11&lt;/li&gt;&lt;li&gt;Формат: переносимая, без установщика&lt;/li&gt;&lt;li&gt;Размер: 54 МБ&lt;/li&gt;&lt;li&gt;Языки интерфейса: русский и английский (переключается в настройках, применяется после перезапуска)&lt;/li&gt;&lt;li&gt;Лицензия: бесплатно, открытый код (MIT), исходники в архиве&lt;/li&gt;&lt;/ul&gt;">
+      <p><strong>Free and open source under the MIT licence: the source code ships in the same archive as the program.</strong></p>
+<p>Telegram Media Downloader logs in to your Telegram account and saves files from your chats to disk — once, when you ask, or on its own, on a timer, from the people you pick. Along the way it records the text of your conversations and builds them into a single, searchable report. It is a tool for people who get their work sent to them over Telegram: files stop getting buried in chats, and the message you need turns up in a second.</p>
+<h3>Open source</h3>
+<p>A program that logs in to your Telegram account should not be a black box. Telegram Media Downloader is open source under the MIT licence, and the source code ships in the same archive as the program, together with a one-click build script (build.bat). Anyone can read what it does with the account and build the exe themselves. There is no telemetry: the program talks only to Telegram's servers, using your own API keys.</p>
+<h3>What it downloads</h3>
+<p>Choose a chat, channel or group, set the dates and the file types — video, photos, documents, archives, audio — and press Scan. The program shows how much is there and how much is new; Download fetches it, several files at a time. Each chat's files go into their own folder, sorted into a folder per day, with a mark for who sent each file — you or the other person. You can save the conversation text as well: one HTML page per day, sitting next to that day's files.</p>
+<h3>Monitoring: incoming files that collect themselves</h3>
+<p>The second tab is a list of people and groups the program watches by itself. Every few minutes — anything from 1 to 60, five by default — it checks them and fetches new files of the ticked types, each contact into its own folder. This earns its keep when a job has many people on it and they all send files to your private chat: revisions, source files, renders pile up on disk without you lifting a finger. The program can start with Windows and run from the tray, so the newest files are already downloaded by the time you reach your desktop.</p>
+<h3>A conversation report, and search across every chat at once</h3>
+<p>The History Machine button gathers your conversations with monitored contacts over a chosen period into one HTML page. It opens in a browser with a double-click and needs no internet. Inside are the conversations by contact, a feed of every day at once, and — the part Telegram itself lacks — search across all your conversations together. Telegram only searches inside one chat; here you type a word and see every match across every person, each with a jump to that point in the talk. The report is built from a local journal that fills up while monitoring runs.</p>
+<h3>Loading past history — new in 2.20.0</h3>
+<p>The journal starts filling from the moment you begin watching a contact, so anything earlier does not reach the report by default. Version 2.20.0 fixes that: right-click a contact, choose Load chat history into the journal, and pick a start date or tick From the very beginning of the chat. The program reads the conversation from Telegram and writes only the text and message details into the journal. No files are downloaded, the monitoring start date is left alone, and loading again spoils nothing. After that, the report and its search reach back to well before you ever installed the program.</p>
+<h3>Replacements, edits and deletions — nothing is lost</h3>
+<p>The program never wipes what it has already saved. If someone swaps a file — sends a different one under the same name — the new file is downloaded and the old one stays beside it, renamed with an <em>_old</em> suffix. An edited message is marked "edited" (hover over the mark to see the first version of the text); a deleted one is marked "deleted", struck through and outlined with a dashed line, but kept in the archive. What you end up with is an honest record of the conversation, not the version left behind after someone else's edits.</p>
+<h3>Your session is kept safely</h3>
+<p>The credentials for your Telegram login do not sit next to the program — they live in your private Windows profile, and the authorization key is encrypted by Windows itself (DPAPI) for your account on this computer. You can zip up the program folder and hand it to someone else without your account access travelling with it. On another machine, or under another user, a copy of the key is useless.</p>
+<h3>What it does not do</h3>
+<ul><li>It sends nothing and posts nothing to Telegram on your behalf — it only reads your account and saves files to disk.</li><li>It deletes no files and no messages: deletions are only marked, replacements are kept alongside.</li><li>It uploads nothing to the cloud and hands your data to no one — reports live on your disk and search works offline.</li><li>It does not carry your session to another computer: after a Windows reinstall or a new PC you log in again. That is on purpose.</li><li>It runs on Windows only and works with your own account only (you need free API keys and a one-time login by phone number).</li></ul>
+<h3>At a glance</h3>
+<ul><li>System: Windows 10 and 11</li><li>Format: portable, no installer</li><li>Size: 54 MB</li><li>Interface languages: Russian and English (switched in Settings, applied after a restart)</li><li>Licence: free, open source (MIT), source code in the archive</li></ul>
+    </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Promo" data-ru="// Промо">// Promo</span></h2>
+    
+    
+    
+    
+    <div class="tuts">
+      
+      <figure class="tut" data-only="en">
+        <button class="tut-player" type="button" data-yt="Wbm_GHWJ2Zk" aria-label="Telegram Media Downloader 2.20 overview">
+          <img src="https://i.ytimg.com/vi/Wbm_GHWJ2Zk/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="Telegram Media Downloader 2.20 overview" data-ru="Обзор Telegram Media Downloader 2.20">Telegram Media Downloader 2.20 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/Wbm_GHWJ2Zk" target="_blank" rel="noopener">YouTube · v2.20.0 ↗</a>
+        </figcaption>
+      </figure>
+      
+      <figure class="tut" data-only="ru">
+        <button class="tut-player" type="button" data-yt="LFk1cOaU2M8" aria-label="Telegram Media Downloader 2.20 overview">
+          <img src="https://i.ytimg.com/vi/LFk1cOaU2M8/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="Telegram Media Downloader 2.20 overview" data-ru="Обзор Telegram Media Downloader 2.20">Telegram Media Downloader 2.20 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/LFk1cOaU2M8" target="_blank" rel="noopener">YouTube · v2.20.0 ↗</a>
+        </figcaption>
+      </figure>
+      
+    </div>
+    <div class="links">
+      
+    </div>
+  </div>
+  
+
+  <!-- ── Характеристики ── -->
+  
+  
+  <div class="section">
+    <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
+    <div class="specs">
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>2.20.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Windows 10 / 11 (64-bit)</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free, open source (MIT)</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN / RU</div></div>
+      
+      <div class="spec-row"><div class="spec-key"><span data-en="Installation" data-ru="Установка">Installation</span></div><div class="spec-val">Unzip & run</div></div>
+    </div>
+  </div>
+  
+
+  <!-- ── Как это делалось ── -->
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
+    </div>
+
+    
+    <div class="versions" id="versions">
+      
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">2.20.0</span>
+          <span class="ver-date">2026-09-30</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/tg_downloader/TelegramDownloader-2.20.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            54 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;First public release, open source (MIT) with the source code in the archive. Saves files from your Telegram chats to disk — once or on a timer, from the people you pick — and builds your conversations into one HTML report with search across every chat at once. New in 2.20.0: past chat history can be loaded into the journal, so reports and search reach back before the program was installed. Manual in English and Russian (F1).&lt;/p&gt;" data-ru="&lt;p&gt;Первый публичный выпуск, открытый код (MIT), исходники в архиве. Сохраняет файлы из чатов Telegram на диск — разово или по таймеру, от выбранных людей — и собирает переписку в единый HTML-отчёт с поиском сразу по всем чатам. Новое в 2.20.0: старую переписку можно догрузить в журнал, и отчёты с поиском дотягиваются до времени до установки программы. Справка на русском и английском (F1).&lt;/p&gt;"><p>First public release, open source (MIT) with the source code in the archive. Saves files from your Telegram chats to disk — once or on a timer, from the people you pick — and builds your conversations into one HTML report with search across every chat at once. New in 2.20.0: past chat history can be loaded into the journal, so reports and search reach back before the program was installed. Manual in English and Russian (F1).</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+    </div>
+    
+    
+
+    
+    
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>Telegram Media Downloader v2.20.0 · 2026-09-30</span>
+  </div>
+</footer>
+
+<script>
+/* ── уроки: по клику обложка меняется на плеер YouTube ── */
+document.querySelectorAll('.tut-player').forEach(function (box) {
+  box.addEventListener('click', function () {
+    var frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + box.dataset.yt + '?autoplay=1&rel=0';
+    frame.title = box.getAttribute('aria-label');
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    // YouTube не играет встроенный ролик без Referer (ошибка 153).
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    var live = document.createElement('div');
+    live.className = 'tut-player tut-live';
+    live.appendChild(frame);
+    live.cover = box;
+    box.replaceWith(live);
+  });
+});
+// Язык переключили во время просмотра: скрытый ролик не должен играть
+// дальше — возвращаем ему обложку.
+document.addEventListener('langchange', function () {
+  document.querySelectorAll('.tut-live').forEach(function (live) {
+    if (live.offsetParent === null) live.replaceWith(live.cover);
+  });
+});
+
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
+}
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+
+</body>
+</html>
