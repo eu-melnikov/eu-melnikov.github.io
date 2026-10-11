@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>High Level Tracker 2 | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  @media (max-width: 560px) { .nav-about { display: none; } }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
+  .hero-meta {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h1 strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
+  }
+
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
+  }
+
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
+
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
+  }
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
+  }
+
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  /* метка промо-ролика, когда он стоит среди уроков */
+  .tut-tag {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--accent); border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 6px; margin-left: 6px; vertical-align: 2px;
+  }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  /* Встроенные ролики: пока не нажали — обложка с кнопкой, плеер YouTube
+     грузится только по клику, иначе каждый ролик тянул бы мегабайт скриптов. */
+  .tuts { max-width: var(--text-col); display: flex; flex-direction: column; gap: 36px; }
+  .tut-player {
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 9;
+    padding: 0; border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); cursor: pointer;
+  }
+  .tut { margin: 0; }
+  .tut-live { cursor: default; }
+  .tut-player img, .tut-player iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+  }
+  .tut-player img { object-fit: cover; opacity: .82; transition: opacity .2s; }
+  .tut-player:hover img { opacity: 1; }
+  .tut-play {
+    position: absolute; left: 50%; top: 50%; width: 64px; height: 64px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: rgba(13,15,20,.72); border: 1px solid rgba(0,229,255,.45);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, border-color .2s;
+  }
+  .tut-play svg { width: 22px; height: 22px; margin-left: 3px; }
+  .tut-player:hover .tut-play { transform: translate(-50%, -50%) scale(1.08); border-color: var(--accent); }
+  .tut-cap { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; }
+  .tut-yt { text-decoration: none; }
+  .tut-yt:hover { color: var(--accent); opacity: 1; }
+
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+  /* то, что есть только на одном языке: ролик, русский постер */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="about.html" class="nav-back nav-about"><span data-en="About" data-ru="Обо мне">About</span></a>
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v2.0.0</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>58 Mb
+    </div>
+
+    <h1><strong>High Level Tracker 2</strong></h1>
+
+    
+    <p class="tagline"><span data-en="a work-day tracker with Jira and Telegram: where time went, what's open, what to report" data-ru="трекер рабочего дня в паре с Jira и Telegram: куда ушло время, что открыто, что в отчёт">a work-day tracker with Jira and Telegram: where time went, what's open, what to report</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="PROMO" data-ru="ПРОМО">PROMO</span>
+      </a>
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-10-11</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/HLT2/HLT2_poster.jpg" alt="High Level Tracker 2" data-only="en">
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/HLT2/HLT2_poster_ru.jpg" alt="High Level Tracker 2" data-only="ru">
+      
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose clampable" data-en="&lt;p&gt;HLT 2 (High Level Tracker 2) shows where the working day went and lets you answer &quot;how is it going?&quot; in ten seconds. It works hand in hand with &lt;strong&gt;Jira and Telegram&lt;/strong&gt;: you log time once, in Jira, as you always do, and your worklogs, meetings, notes and review files arrive in the journal on their own. You only type in what lives in neither place: a hallway conversation, a promise, an idea. Whatever is left open piles up in Tails instead of getting lost.&lt;/p&gt;
+&lt;h3&gt;Your Jira time comes in by itself&lt;/h3&gt;
+&lt;p&gt;Every worklog of yours becomes a task record on its day: the issue key and title, the start time, the minutes logged, the worklog comment and a link to the issue. The record is already marked done - the work happened, so it never hangs around as a tail.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Nothing is typed twice: log 1h 30m on an issue and the record shows up on that day.&lt;/li&gt;&lt;li&gt;Changes in Jira follow: edit a worklog and the record updates, delete it and the record is cancelled and stops counting.&lt;/li&gt;&lt;li&gt;Your own edits to a record stay until Jira changes that same field.&lt;/li&gt;&lt;li&gt;The issue key opens the issue's history - every day you worked on it, with the total time.&lt;/li&gt;&lt;li&gt;Time is filed into the right project of your journal by itself: wherever that Jira project's keys already live, or into the default project.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;The token is entered once and kept in the Windows Credential Manager. Sync runs in the background, every 15 minutes by default, and on F5.&lt;/p&gt;
+&lt;h3&gt;Telegram fills the journal for you&lt;/h3&gt;
+&lt;p&gt;HLT 2 reads Telegram under your own account, the way a regular client does, and turns the conversation into records:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Meetings from a calendar bot&lt;/strong&gt; land on their day with time and duration. The bot deletes a meeting and the record is cancelled; it moves one and the record follows.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Inbox channel:&lt;/strong&gt; forward any message to your own channel and a note appears with its text and a link back to the original.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Files in chats&lt;/strong&gt; that match the review masks (.mb, .ma and .fbx by default) become review records on the day and at the time they were sent.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;The Telegram sign-in and keys are stored next to the program, encrypted by Windows (DPAPI) for your account.&lt;/p&gt;
+&lt;h3&gt;Overview: &quot;how is it going?&quot; answered&lt;/h3&gt;
+&lt;p&gt;The screen for the morning and the minute before a call. On the left: what is in progress, what not to forget, and what is coming up. Below: where the day went, every record with a bar of its minutes. The last three days with records are ready as text - Copy puts a day on the clipboard for a chat or a stand-up, Copy the week takes the whole week with its total. A line reads like this: &quot;✓ GLM-168 Polish Wren's attacks after game design feedback&quot;.&lt;/p&gt;
+&lt;p&gt;Further down is the month in hours: time recorded against working time, the share eaten by meetings, how many weekdays have no records at all, and a chart by day.&lt;/p&gt;
+&lt;h3&gt;Work: the day by the hour, and the week&lt;/h3&gt;
+&lt;p&gt;The chosen day on an hour scale, in lanes: tasks, reviews, meetings, notes. Drag a block to another time, pull its right edge to change the duration, Ctrl+wheel to zoom into the hours. Holes - working time with nothing recorded - are tinted red, and a double-click in one adds a record that fills it exactly.&lt;/p&gt;
+&lt;p&gt;Underneath is the whole week, each record a chip; drop a chip into another column and the record moves to that day. Click a record and the panel on the right shows everything about it, its links and the issue history.&lt;/p&gt;
+&lt;h3&gt;A report for the week and the month&lt;/h3&gt;
+&lt;p&gt;The third screen is Report: week + month, key 3. A week collects small work and serious work alike; only what you pick goes in here. Right-click a record → &quot;Add to report…&quot; or press R, and add a comment if you like: what was done and why it matters.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Week&lt;/strong&gt; - the picked records by day, with their comments.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Month&lt;/strong&gt; - the same picks grouped by week; the arrows step through months.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Copy&lt;/strong&gt; - the report as text, ready for a chat, Jira or an e-mail.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Save .docx&lt;/strong&gt; or &lt;strong&gt;.txt&lt;/strong&gt; - as a file.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;Comments can be edited on any day, and a Jira or Telegram sync never overwrites them.&lt;/p&gt;
+&lt;h3&gt;Tails, rescheduling and reminders&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Tails&lt;/strong&gt; is everything still open, except meetings, in one list: search by words, filter by kind and age, close a record or take it into today's work, close everything found in one go.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Postpone to&lt;/strong&gt; carries a record over to another day. It is smart about time: if hours were already spent, they stay on the day they were spent, and an open continuation moves to the new day.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Remind me in&lt;/strong&gt; goes from a week to a year, with the date shown right in the menu. A reminder waits under Ahead, and on its day it pops up as a message from the tray.&lt;/p&gt;
+&lt;h3&gt;Lives in the tray, travels with its folder&lt;/h3&gt;
+&lt;p&gt;The close button hides the window in the tray while the program keeps syncing and reminding. One tick in Settings starts HLT 2 with Windows, straight into the tray. Launching it again does not open a second copy - it brings up the window that is already running. Journals (.hlt2) show the program's icon in Explorer, and a double click opens one, even while HLT 2 sits in the tray.&lt;/p&gt;
+&lt;p&gt;The journal is a single .hlt2 file wherever you created it. It saves itself after every edit, and the previous version is set aside as a backup - the last twenty sit next to the journal. Settings live in settings.json next to the program and move with its folder.&lt;/p&gt;
+&lt;h3&gt;A tutorial and a tutorial project&lt;/h3&gt;
+&lt;p&gt;You can start without connecting anything of your own. &lt;strong&gt;Help → Tutorial project Glowmire&lt;/strong&gt; opens a made-up journal: two months of an animator's work on an invented game - dailies and planning, tasks with keys, review files, notes, rescheduled work, reminders and report marks. Its last day is always today, so every screen looks alive: click, drag, close tails - nothing real is touched. Jira and Telegram write nothing into it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Help → Tutorial for beginners&lt;/strong&gt; is a step-by-step lesson with pictures and numbered callouts for every button: unzip and run, walk through the screens of the tutorial project with small exercises, create your own journal, make a Jira token, get the keys at my.telegram.org, sign in to Telegram and live through your first working day. The tutorial comes in English and Russian, and the tutorial project itself lies in the demo folder next to the program and opens with a double click.&lt;/p&gt;
+&lt;h3&gt;What it does not do&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;It does not go online on its own.&lt;/strong&gt; It talks only to your Jira and to Telegram, and only if you connect them. Without them HLT 2 is a plain manual journal.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It does not log time to Jira.&lt;/strong&gt; It only reads your worklogs; colleagues' worklogs never reach your journal.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It does not fit every Jira.&lt;/strong&gt; It is built for self-hosted Jira (Server / Data Center) with a personal access token.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It does not understand every calendar bot.&lt;/strong&gt; Meetings are read from one message format; other bots' messages are skipped.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It cannot do without your Telegram account.&lt;/strong&gt; You need an api_id and api_hash from my.telegram.org - issued once, free of charge.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It does not carry secrets across.&lt;/strong&gt; On another computer or another Windows user you sign in to Telegram and enter the Jira token again - by design.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It does not download files.&lt;/strong&gt; Pictures and documents stay in Telegram; the journal keeps a link.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;There is no Ctrl+Z.&lt;/strong&gt; That is why deleting a record asks first, and why backups of the journal sit next to it.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;It is not code-signed.&lt;/strong&gt; On first launch Windows may warn about an unknown publisher.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;System: Windows 10 and 11, 64-bit&lt;/li&gt;&lt;li&gt;Format: a folder with HLT2.exe, no installer&lt;/li&gt;&lt;li&gt;Size: HLT2-2.0.0.zip, 58 MB&lt;/li&gt;&lt;li&gt;Languages: English and Russian - interface and manual, switched without a restart&lt;/li&gt;&lt;li&gt;To start with: the Glowmire tutorial project and a step-by-step tutorial, right in the Help menu&lt;/li&gt;&lt;li&gt;Works with: Jira Server / Data Center (personal access token) and Telegram; both are optional&lt;/li&gt;&lt;li&gt;Licence: free, all rights reserved by the author&lt;/li&gt;&lt;li&gt;Install: unzip into a folder you can write to (not Program Files) and run HLT2.exe&lt;/li&gt;&lt;li&gt;Version: 2.0.0, the build number is in Help → About HLT 2&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;HLT 2 (High Level Tracker 2) показывает, куда ушёл рабочий день, и помогает за десять секунд ответить на «как дела?». Программа работает в паре с &lt;strong&gt;Jira и Telegram&lt;/strong&gt;: время вы логируете один раз, в Jira, как обычно, а ворклоги, встречи, заметки и файлы на ревью приходят в журнал сами. Руками дописывается только то, чего нет ни там, ни там: разговор в коридоре, обещание, идея. Всё, что осталось открытым, копится в хвостах и не теряется.&lt;/p&gt;
+&lt;h3&gt;Время из Jira приходит само&lt;/h3&gt;
+&lt;p&gt;Каждый ваш ворклог становится задачей в свой день: ключ и название задачи, время начала, залогированные минуты, комментарий ворклога и ссылка на задачу. Запись сразу «готово» — работа сделана, хвостом она не висит.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;Ничего не вводится дважды: отметили в задаче 1 ч 30 мин — запись появилась на тот же день.&lt;/li&gt;&lt;li&gt;Правки в Jira доходят сами: поменяли ворклог — запись поправится, удалили — отменится и перестанет считаться.&lt;/li&gt;&lt;li&gt;Ваши ручные правки записи остаются, пока Jira не поменяет то же поле.&lt;/li&gt;&lt;li&gt;По ключу задачи открывается её история — все дни, когда вы ею занимались, с суммой времени.&lt;/li&gt;&lt;li&gt;Время раскладывается по проектам журнала само: туда, где уже лежат ключи этого проекта Jira, или в проект по умолчанию.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;Токен вводится один раз и хранится в диспетчере учётных данных Windows. Синхронизация идёт в фоне, по умолчанию раз в 15 минут, и по F5.&lt;/p&gt;
+&lt;h3&gt;Telegram заполняет журнал сам&lt;/h3&gt;
+&lt;p&gt;HLT 2 читает Telegram под вашим аккаунтом, как обычный клиент, и превращает переписку в записи:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Встречи от бота-календаря&lt;/strong&gt; встают в свой день со временем и длительностью. Бот удалил встречу — запись отменяется, перенёс — поправляется.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Канал-инбокс:&lt;/strong&gt; перешлите любое сообщение в свой канал — в журнале появится заметка с его текстом и ссылкой на оригинал.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Файлы из чатов&lt;/strong&gt; по маскам ревью (по умолчанию .mb, .ma, .fbx) становятся записями ревью в тот день и в то время, когда их прислали.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;Вход и ключи Telegram хранятся рядом с программой, зашифрованными Windows (DPAPI) под вашу учётную запись.&lt;/p&gt;
+&lt;h3&gt;«Обзор»: ответ на «как дела?»&lt;/h3&gt;
+&lt;p&gt;Экран для утра и для минуты перед созвоном. Слева — что сейчас в работе, что не забыть и что впереди; ниже — на что ушёл день, каждая запись с полоской своих минут. Три последних дня с записями лежат готовым текстом: кнопка «Копировать» кладёт день в буфер для чата или стендапа, «Копировать неделю» — всю неделю с итогом. Строка получается такой: «✓ GLM-168 Полировка атак Wren по фидбеку геймдизайна».&lt;/p&gt;
+&lt;p&gt;Внизу — месяц в часах: сколько записано против рабочего времени, какую долю съели встречи, сколько будних дней осталось без записей, и график по дням.&lt;/p&gt;
+&lt;h3&gt;«Работа»: день по часам и неделя&lt;/h3&gt;
+&lt;p&gt;Выбранный день на шкале часов, по дорожкам: задачи, ревью, встречи, заметки. Блок перетаскивается на другое время, правый край растягивает длительность, Ctrl+колесо приближает часы. Дыры — рабочее время, на которое ничего не записано, — подкрашены красным; двойной щелчок по дыре добавляет запись, которая закрывает её целиком.&lt;/p&gt;
+&lt;p&gt;Ниже — вся неделя: каждая запись плашкой, перетащите её в другой столбец — она переедет на тот день. Щелчок по записи открывает справа табло: всё о ней, ссылки и история задачи.&lt;/p&gt;
+&lt;h3&gt;Отчёт за неделю и месяц&lt;/h3&gt;
+&lt;p&gt;Третий экран — «Отчёт · неделя + месяц», клавиша 3. За неделю набирается и мелкая, и серьёзная работа; сюда попадает только то, что вы отобрали сами. Правый щелчок по записи → «В отчёт…» или клавиша R, по желанию — комментарий: что сделано и почему это важно.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Неделя&lt;/strong&gt; — отобранные записи по дням, с комментариями.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Месяц&lt;/strong&gt; — те же отметки, собранные по неделям; стрелки листают месяцы.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Копировать&lt;/strong&gt; — отчёт текстом в буфер, для чата, Jira или письма.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Сохранить .docx&lt;/strong&gt; или &lt;strong&gt;.txt&lt;/strong&gt; — файлом.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;Комментарий можно поправить в любой день, синхронизация Jira и Telegram его не затирает.&lt;/p&gt;
+&lt;h3&gt;Хвосты, перенос и напоминания&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Хвосты&lt;/strong&gt; — всё открытое, кроме встреч, одним списком: поиск по словам, фильтры по виду и возрасту, закрыть запись или взять её в работу на сегодня, закрыть найденное пачкой.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Перенести на&lt;/strong&gt; — продолжить запись в другой день. Перенос умный: если на запись уже ушло время, часы остаются там, где их потратили, а на новый день уходит открытое продолжение.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Напомнить через&lt;/strong&gt; — от недели до года, дата видна сразу в меню. Напоминание ждёт в блоке «Впереди», а в свой день всплывает сообщением из трея.&lt;/p&gt;
+&lt;h3&gt;Живёт в трее и переезжает с папкой&lt;/h3&gt;
+&lt;p&gt;Крестик убирает окно в трей, а программа продолжает синхронизировать источники и напоминать. По галочке в настройках HLT 2 запускается вместе с Windows сразу в трей. Повторный запуск не открывает вторую копию, а поднимает уже открытое окно. Журналы .hlt2 в Проводнике — со значком программы, и двойной щелчок открывает журнал, даже если HLT 2 сидит в трее.&lt;/p&gt;
+&lt;p&gt;Журнал — один файл .hlt2 там, где вы его создали. Он записывается сам после каждой правки, а предыдущая версия откладывается в резервную копию — последние двадцать хранятся рядом с журналом. Настройки лежат в settings.json рядом с программой и переезжают вместе с папкой.&lt;/p&gt;
+&lt;h3&gt;Урок для новичков и учебный проект&lt;/h3&gt;
+&lt;p&gt;Начать можно, не подключая ничего своего. &lt;strong&gt;Справка → Учебный проект Glowmire&lt;/strong&gt; открывает выдуманный журнал: два месяца работы аниматора над придуманной игрой — дейли и планирования, задачи с ключами, ревью файлов, заметки, переносы, напоминания и отметки для отчёта. Последний день в нём всегда сегодня, поэтому все экраны «живые»: можно щёлкать, двигать, закрывать хвосты и ничего настоящего не задеть. Jira и Telegram в учебный проект ничего не пишут.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Справка → Урок для новичков&lt;/strong&gt; — пошаговый урок с картинками и нумерованными выносками к каждой кнопке: распаковать и запустить, погулять по экранам учебного проекта с маленькими заданиями, завести свой журнал, сделать токен в Jira, получить ключи на my.telegram.org, войти в Telegram и прожить первый рабочий день. Урок — на русском и английском, а сам учебный проект лежит в папке demo рядом с программой и открывается двойным щелчком.&lt;/p&gt;
+&lt;h3&gt;Чего программа не делает&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Не ходит в сеть сама по себе.&lt;/strong&gt; Связь — только с вашей Jira и с Telegram, и только если вы их подключили. Без них HLT 2 работает как обычный ручной журнал.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не логирует время в Jira.&lt;/strong&gt; Она только читает ваши ворклоги; ворклоги коллег в журнал не попадают.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не подходит к любой Jira.&lt;/strong&gt; Программа рассчитана на Jira со своим сервером (Server / Data Center) и вход по личному токену доступа.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не понимает любых ботов-календарей.&lt;/strong&gt; Встречи читаются из одного формата сообщений; сообщения других ботов пропускаются.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не обходится без вашего аккаунта Telegram.&lt;/strong&gt; Нужны api_id и api_hash с my.telegram.org — их выдают один раз и бесплатно.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не переносит секреты.&lt;/strong&gt; Вход в Telegram и токен Jira на другом компьютере или под другим пользователем Windows придётся ввести заново — так задумано.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не скачивает файлы.&lt;/strong&gt; Картинки и документы из Telegram остаются в Telegram, в журнале — ссылка.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не отменяет по Ctrl+Z.&lt;/strong&gt; Поэтому удаление записи переспрашивает, а резервные копии журнала лежат рядом с ним.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Не подписана цифровым сертификатом.&lt;/strong&gt; При первом запуске Windows может показать предупреждение о неизвестном издателе.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Система: Windows 10 и 11, 64-бит&lt;/li&gt;&lt;li&gt;Формат: папка с HLT2.exe, установка не нужна&lt;/li&gt;&lt;li&gt;Размер: архив HLT2-2.0.0.zip, 58 МБ&lt;/li&gt;&lt;li&gt;Языки: русский и английский — интерфейс и справка, переключение без перезапуска&lt;/li&gt;&lt;li&gt;Для начала: учебный проект Glowmire и пошаговый урок прямо из меню «Справка»&lt;/li&gt;&lt;li&gt;Работает с: Jira Server / Data Center (личный токен) и Telegram; оба источника необязательны&lt;/li&gt;&lt;li&gt;Лицензия: бесплатно, все права у автора&lt;/li&gt;&lt;li&gt;Установка: распаковать в папку, куда можно писать (не в Program Files), и запустить HLT2.exe&lt;/li&gt;&lt;li&gt;Версия: 2.0.0, номер сборки — в «Справка → О программе HLT 2»&lt;/li&gt;&lt;/ul&gt;">
+      <p>HLT 2 (High Level Tracker 2) shows where the working day went and lets you answer "how is it going?" in ten seconds. It works hand in hand with <strong>Jira and Telegram</strong>: you log time once, in Jira, as you always do, and your worklogs, meetings, notes and review files arrive in the journal on their own. You only type in what lives in neither place: a hallway conversation, a promise, an idea. Whatever is left open piles up in Tails instead of getting lost.</p>
+<h3>Your Jira time comes in by itself</h3>
+<p>Every worklog of yours becomes a task record on its day: the issue key and title, the start time, the minutes logged, the worklog comment and a link to the issue. The record is already marked done - the work happened, so it never hangs around as a tail.</p>
+<ul><li>Nothing is typed twice: log 1h 30m on an issue and the record shows up on that day.</li><li>Changes in Jira follow: edit a worklog and the record updates, delete it and the record is cancelled and stops counting.</li><li>Your own edits to a record stay until Jira changes that same field.</li><li>The issue key opens the issue's history - every day you worked on it, with the total time.</li><li>Time is filed into the right project of your journal by itself: wherever that Jira project's keys already live, or into the default project.</li></ul>
+<p>The token is entered once and kept in the Windows Credential Manager. Sync runs in the background, every 15 minutes by default, and on F5.</p>
+<h3>Telegram fills the journal for you</h3>
+<p>HLT 2 reads Telegram under your own account, the way a regular client does, and turns the conversation into records:</p>
+<ul><li><strong>Meetings from a calendar bot</strong> land on their day with time and duration. The bot deletes a meeting and the record is cancelled; it moves one and the record follows.</li><li><strong>Inbox channel:</strong> forward any message to your own channel and a note appears with its text and a link back to the original.</li><li><strong>Files in chats</strong> that match the review masks (.mb, .ma and .fbx by default) become review records on the day and at the time they were sent.</li></ul>
+<p>The Telegram sign-in and keys are stored next to the program, encrypted by Windows (DPAPI) for your account.</p>
+<h3>Overview: "how is it going?" answered</h3>
+<p>The screen for the morning and the minute before a call. On the left: what is in progress, what not to forget, and what is coming up. Below: where the day went, every record with a bar of its minutes. The last three days with records are ready as text - Copy puts a day on the clipboard for a chat or a stand-up, Copy the week takes the whole week with its total. A line reads like this: "✓ GLM-168 Polish Wren's attacks after game design feedback".</p>
+<p>Further down is the month in hours: time recorded against working time, the share eaten by meetings, how many weekdays have no records at all, and a chart by day.</p>
+<h3>Work: the day by the hour, and the week</h3>
+<p>The chosen day on an hour scale, in lanes: tasks, reviews, meetings, notes. Drag a block to another time, pull its right edge to change the duration, Ctrl+wheel to zoom into the hours. Holes - working time with nothing recorded - are tinted red, and a double-click in one adds a record that fills it exactly.</p>
+<p>Underneath is the whole week, each record a chip; drop a chip into another column and the record moves to that day. Click a record and the panel on the right shows everything about it, its links and the issue history.</p>
+<h3>A report for the week and the month</h3>
+<p>The third screen is Report: week + month, key 3. A week collects small work and serious work alike; only what you pick goes in here. Right-click a record → "Add to report…" or press R, and add a comment if you like: what was done and why it matters.</p>
+<ul><li><strong>Week</strong> - the picked records by day, with their comments.</li><li><strong>Month</strong> - the same picks grouped by week; the arrows step through months.</li><li><strong>Copy</strong> - the report as text, ready for a chat, Jira or an e-mail.</li><li><strong>Save .docx</strong> or <strong>.txt</strong> - as a file.</li></ul>
+<p>Comments can be edited on any day, and a Jira or Telegram sync never overwrites them.</p>
+<h3>Tails, rescheduling and reminders</h3>
+<p><strong>Tails</strong> is everything still open, except meetings, in one list: search by words, filter by kind and age, close a record or take it into today's work, close everything found in one go.</p>
+<p><strong>Postpone to</strong> carries a record over to another day. It is smart about time: if hours were already spent, they stay on the day they were spent, and an open continuation moves to the new day.</p>
+<p><strong>Remind me in</strong> goes from a week to a year, with the date shown right in the menu. A reminder waits under Ahead, and on its day it pops up as a message from the tray.</p>
+<h3>Lives in the tray, travels with its folder</h3>
+<p>The close button hides the window in the tray while the program keeps syncing and reminding. One tick in Settings starts HLT 2 with Windows, straight into the tray. Launching it again does not open a second copy - it brings up the window that is already running. Journals (.hlt2) show the program's icon in Explorer, and a double click opens one, even while HLT 2 sits in the tray.</p>
+<p>The journal is a single .hlt2 file wherever you created it. It saves itself after every edit, and the previous version is set aside as a backup - the last twenty sit next to the journal. Settings live in settings.json next to the program and move with its folder.</p>
+<h3>A tutorial and a tutorial project</h3>
+<p>You can start without connecting anything of your own. <strong>Help → Tutorial project Glowmire</strong> opens a made-up journal: two months of an animator's work on an invented game - dailies and planning, tasks with keys, review files, notes, rescheduled work, reminders and report marks. Its last day is always today, so every screen looks alive: click, drag, close tails - nothing real is touched. Jira and Telegram write nothing into it.</p>
+<p><strong>Help → Tutorial for beginners</strong> is a step-by-step lesson with pictures and numbered callouts for every button: unzip and run, walk through the screens of the tutorial project with small exercises, create your own journal, make a Jira token, get the keys at my.telegram.org, sign in to Telegram and live through your first working day. The tutorial comes in English and Russian, and the tutorial project itself lies in the demo folder next to the program and opens with a double click.</p>
+<h3>What it does not do</h3>
+<ul><li><strong>It does not go online on its own.</strong> It talks only to your Jira and to Telegram, and only if you connect them. Without them HLT 2 is a plain manual journal.</li><li><strong>It does not log time to Jira.</strong> It only reads your worklogs; colleagues' worklogs never reach your journal.</li><li><strong>It does not fit every Jira.</strong> It is built for self-hosted Jira (Server / Data Center) with a personal access token.</li><li><strong>It does not understand every calendar bot.</strong> Meetings are read from one message format; other bots' messages are skipped.</li><li><strong>It cannot do without your Telegram account.</strong> You need an api_id and api_hash from my.telegram.org - issued once, free of charge.</li><li><strong>It does not carry secrets across.</strong> On another computer or another Windows user you sign in to Telegram and enter the Jira token again - by design.</li><li><strong>It does not download files.</strong> Pictures and documents stay in Telegram; the journal keeps a link.</li><li><strong>There is no Ctrl+Z.</strong> That is why deleting a record asks first, and why backups of the journal sit next to it.</li><li><strong>It is not code-signed.</strong> On first launch Windows may warn about an unknown publisher.</li></ul>
+<h3>At a glance</h3>
+<ul><li>System: Windows 10 and 11, 64-bit</li><li>Format: a folder with HLT2.exe, no installer</li><li>Size: HLT2-2.0.0.zip, 58 MB</li><li>Languages: English and Russian - interface and manual, switched without a restart</li><li>To start with: the Glowmire tutorial project and a step-by-step tutorial, right in the Help menu</li><li>Works with: Jira Server / Data Center (personal access token) and Telegram; both are optional</li><li>Licence: free, all rights reserved by the author</li><li>Install: unzip into a folder you can write to (not Program Files) and run HLT2.exe</li><li>Version: 2.0.0, the build number is in Help → About HLT 2</li></ul>
+    </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Promo" data-ru="// Промо">// Promo</span></h2>
+    
+    
+    
+    
+    <div class="tuts">
+      
+      <figure class="tut" data-only="en">
+        <button class="tut-player" type="button" data-yt="Pos50pbc5YI" aria-label="HLT 2 overview">
+          <img src="https://i.ytimg.com/vi/Pos50pbc5YI/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="HLT 2 overview" data-ru="Обзор HLT 2">HLT 2 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/Pos50pbc5YI" target="_blank" rel="noopener">YouTube · v2.0.0 ↗</a>
+        </figcaption>
+      </figure>
+      
+      <figure class="tut" data-only="ru">
+        <button class="tut-player" type="button" data-yt="zc_BOKtDeMU" aria-label="HLT 2 overview">
+          <img src="https://i.ytimg.com/vi/zc_BOKtDeMU/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="HLT 2 overview" data-ru="Обзор HLT 2">HLT 2 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/zc_BOKtDeMU" target="_blank" rel="noopener">YouTube · v2.0.0 ↗</a>
+        </figcaption>
+      </figure>
+      
+    </div>
+    <div class="links">
+      
+    </div>
+  </div>
+  
+
+  <!-- ── Характеристики ── -->
+  
+  
+  <div class="section">
+    <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
+    <div class="specs">
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>2.0.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Windows 10 / 11 (64-bit)</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN / RU</div></div>
+      
+      <div class="spec-row"><div class="spec-key"><span data-en="Installation" data-ru="Установка">Installation</span></div><div class="spec-val">Unzip & run</div></div>
+    </div>
+  </div>
+  
+
+  <!-- ── Как это делалось ── -->
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
+    </div>
+
+    
+    <div class="versions" id="versions">
+      
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">2.0.0</span>
+          <span class="ver-date">2026-10-11</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/HLT2/HLT2-2.0.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            58 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;The first public release of HLT 2 for Windows 10/11: a work-day tracker paired with Jira and Telegram, where worklogs, meetings, notes and review files arrive in the journal by themselves. Overview, Work and Report: week + month screens, Tails, rescheduling and tray reminders; manual in English and Russian, a step-by-step tutorial for beginners and a made-up tutorial project to try everything on.&lt;/p&gt;" data-ru="&lt;p&gt;Первый публичный выпуск HLT 2 для Windows 10/11: трекер рабочего дня в паре с Jira и Telegram - ворклоги, встречи, заметки и файлы на ревью приходят в журнал сами. Экраны «Обзор», «Работа» и «Отчёт · неделя + месяц», хвосты, перенос и напоминания из трея; справка на русском и английском, пошаговый урок для новичков и выдуманный учебный проект, чтобы всё потрогать.&lt;/p&gt;"><p>The first public release of HLT 2 for Windows 10/11: a work-day tracker paired with Jira and Telegram, where worklogs, meetings, notes and review files arrive in the journal by themselves. Overview, Work and Report: week + month screens, Tails, rescheduling and tray reminders; manual in English and Russian, a step-by-step tutorial for beginners and a made-up tutorial project to try everything on.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+    </div>
+    
+    
+
+    
+    
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>High Level Tracker 2 v2.0.0 · 2026-10-11</span>
+  </div>
+</footer>
+
+<script>
+/* ── уроки: по клику обложка меняется на плеер YouTube ── */
+document.querySelectorAll('.tut-player').forEach(function (box) {
+  box.addEventListener('click', function () {
+    var frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + box.dataset.yt + '?autoplay=1&rel=0';
+    frame.title = box.getAttribute('aria-label');
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    // YouTube не играет встроенный ролик без Referer (ошибка 153).
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    var live = document.createElement('div');
+    live.className = 'tut-player tut-live';
+    live.appendChild(frame);
+    live.cover = box;
+    box.replaceWith(live);
+  });
+});
+// Язык переключили во время просмотра: скрытый ролик не должен играть
+// дальше — возвращаем ему обложку.
+document.addEventListener('langchange', function () {
+  document.querySelectorAll('.tut-live').forEach(function (live) {
+    if (live.offsetParent === null) live.replaceWith(live.cover);
+  });
+});
+
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
+}
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+
+</body>
+</html>
