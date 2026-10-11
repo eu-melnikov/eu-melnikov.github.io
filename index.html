@@ -434,24 +434,28 @@
     margin-bottom: 12px;
   }
 
-  .about-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-  .about-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--muted);
+  .about-teaser { display: flex; align-items: center; gap: 32px; }
+  .about-teaser .about-text p { margin-bottom: 20px; max-width: 620px; }
+  .about-photo {
+    flex: none; width: 128px; height: 128px; border-radius: 50%; overflow: hidden;
+    border: 2px solid rgba(0,229,255,.35);
+    box-shadow: 0 0 0 6px rgba(0,229,255,.05);
   }
-  .about-list li::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    flex-shrink: 0;
+  .about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; display: block; }
+  .btn-about {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .08em;
+    padding: 10px 18px; border-radius: 8px; text-decoration: none;
+    color: var(--accent); border: 1px solid rgba(0,229,255,.35);
+    background: linear-gradient(135deg, rgba(0,229,255,.1), rgba(124,58,237,.1));
+    transition: border-color .2s, transform .15s;
   }
-
-  .about-bio { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-  @media (max-width: 640px) { .about-bio { grid-template-columns: 1fr; } }
+  .btn-about:hover { border-color: rgba(0,229,255,.65); transform: translateY(-1px); }
+  .btn-about svg { width: 14px; height: 14px; }
+  @media (max-width: 640px) {
+    .about-teaser { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .about-box { padding: 28px 20px; }
+  }
 
   .social-links {
     display: flex;
@@ -616,7 +620,7 @@
     <div class="nav-links">
       <a href="#software"><span data-en="Software" data-ru="Программы">Software</span></a>
       <a href="news.html" class="nav-news"><span data-en="News" data-ru="Новости">News</span></a>
-      <a href="#about"><span data-en="About" data-ru="Обо мне">About</span></a>
+      <a href="about.html"><span data-en="About" data-ru="Обо мне">About</span></a>
     </div>
     <div class="langsw">
       <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
@@ -1758,7 +1762,7 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
   </div>
 </div>
 
-<!-- ── About ── -->
+<!-- ── About: короткая карточка, вся история — на about.html ── -->
 <div class="wrap">
   <div class="section" id="about">
     <div class="section-header">
@@ -1766,44 +1770,39 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
       <div class="section-line"></div>
     </div>
     <div class="about-box">
-      <div class="about-bio">
+      <div class="about-teaser">
+        <a href="about.html" class="about-photo"><img src="assets/about-photo.jpg" alt="Eugene Melnikov" loading="lazy"></a>
         <div class="about-text">
           <h3><span data-en="Hi, I'm" data-ru="Привет, я">Hi, I'm</span> <strong style="color:var(--accent)"><span data-en="Eugene Melnikov" data-ru="Евгений Мельников">Eugene Melnikov</span></strong></h3>
-          <p><span data-en="Character animator since 2006. I lead an animation outsource division, mentoring animators and shaping the creative process from brief to final shot." data-ru="Аниматор персонажей с 2006 года. Руковожу отделом аутсорса анимации: обучаю аниматоров и веду творческий процесс от брифа до финального шота.">Character animator since 2006. I lead an animation outsource division, mentoring animators and shaping the creative process from brief to final shot.</span></p>
-          <p><span data-en="Alongside animation, I write Python scripts to improve pipeline workflows and smooth out collaboration between animation teams. My tools are born out of real production pain — if something is repetitive and boring, I automate it." data-ru="Параллельно с анимацией пишу скрипты на Python: улучшаю пайплайн и сглаживаю совместную работу анимационных команд. Мои инструменты рождаются из настоящей продакшн-боли — если что-то однообразно и скучно, я это автоматизирую.">Alongside animation, I write Python scripts to improve pipeline workflows and smooth out collaboration between animation teams. My tools are born out of real production pain — if something is repetitive and boring, I automate it.</span></p>
-          <p><span data-en="Building Windows utilities is part hobby, part pragmatism — 50/50. I enjoy thinking up features, optimising processes, and occasionally shipping something useful to the world for free." data-ru="Утилиты под Windows делаю наполовину из интереса, наполовину из практичности. Люблю придумывать фичи, оптимизировать процессы и иногда отдавать миру что-нибудь полезное бесплатно.">Building Windows utilities is part hobby, part pragmatism — 50/50. I enjoy thinking up features, optimising processes, and occasionally shipping something useful to the world for free.</span></p>
-        </div>
-        <div>
-          <ul class="about-list">
-            <li><span data-en="Lead animator &amp; animation team lead" data-ru="Ведущий аниматор и руководитель команды">Lead animator &amp; animation team lead</span></li>
-            <li><span data-en="Character animation since 2006" data-ru="Анимация персонажей с 2006 года">Character animation since 2006</span></li>
-            <li><span data-en="Python scripting for animation pipelines" data-ru="Python-скрипты для анимационного пайплайна">Python scripting for animation pipelines</span></li>
-            <li><span data-en="Windows utilities for everyday automation" data-ru="Утилиты под Windows для повседневной автоматизации">Windows utilities for everyday automation</span></li>
-            <li><span data-en="All tools here are free, no strings attached" data-ru="Все программы здесь бесплатны, без условий">All tools here are free, no strings attached</span></li>
-          </ul>
+          <p><span data-en="Character animator since 2006, Senior Animator at Saber Interactive. I build tools for animators together with AI - and share them here for free." data-ru="Аниматор персонажей с 2006 года, Senior Animator в Saber Interactive. Делаю инструменты для аниматоров вместе с нейросетью - и выкладываю их здесь бесплатно.">Character animator since 2006, Senior Animator at Saber Interactive. I build tools for animators together with AI - and share them here for free.</span></p>
+          <a href="about.html" class="btn-about">
+            <span data-en="MORE ABOUT ME" data-ru="ПОДРОБНЕЕ ОБО МНЕ">MORE ABOUT ME</span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>
+          </a>
         </div>
       </div>
       <div class="social-links">
-        <a class="social-btn" href="https://www.linkedin.com/in/eugene-melnikov-ab087114a/" target="_blank">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-          LINKEDIN
-        </a>
-        <a class="social-btn" href="https://t.me/eov_animation" target="_blank">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0v5.5l3.5-3"/></svg>
-          TELEGRAM
-        </a>
-        <a class="social-btn" href="https://www.youtube.com/c/EugeneMelnikov" target="_blank">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="var(--bg)"/></svg>
-          YOUTUBE
-        </a>
-        <a class="social-btn" href="https://www.artstation.com/emelnikov" target="_blank">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17.5L5.5 21l1.5-2.5L3.5 14 2 17.5zm19.5.5h-1.8L13 5H11L3.5 18h3.8l1.2-2h8l1.2 2h3.8zM10.2 13l2.8-5.5L15.8 13h-5.6z"/></svg>
-          <span data-en="ARTSTATION — ANIMATION" data-ru="ARTSTATION — АНИМАЦИЯ">ARTSTATION — ANIMATION</span>
-        </a>
-        <a class="social-btn" href="https://www.artstation.com/eugene527" target="_blank">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17.5L5.5 21l1.5-2.5L3.5 14 2 17.5zm19.5.5h-1.8L13 5H11L3.5 18h3.8l1.2-2h8l1.2 2h3.8zM10.2 13l2.8-5.5L15.8 13h-5.6z"/></svg>
-          <span data-en="ARTSTATION — 3D MODELING" data-ru="ARTSTATION — 3D-МОДЕЛИРОВАНИЕ">ARTSTATION — 3D MODELING</span>
-        </a>
+
+    <a class="social-btn" href="https://www.linkedin.com/in/eugene-melnikov-ab087114a/" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+      LINKEDIN
+    </a>
+    <a class="social-btn" href="https://t.me/eov_animation" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0v5.5l3.5-3"/></svg>
+      TELEGRAM
+    </a>
+    <a class="social-btn" href="https://www.youtube.com/c/EugeneMelnikov" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="var(--bg)"/></svg>
+      YOUTUBE
+    </a>
+    <a class="social-btn" href="https://www.artstation.com/emelnikov" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17.5L5.5 21l1.5-2.5L3.5 14 2 17.5zm19.5.5h-1.8L13 5H11L3.5 18h3.8l1.2-2h8l1.2 2h3.8zM10.2 13l2.8-5.5L15.8 13h-5.6z"/></svg>
+      <span data-en="ARTSTATION — ANIMATION" data-ru="ARTSTATION — АНИМАЦИЯ">ARTSTATION — ANIMATION</span>
+    </a>
+    <a class="social-btn" href="https://www.artstation.com/eugene527" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17.5L5.5 21l1.5-2.5L3.5 14 2 17.5zm19.5.5h-1.8L13 5H11L3.5 18h3.8l1.2-2h8l1.2 2h3.8zM10.2 13l2.8-5.5L15.8 13h-5.6z"/></svg>
+      <span data-en="ARTSTATION — 3D MODELING" data-ru="ARTSTATION — 3D-МОДЕЛИРОВАНИЕ">ARTSTATION — 3D MODELING</span>
+    </a>
       </div>
     </div>
   </div>

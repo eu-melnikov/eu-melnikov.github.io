@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-en="About — e.melnikov" data-ru="Обо мне — e.melnikov">About — e.melnikov</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0d0f14;
+    --bg2:       #13161e;
+    --bg3:       #1a1d28;
+    --border:    #252836;
+    --accent:    #00e5ff;
+    --accent2:   #7c3aed;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --body:      #94a3b8;
+    --mono:      'JetBrains Mono', monospace;
+    --sans:      'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: .15;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blob-1 { width: 520px; height: 520px; background: var(--accent2); top: -160px; left: -160px; }
+  .blob-2 { width: 380px; height: 380px; background: var(--accent); bottom: -120px; right: -120px; }
+
+  .wrap { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.8);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap {
+    display: flex; align-items: center;
+    justify-content: space-between; height: 56px; gap: 16px;
+  }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 24px; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a {
+    font-size: 13px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.on { color: var(--accent); }
+
+  /* ── шапка: фото и главное ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 56px;
+    align-items: center;
+    padding: 64px 0 40px;
+  }
+  .photo {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    aspect-ratio: 2 / 3;
+    background: var(--bg2);
+  }
+  .photo::after {
+    /* фото тёплое, сайт холодный — лёгкая подсветка снизу их сводит */
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(13,15,20,.55), transparent 35%);
+    pointer-events: none;
+  }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-glow {
+    position: absolute; inset: -14px; z-index: -1;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(0,229,255,.25), rgba(124,58,237,.25));
+    filter: blur(28px);
+  }
+  .photo-wrap { position: relative; }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    background: rgba(0,229,255,.08); border: 1px solid rgba(0,229,255,.2);
+    border-radius: 20px; padding: 4px 12px; margin-bottom: 20px;
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -.03em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .tagline {
+    font-size: 18px; font-weight: 300; line-height: 1.55;
+    color: var(--text); margin-top: 16px; max-width: 540px;
+  }
+  .facts {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 10px;
+    margin-top: 28px;
+  }
+  .facts li {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: var(--body);
+  }
+  .facts li::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
+
+  .social-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+  .social-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .06em;
+    padding: 8px 14px; border-radius: 8px; text-decoration: none;
+    border: 1px solid var(--border); color: var(--muted); background: var(--bg3);
+    transition: border-color .2s, color .2s;
+  }
+  .social-btn:hover { border-color: rgba(0,229,255,.4); color: var(--accent); }
+  .social-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── вехи ── */
+  .milestones {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 24px 0 8px;
+  }
+  .milestone { background: var(--bg2); padding: 20px 20px 22px; }
+  .milestone .year {
+    font-family: var(--mono); font-size: 20px; font-weight: 700;
+    color: var(--accent); letter-spacing: -.01em;
+  }
+  .milestone p { font-size: 13px; color: var(--body); line-height: 1.55; margin-top: 8px; }
+  .milestone:last-child .year { color: var(--text); }
+
+  /* ── разделы с текстом ── */
+  .story { max-width: 720px; }
+  .block { padding-top: 56px; }
+  .block h2 {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .12em;
+    margin-bottom: 22px;
+  }
+  .block h2::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+  .block p {
+    font-size: 16px; line-height: 1.8; color: var(--body);
+    margin-bottom: 16px;
+  }
+  .block p a {
+    color: var(--accent); text-decoration: none;
+    border-bottom: 1px solid rgba(0,229,255,.3);
+  }
+  .block p a:hover { border-bottom-color: var(--accent); }
+
+  /* ── проекты ── */
+  .note { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: 13px; color: var(--text);
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 12px; line-height: 1.35;
+  }
+
+  /* ── заключение: тот же текст, но чуть ближе к читателю ── */
+  .closing p {
+    color: var(--text);
+    border-left: 2px solid rgba(0,229,255,.45);
+    padding-left: 20px;
+  }
+  .closing p + p { margin-top: -16px; padding-top: 16px; }
+
+  /* ── к программам ── */
+  .cta { padding: 56px 0 24px; }
+  .btn-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, rgba(0,229,255,.14), rgba(124,58,237,.14));
+    border: 1px solid rgba(0,229,255,.35);
+    color: var(--accent);
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: .1em; padding: 13px 28px; border-radius: 10px;
+    text-decoration: none;
+    transition: background .2s, border-color .2s, transform .15s;
+  }
+  .btn-cta:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.24), rgba(124,58,237,.24));
+    border-color: rgba(0,229,255,.65);
+    transform: translateY(-1px);
+  }
+  .btn-cta svg { width: 14px; height: 14px; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0; text-align: center;
+    font-size: 13px; color: var(--muted);
+    font-family: var(--mono); margin-top: 48px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 36px; padding-top: 40px; }
+    .photo-wrap { max-width: 300px; }
+    .milestones { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .nav-links { display: none; }
+    .milestones { grid-template-columns: 1fr; }
+    .photo-wrap { max-width: 240px; }
+    .block p { font-size: 15px; }
+  }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+  /* то, что есть только на одном языке: ролик, русский постер */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
+
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="index.html#software"><span data-en="Software" data-ru="Программы">Software</span></a>
+        <a href="news.html"><span data-en="News" data-ru="Новости">News</span></a>
+        <a href="about.html" class="on"><span data-en="About" data-ru="Обо мне">About</span></a>
+      </div>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Шапка ── -->
+  <div class="hero">
+    <div class="photo-wrap">
+      <div class="photo-glow"></div>
+      <div class="photo"><img src="assets/about-photo.jpg" alt="Eugene Melnikov"></div>
+    </div>
+    <div>
+      <div class="kicker"><span data-en="About" data-ru="Обо мне">About</span></div>
+      <h1><span data-en="Eugene Melnikov" data-ru="Евгений Мельников">Eugene Melnikov</span></h1>
+      <p class="tagline"><span data-en="Character animator in game development. I build tools for animators - and a few for everyday life." data-ru="Аниматор персонажей в геймдеве. Делаю инструменты для аниматоров - и не только.">Character animator in game development. I build tools for animators - and a few for everyday life.</span></p>
+      <ul class="facts">
+        <li><span data-en="In 3D since 2001, in animation since 2006" data-ru="В 3D с 2001 года, в анимации - с 2006-го">In 3D since 2001, in animation since 2006</span></li>
+        <li><span data-en="Senior Animator at Saber Interactive since 2011" data-ru="Senior Animator в Saber Interactive с 2011 года">Senior Animator at Saber Interactive since 2011</span></li>
+        <li><span data-en="Leading a small team of outsource animators" data-ru="Веду небольшую команду аутсорс-аниматоров">Leading a small team of outsource animators</span></li>
+        <li><span data-en="Everything on this site is free" data-ru="Всё на этом сайте бесплатно">Everything on this site is free</span></li>
+      </ul>
+      <div class="social-links">
+
+    <a class="social-btn" href="https://www.linkedin.com/in/eugene-melnikov-ab087114a/" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+      LINKEDIN
+    </a>
+    <a class="social-btn" href="https://t.me/eov_animation" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0v5.5l3.5-3"/></svg>
+      TELEGRAM
+    </a>
+    <a class="social-btn" href="https://www.youtube.com/c/EugeneMelnikov" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.965C5.12 20 12 20 12 20s6.88 0 8.59-.455a2.78 2.78 0 001.95-1.965A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="var(--bg)"/></svg>
+      YOUTUBE
+    </a>
+    <a class="social-btn" href="https://www.artstation.com/emelnikov" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17.5L5.5 21l1.5-2.5L3.5 14 2 17.5zm19.5.5h-1.8L13 5H11L3.5 18h3.8l1.2-2h8l1.2 2h3.8zM10.2 13l2.8-5.5L15.8 13h-5.6z"/></svg>
+      <span data-en="ARTSTATION — ANIMATION" data-ru="ARTSTATION — АНИМАЦИЯ">ARTSTATION — ANIMATION</span>
+    </a>
+    <a class="social-btn" href="https://www.artstation.com/eugene527" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17.5L5.5 21l1.5-2.5L3.5 14 2 17.5zm19.5.5h-1.8L13 5H11L3.5 18h3.8l1.2-2h8l1.2 2h3.8zM10.2 13l2.8-5.5L15.8 13h-5.6z"/></svg>
+      <span data-en="ARTSTATION — 3D MODELING" data-ru="ARTSTATION — 3D-МОДЕЛИРОВАНИЕ">ARTSTATION — 3D MODELING</span>
+    </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Вехи ── -->
+  <div class="milestones">
+    <div class="milestone"><div class="year">2001</div><p><span data-en="3D commercials: the full cycle, from model to finished video" data-ru="3D-реклама: полный цикл, от модели до готового ролика">3D commercials: the full cycle, from model to finished video</span></p></div>
+    <div class="milestone"><div class="year">2006</div><p><span data-en="Kenjitsu - first game studio, first animation tasks" data-ru="Kenjitsu - первая игровая студия, первые задачи по анимации">Kenjitsu - first game studio, first animation tasks</span></p></div>
+    <div class="milestone"><div class="year">2011</div><p><span data-en="Saber Interactive - animator on large projects" data-ru="Saber Interactive - аниматор на больших проектах">Saber Interactive - animator on large projects</span></p></div>
+    <div class="milestone"><div class="year"><span data-en="Now" data-ru="Сейчас">Now</span></div><p><span data-en="Leading an outsource team and building tools with AI" data-ru="Веду аутсорс-команду и делаю инструменты вместе с нейросетью">Leading an outsource team and building tools with AI</span></p></div>
+  </div>
+
+  <!-- ── История ── -->
+  <div class="story">
+    <section class="block">
+      <h2><span data-en="// How I got into animation" data-ru="// Как я попал в анимацию">// How I got into animation</span></h2>
+      <p><span data-en="I started in 2001 at an advertising studio that made 3D clips for the city's LED billboards. There were few of us, so I did everything myself - modeling, texturing, rigging, skinning, animation and putting the clip together. That's how I learned 3D end to end, from the first polygon to the finished video." data-ru="Начинал в 2001 году в рекламной студии: мы делали 3D-ролики для городских световых табло. Людей было мало, поэтому всё делал сам - моделирование, текстуры, риг, скиннинг, анимацию и сборку ролика. Так я выучил 3D целиком, от первого полигона до готового видео.">I started in 2001 at an advertising studio that made 3D clips for the city's LED billboards. There were few of us, so I did everything myself - modeling, texturing, rigging, skinning, animation and putting the clip together. That's how I learned 3D end to end, from the first polygon to the finished video.</span></p>
+      <p><span data-en="In 2006 I joined my first game company, Kenjitsu. At first I was a generalist there too, covering whatever the team was short of. Then one of the animators noticed I had a feel for animation and started giving me tasks and going through them with me. I got hooked, and I've worked as an animator ever since." data-ru="В 2006-м я пришёл в свою первую игровую компанию, Kenjitsu. Сначала тоже универсалом - закрывал задачи, на которые не хватало людей. Потом один из аниматоров заметил, что анимация у меня получается, и начал давать мне задания и разбирать их со мной. Я втянулся и с тех пор работаю аниматором.">In 2006 I joined my first game company, Kenjitsu. At first I was a generalist there too, covering whatever the team was short of. Then one of the animators noticed I had a feel for animation and started giving me tasks and going through them with me. I got hooked, and I've worked as an animator ever since.</span></p>
+      <p><span data-en="Several studios and many projects followed. Some of them needed rigging, skinning or cloth simulation alongside animation. When I didn't know something, I learned it and got the task done. Concept art and modeling aren't my field. Rigging, skinning and cloth I keep in mind as neighbouring parts of the same job: I may not know every corner of them, but I understand how they work." data-ru="Дальше было несколько студий и много проектов. На некоторых вместе с анимацией нужны были риг, скиннинг или симуляция одежды. Если я чего-то не знал - разбирался и доводил задачу до результата. Концепт-арт и модели - не моя область. А риг, скин и ткань я держу в голове как смежные части одной работы: если не знаю каждую до конца, то понимаю, как они устроены.">Several studios and many projects followed. Some of them needed rigging, skinning or cloth simulation alongside animation. When I didn't know something, I learned it and got the task done. Concept art and modeling aren't my field. Rigging, skinning and cloth I keep in mind as neighbouring parts of the same job: I may not know every corner of them, but I understand how they work.</span></p>
+    </section>
+
+    <section class="block">
+      <h2><span data-en="// What I do now" data-ru="// Чем занимаюсь сейчас">// What I do now</span></h2>
+      <p><span data-en="I've been at Saber Interactive since 2011. My title is senior animator. For the last couple of years most of my time goes into leading a small team of outsource animators. The work isn't the most creative, but it carries a lot of responsibility - hand out tasks, explain what's needed, review, give feedback on time, and show management where we stand." data-ru="С 2011 года работаю в Saber Interactive. По должности - senior animator. Последние пару лет большую часть времени веду небольшую команду аутсорс-аниматоров. Работа не самая творческая, но ответственная: распределить задачи, объяснить, что нужно, проверить, вовремя дать обратную связь, показать руководству, где мы находимся.">I've been at Saber Interactive since 2011. My title is senior animator. For the last couple of years most of my time goes into leading a small team of outsource animators. The work isn't the most creative, but it carries a lot of responsibility - hand out tasks, explain what's needed, review, give feedback on time, and show management where we stand.</span></p>
+      <p><span data-en="I still animate, though - selectively. I take on complex animation tasks that a lot depends on further down the line, and those that need more experience or knowledge of our internal processes. It's not a lack of trust in the team: I've simply worked inside our pipeline for a long time and do a lot of things in it myself. Larger volumes of work that are easy to hand off go to outsourcing." data-ru="Но руками я тоже работаю - точечно. Беру сложные анимационные задачи, от которых многое зависит дальше по цепочке, и те, где нужно больше опыта или знание наших внутренних процессов. Это не недоверие к команде: просто я давно работаю внутри нашего пайплайна и многое в нём делаю сам. А объёмную работу, которую легко вынести наружу, передаём в аутсорс.">I still animate, though - selectively. I take on complex animation tasks that a lot depends on further down the line, and those that need more experience or knowledge of our internal processes. It's not a lack of trust in the team: I've simply worked inside our pipeline for a long time and do a lot of things in it myself. Larger volumes of work that are easy to hand off go to outsourcing.</span></p>
+      <p><span data-en="To my own surprise, I found it interesting. And I found that leading people takes more than communication and a bit of psychology - it takes tools. You need to see who is busy with what right now and when they'll be free, so the next task is ready by then, and how the work is moving as a whole." data-ru="Неожиданно для себя я понял, что мне это интересно. И что руководить - это не только общение и немного психологии, но и инструменты: нужно видеть, кто чем занят прямо сейчас и когда освободится, чтобы к этому моменту была готова следующая задача, и как продвигается работа в целом.">To my own surprise, I found it interesting. And I found that leading people takes more than communication and a bit of psychology - it takes tools. You need to see who is busy with what right now and when they'll be free, so the next task is ready by then, and how the work is moving as a whole.</span></p>
+    </section>
+
+    <section class="block">
+      <h2><span data-en="// Where these programs come from" data-ru="// Откуда здесь программы">// Where these programs come from</span></h2>
+      <p><span data-en="There were no ready-made tools for this kind of work, so I started making my own. For the animators in my department - Maya scripts and plugins: loading and transferring animation, retiming scenes, mirroring, pickers, painting curves and poses, merging scenes, our own revision system. For myself as a lead - programs that connect Jira, Kitsu and Perforce and show in real time who is working on what, and <a href=&quot;roadmapper-versions.html&quot;>RoadMapper</a>, which shows how the whole project is moving." data-ru="Готовых инструментов под такую работу не было, и я начал делать свои. Для аниматоров отдела - скрипты и плагины для Maya: загрузка и перенос анимации, ретайм сцен, зеркалирование, пикеры, рисование кривых и поз, слияние сцен, своя система ревизий. Для себя как лида - программы, которые связывают Jira, Kitsu и Perforce и в реальном времени показывают, кто над чем работает, и <a href=&quot;roadmapper-versions.html&quot;>RoadMapper</a>, в котором видно продвижение всего проекта.">There were no ready-made tools for this kind of work, so I started making my own. For the animators in my department - Maya scripts and plugins: loading and transferring animation, retiming scenes, mirroring, pickers, painting curves and poses, merging scenes, our own revision system. For myself as a lead - programs that connect Jira, Kitsu and Perforce and show in real time who is working on what, and <a href="roadmapper-versions.html">RoadMapper</a>, which shows how the whole project is moving.</span></p>
+      <p><span data-en="I build them together with AI. I know where it hurts, what tool is needed and how it has to fit into the work. I explain that to the model, we build it together, and I test it on real tasks right away: something I extend, something I redo, and something works exactly right the first time." data-ru="Делаю я их вместе с нейросетью. Я знаю, где болит, какой инструмент нужен и как он должен вписаться в работу. Объясняю это нейросети, мы вместе его собираем, и я сразу проверяю его в деле: что-то дописываю, что-то переделываю, а что-то работает как надо с первого раза.">I build them together with AI. I know where it hurts, what tool is needed and how it has to fit into the work. I explain that to the model, we build it together, and I test it on real tasks right away: something I extend, something I redo, and something works exactly right the first time.</span></p>
+      <p><span data-en="Some of these tools turned out to be useful beyond our team. <a href=&quot;frames_commander-versions.html&quot;>FramesCommander</a>, for example, is now used by animators far outside our studio." data-ru="Некоторые из этих инструментов оказались полезны не только нам. <a href=&quot;frames_commander-versions.html&quot;>FramesCommander</a>, например, теперь используют аниматоры далеко за пределами нашей студии.">Some of these tools turned out to be useful beyond our team. <a href="frames_commander-versions.html">FramesCommander</a>, for example, is now used by animators far outside our studio.</span></p>
+    </section>
+
+    <section class="block">
+      <h2><span data-en="// Beyond work" data-ru="// Не только работа">// Beyond work</span></h2>
+      <p><span data-en="Then the same thing started happening outside work. Everyday life is also short of small programs - for routine or for creative things. The ideas come on their own, and I build them. <a href=&quot;PictCommander-versions.html&quot;>PictCommander</a> is an image viewer with everything I missed in ACDSee and similar programs. <a href=&quot;tg_downloader-versions.html&quot;>TG Downloader</a> keeps track of everything people send you in Telegram and can search across several chats at once. And RoadMapper is connected to my home projects too - it quietly keeps a record of what I did and when." data-ru="Потом то же самое стало происходить и вне работы. В обычной жизни тоже не хватает каких-то программ - для рутины или для творчества. Идеи приходят сами, и я их делаю. <a href=&quot;PictCommander-versions.html&quot;>PictCommander</a> - просмотрщик картинок, в который я собрал всё, чего мне не хватало в ACDSee и похожих программах. <a href=&quot;tg_downloader-versions.html&quot;>TG Downloader</a> ведёт учёт всего, что присылают в Telegram, и умеет искать сразу по нескольким чатам. А RoadMapper подключён и к домашним проектам - в нём сам собой копится учёт того, что и когда я сделал.">Then the same thing started happening outside work. Everyday life is also short of small programs - for routine or for creative things. The ideas come on their own, and I build them. <a href="PictCommander-versions.html">PictCommander</a> is an image viewer with everything I missed in ACDSee and similar programs. <a href="tg_downloader-versions.html">TG Downloader</a> keeps track of everything people send you in Telegram and can search across several chats at once. And RoadMapper is connected to my home projects too - it quietly keeps a record of what I did and when.</span></p>
+    </section>
+
+    <section class="block">
+      <h2><span data-en="// About vibe coding" data-ru="// Про вайбкодинг">// About vibe coding</span></h2>
+      <p><span data-en="I'm not a programmer and don't pretend to be. The code is written by AI. But I don't like the idea that vibe coding means someone who can't do anything and learns nothing. To get a working program you have to understand the problem it solves, know the subject, and know how the pipeline it will live in is built. The model doesn't know any of that on its own - someone has to explain it." data-ru="Я не программист и не делаю вид, что им являюсь. Код пишет нейросеть. Но мне не нравится представление, что вайбкодинг - это когда человек ничего не умеет и ничему не учится. Чтобы получилась рабочая программа, нужно понимать задачу, которую она закрывает, знать матчасть и то, как устроен пайплайн, в котором она будет жить. Нейросеть сама этого не знает - ей это нужно объяснить.">I'm not a programmer and don't pretend to be. The code is written by AI. But I don't like the idea that vibe coding means someone who can't do anything and learns nothing. To get a working program you have to understand the problem it solves, know the subject, and know how the pipeline it will live in is built. The model doesn't know any of that on its own - someone has to explain it.</span></p>
+      <p><span data-en="And a good programmer who doesn't animate is unlikely to build a tool that feels right to an animator, unless they work closely with one. I'm an animator and I know what gets in the way; the model knows how to program it. This site is the result of that collaboration." data-ru="И хороший программист, который сам не анимирует, вряд ли сделает инструмент, удобный аниматору, если не будет плотно работать с аниматором. Я аниматор и знаю, что мешает в работе, а нейросеть знает, как это запрограммировать. Этот сайт - результат такой совместной работы.">And a good programmer who doesn't animate is unlikely to build a tool that feels right to an animator, unless they work closely with one. I'm an animator and I know what gets in the way; the model knows how to program it. This site is the result of that collaboration.</span></p>
+    </section>
+
+    <section class="block">
+      <h2><span data-en="// Projects" data-ru="// Проекты">// Projects</span></h2>
+      <p class="note"><span data-en="Games I worked on - mostly as an animator, sometimes on rigging and skinning." data-ru="Игры, над которыми я работал - в основном аниматором, иногда на риге и скиннинге.">Games I worked on - mostly as an animator, sometimes on rigging and skinning.</span></p>
+      <div class="chips">
+        <span class="chip">John Carpenter's Toxic Commando</span>
+        <span class="chip">Warhammer 40,000: Space Marine 2</span>
+        <span class="chip"><span data-en="Halo - several titles, including The Master Chief Collection" data-ru="Halo - несколько игр серии, включая The Master Chief Collection">Halo - several titles, including The Master Chief Collection</span></span>
+        <span class="chip">World War Z: Aftermath</span>
+        <span class="chip">World War Z</span>
+        <span class="chip">Quake Champions</span>
+        <span class="chip">Inversion</span>
+        <span class="chip">Marauder</span>
+        <span class="chip">God Mode</span>
+        <span class="chip">Broken Sword</span>
+        <span class="chip">Blood and Gold: Caribbean!</span>
+        <span class="chip">Polaris Sector</span>
+        <span class="chip">Eador: Master of the Broken World</span>
+        <span class="chip">Eador: Genesis</span>
+        <span class="chip">How to Get: The Prince of Persia and Greedy Caliph</span>
+        <span class="chip">Exodus</span>
+        
+      </div>
+    </section>
+
+    <section class="block closing">
+      <h2><span data-en="// In closing" data-ru="// Вместо заключения">// In closing</span></h2>
+      <p><span data-en="When people ask how long I studied, I honestly say I never finished. Working as an animator - or in any other field - quickly teaches you that knowledge is never complete: things change fast, and it has to be updated all the time." data-ru="Когда меня спрашивают, долго ли я учился, я честно отвечаю, что так и не закончил. Работа аниматора - да и любая другая - быстро приучает к мысли, что знания не бывают законченными: всё быстро меняется, и их приходится постоянно обновлять.">When people ask how long I studied, I honestly say I never finished. Working as an animator - or in any other field - quickly teaches you that knowledge is never complete: things change fast, and it has to be updated all the time.</span></p>
+      <p><span data-en="And when asked how much I know, I answer just as honestly: the more I learn, the more I realise how much I don't know. But I enjoy the process itself - making things, learning, and seeing what comes out of it." data-ru="А на вопрос, сколько я знаю, отвечаю так же честно: чем больше узнаю, тем лучше понимаю, как много ещё не знаю. Но мне нравится сам процесс - делать, учиться и видеть, что из этого получается.">And when asked how much I know, I answer just as honestly: the more I learn, the more I realise how much I don't know. But I enjoy the process itself - making things, learning, and seeing what comes out of it.</span></p>
+    </section>
+  </div>
+
+  <!-- ── К программам ── -->
+  <div class="cta">
+    <a href="index.html#software" class="btn-cta">
+      <span data-en="SEE THE SOFTWARE" data-ru="СМОТРЕТЬ ПРОГРАММЫ">SEE THE SOFTWARE</span>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>
+    </a>
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span>
+  </div>
+</footer>
+
+<script data-goatcounter="https://eu-melnikov.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+</body>
+</html>
