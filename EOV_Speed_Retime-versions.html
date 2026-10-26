@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EOV Speed Retime | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  @media (max-width: 560px) { .nav-about { display: none; } }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
+  .hero-meta {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h1 strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  h1 .h1-ver { margin-left: .35em; }
+
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
+  }
+
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
+  }
+
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
+
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
+  }
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
+  }
+
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  /* метка промо-ролика, когда он стоит среди уроков */
+  .tut-tag {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--accent); border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 6px; margin-left: 6px; vertical-align: 2px;
+  }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  /* Встроенные ролики: пока не нажали — обложка с кнопкой, плеер YouTube
+     грузится только по клику, иначе каждый ролик тянул бы мегабайт скриптов. */
+  .tuts { max-width: var(--text-col); display: flex; flex-direction: column; gap: 36px; }
+  .tut-player {
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 9;
+    padding: 0; border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); cursor: pointer;
+  }
+  .tut { margin: 0; }
+  .tut-live { cursor: default; }
+  .tut-player img, .tut-player iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+  }
+  .tut-player img { object-fit: cover; opacity: .82; transition: opacity .2s; }
+  .tut-player:hover img { opacity: 1; }
+  .tut-play {
+    position: absolute; left: 50%; top: 50%; width: 64px; height: 64px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: rgba(13,15,20,.72); border: 1px solid rgba(0,229,255,.45);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, border-color .2s;
+  }
+  .tut-play svg { width: 22px; height: 22px; margin-left: 3px; }
+  .tut-player:hover .tut-play { transform: translate(-50%, -50%) scale(1.08); border-color: var(--accent); }
+  .tut-cap { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; }
+  .tut-yt { text-decoration: none; }
+  .tut-yt:hover { color: var(--accent); opacity: 1; }
+
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+  /* то, что есть только на одном языке: ролик, русский постер */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="about.html" class="nav-back nav-about"><span data-en="About" data-ru="Обо мне">About</span></a>
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v0.10.0</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>21.3 Mb
+    </div>
+
+    <h1><strong>EOV Speed Retime <span class="h1-ver">v0.10.0</span></strong></h1>
+
+    
+    <p class="tagline"><span data-en="retime a whole Maya scene: one speed curve, live preview, bake into keys" data-ru="ретайм всей сцены Maya: одна кривая скорости, живой предпросмотр, бейк в ключи">retime a whole Maya scene: one speed curve, live preview, bake into keys</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="PROMO" data-ru="ПРОМО">PROMO</span>
+      </a>
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-10-26</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOV_Speed_Retime/EOV_Speed_Retime_poster.jpg" alt="EOV Speed Retime" data-only="en">
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOV_Speed_Retime/EOV_Speed_Retime_poster_ru.jpg" alt="EOV Speed Retime" data-only="ru">
+      
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose clampable" data-en="&lt;p&gt;EOV Speed Retime is a free tool for Maya that changes the speed of a whole scene with one speed curve. Slow motion on the hit, faster after it, and every character, prop and camera stays in sync. You see the new timing in the viewport at once and bake it into the keys only when it looks right.&lt;/p&gt;
+&lt;p&gt;Retiming a scene is usually manual work: select keys in the Graph Editor, scale them, shift them, then do the same for the next character. In a shot with a stunt, traffic and people on the sidewalks that takes days, and the sync still slips somewhere.&lt;/p&gt;
+&lt;h3&gt;A speed curve&lt;/h3&gt;
+&lt;p&gt;The window is a graph: animation frames across, speed from 0.1x to 4x up the side. Click the curve to add a point, drag to move it, right-click to make it smooth or a corner. The Scene ruler underneath shows which scene frame each animation frame lands on: where the scene slows down, its ticks spread apart. Curves are kept as presets, and the curve you baked is saved by itself before every bake.&lt;/p&gt;
+&lt;h3&gt;Live preview&lt;/h3&gt;
+&lt;p&gt;Enable turns on a preview through Maya's own Scene Time Warp: the scene plays in the new timing right away, and your keys stay where they are. Edit the curve as much as you like; it has its own Undo / Redo. The 0.5x and 0.3x buttons slow down playback itself, handy for checking how smoothly the scene eases into slow motion.&lt;/p&gt;
+&lt;h3&gt;Bake Retime&lt;/h3&gt;
+&lt;p&gt;The bake moves the keys of the channels to where the preview played them. Three ways: &lt;strong&gt;Move keys&lt;/strong&gt; moves them as they are and lets Maya work out the tangents; &lt;strong&gt;Snap to whole frames&lt;/strong&gt; puts them on whole frames; &lt;strong&gt;Resample every frame&lt;/strong&gt; keys every frame, for mocap and simulations. &lt;strong&gt;Keep motion exact&lt;/strong&gt; adds keys only on the frames where the moved keys alone would drift from the preview. Bake into the keys themselves or onto a new animation layer on top of everything, so the retime can be muted with one button. The whole bake is one Ctrl+Z, and a progress bar runs at the bottom of the window while it works.&lt;/p&gt;
+&lt;h3&gt;What to bake: Targets&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Select Free Animated&lt;/strong&gt; finds every free animated channel of the scene in one click, meaning those not driven by a constraint: a constraint gets the retime through its target. &lt;strong&gt;+ Add&lt;/strong&gt; takes the selection, cameras, lights and blendShapes included. Whole rigs are easiest to take by selection sets, Maya sets or EOV Selection Sets: a set is read at the moment of the bake, so a control added to it later gets the retime too.&lt;/p&gt;
+&lt;h3&gt;Switches, static channels, references&lt;/h3&gt;
+&lt;p&gt;Visibility, IK/FK and space switches are not stretched: each change keeps its length and only its start moves. Static channels, whose keys change nothing, stay as they were. Maya won't let anyone edit curves that come from a referenced file, so the tool copies such a curve into the scene and bakes the copy; the referenced file itself is not touched. Animation layers don't need merging: the keys of every layer and of their weights move together.&lt;/p&gt;
+&lt;h3&gt;A lesson with its scene&lt;/h3&gt;
+&lt;p&gt;The archive carries a lesson in English and Russian, &quot;Slowing down a stunt on the avenue&quot;: a street scene with about a thousand animated objects and over twelve hundred curves, where a flying car falls and tumbles. One 1x - 0.3x - 1x curve slows the crash down together with the whole city. The lesson scene and the before and after videos are in the same folder.&lt;/p&gt;
+&lt;h3&gt;What it does not do&lt;/h3&gt;
+&lt;p&gt;Caches, simulations, Alembic and image planes with a sequence are not retimed: the Time Warp may move them in the preview, and after the bake they go back to the old timing. Sound is not taken into account. Driven keys and locked curves are left alone. Switches are worth a look after the bake: the tool keeps their length, but it can't guess how that moment should look in the new timing.&lt;/p&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Autodesk Maya 2019-2026, Windows&lt;/li&gt;&lt;li&gt;free, MIT license, open source&lt;/li&gt;&lt;li&gt;install: drag one file into the Maya window, once for every version&lt;/li&gt;&lt;li&gt;22 MB archive, the lesson and its scene included&lt;/li&gt;&lt;li&gt;interface in English, manual and lesson in English and Russian&lt;/li&gt;&lt;li&gt;the same tool is part of the eov animation tools panel&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;EOV Speed Retime - бесплатный инструмент для Maya, который меняет скорость всей сцены одной кривой скорости. Слоу-мо на ударе, быстрее после него - и все персонажи, предметы и камеры остаются в синхроне. Новый тайминг сразу виден во вьюпорте, а в ключи запекается, только когда он вас устроил.&lt;/p&gt;
+&lt;p&gt;Ретайм сцены - задача, которую обычно делают руками: в Graph Editor выделяют ключи, растягивают, сдвигают, потом то же самое у следующего персонажа. На сцене с трюком, потоком машин и пешеходами это дни работы, а синхрон всё равно где-нибудь собьётся.&lt;/p&gt;
+&lt;h3&gt;Кривая скорости&lt;/h3&gt;
+&lt;p&gt;Окно - это график: по горизонтали кадры анимации, по вертикали скорость от 0.1x до 4x. Клик по кривой добавляет точку, перетаскивание двигает её, правая кнопка делает точку плавной или угловой. Нижняя шкала Scene показывает, на какой кадр сцены попадёт каждый кадр анимации: где сцена замедлена, деления разъезжаются. Кривые сохраняются пресетами, а перед каждым бейком прежняя кривая сохраняется сама.&lt;/p&gt;
+&lt;h3&gt;Живой предпросмотр&lt;/h3&gt;
+&lt;p&gt;Кнопка Enable включает предпросмотр через Scene Time Warp самой Maya: сцена сразу играет в новом тайминге, а ваши ключи не трогаются. Кривую можно править сколько угодно, у неё своя история Undo / Redo. Кнопки 0.5x и 0.3x замедляют само проигрывание - удобно разглядеть, плавно ли сцена входит в слоу-мо.&lt;/p&gt;
+&lt;h3&gt;Bake Retime&lt;/h3&gt;
+&lt;p&gt;Запекание переносит ключи каналов туда, где их показывал предпросмотр. Три способа: &lt;strong&gt;Move keys&lt;/strong&gt; - ключи переезжают как есть, касательные пересчитываются; &lt;strong&gt;Snap to whole frames&lt;/strong&gt; - на целые кадры; &lt;strong&gt;Resample every frame&lt;/strong&gt; - ключ на каждом кадре, для мокапа и симуляций. &lt;strong&gt;Keep motion exact&lt;/strong&gt; добавляет ключи только на тех кадрах, где одни перенесённые ключи разошлись бы с предпросмотром. Запечь можно в сами ключи или на новый слой анимации поверх всех - тогда ретайм выключается одной кнопкой mute. Всё запекание - один шаг Ctrl+Z, а во время бейка внизу окна идёт полоска прогресса.&lt;/p&gt;
+&lt;h3&gt;Что запекать: Targets&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Select Free Animated&lt;/strong&gt; одним кликом находит все свободные анимированные каналы сцены - то, что не под констрейнтом: констрейнт получит ретайм через свою цель. &lt;strong&gt;+ Add&lt;/strong&gt; берёт выделенное, в том числе камеры, свет и blendShape. Целые риги удобно брать наборами выделения - наборами Maya или EOV Selection Sets: состав набора читается в момент бейка, добавили контрол позже - он тоже получит ретайм.&lt;/p&gt;
+&lt;h3&gt;Переключатели, статика, референсы&lt;/h3&gt;
+&lt;p&gt;Видимость, IK/FK и переключение пространств не растягиваются: каждое изменение сохраняет свою длину, переносится только его начало. Статичные каналы, где ключи ничего не меняют, остаются как были. Кривые из референсов Maya править не даёт - инструмент копирует такую кривую в сцену и запекает копию, сам референс не меняется. Слои анимации сливать не нужно: ключи всех слоёв и их весов переезжают вместе.&lt;/p&gt;
+&lt;h3&gt;Урок со сценой&lt;/h3&gt;
+&lt;p&gt;В архиве - урок «Замедляем трюк на проспекте» на русском и английском: сцена улицы, около тысячи анимированных объектов и больше тысячи двухсот кривых, летающая машина падает и кувыркается. Одна кривая 1x - 0.3x - 1x замедляет аварию вместе со всем городом. Сцена урока, ролики «до» и «после» - в той же папке.&lt;/p&gt;
+&lt;h3&gt;Чего инструмент не делает&lt;/h3&gt;
+&lt;p&gt;Кэши, симуляции, Alembic и image plane с секвенцией не ретаймятся: в предпросмотре Time Warp может их двигать, а после бейка они вернутся в старый тайминг. Звук не учитывается. Driven keys и заблокированные кривые не трогаются. Переключатели после бейка стоит просмотреть глазами: инструмент сохраняет их длину, но угадать, как это место должно выглядеть в новом тайминге, не может.&lt;/p&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Autodesk Maya 2019-2026, Windows&lt;/li&gt;&lt;li&gt;бесплатно, лицензия MIT, открытый код&lt;/li&gt;&lt;li&gt;установка: перетащить один файл в окно Maya, сразу для всех версий&lt;/li&gt;&lt;li&gt;архив 22 МБ вместе с уроком и его сценой&lt;/li&gt;&lt;li&gt;интерфейс на английском, справка и урок на русском и английском&lt;/li&gt;&lt;li&gt;тот же инструмент входит в панель eov animation tools&lt;/li&gt;&lt;/ul&gt;">
+      <p>EOV Speed Retime is a free tool for Maya that changes the speed of a whole scene with one speed curve. Slow motion on the hit, faster after it, and every character, prop and camera stays in sync. You see the new timing in the viewport at once and bake it into the keys only when it looks right.</p>
+<p>Retiming a scene is usually manual work: select keys in the Graph Editor, scale them, shift them, then do the same for the next character. In a shot with a stunt, traffic and people on the sidewalks that takes days, and the sync still slips somewhere.</p>
+<h3>A speed curve</h3>
+<p>The window is a graph: animation frames across, speed from 0.1x to 4x up the side. Click the curve to add a point, drag to move it, right-click to make it smooth or a corner. The Scene ruler underneath shows which scene frame each animation frame lands on: where the scene slows down, its ticks spread apart. Curves are kept as presets, and the curve you baked is saved by itself before every bake.</p>
+<h3>Live preview</h3>
+<p>Enable turns on a preview through Maya's own Scene Time Warp: the scene plays in the new timing right away, and your keys stay where they are. Edit the curve as much as you like; it has its own Undo / Redo. The 0.5x and 0.3x buttons slow down playback itself, handy for checking how smoothly the scene eases into slow motion.</p>
+<h3>Bake Retime</h3>
+<p>The bake moves the keys of the channels to where the preview played them. Three ways: <strong>Move keys</strong> moves them as they are and lets Maya work out the tangents; <strong>Snap to whole frames</strong> puts them on whole frames; <strong>Resample every frame</strong> keys every frame, for mocap and simulations. <strong>Keep motion exact</strong> adds keys only on the frames where the moved keys alone would drift from the preview. Bake into the keys themselves or onto a new animation layer on top of everything, so the retime can be muted with one button. The whole bake is one Ctrl+Z, and a progress bar runs at the bottom of the window while it works.</p>
+<h3>What to bake: Targets</h3>
+<p><strong>Select Free Animated</strong> finds every free animated channel of the scene in one click, meaning those not driven by a constraint: a constraint gets the retime through its target. <strong>+ Add</strong> takes the selection, cameras, lights and blendShapes included. Whole rigs are easiest to take by selection sets, Maya sets or EOV Selection Sets: a set is read at the moment of the bake, so a control added to it later gets the retime too.</p>
+<h3>Switches, static channels, references</h3>
+<p>Visibility, IK/FK and space switches are not stretched: each change keeps its length and only its start moves. Static channels, whose keys change nothing, stay as they were. Maya won't let anyone edit curves that come from a referenced file, so the tool copies such a curve into the scene and bakes the copy; the referenced file itself is not touched. Animation layers don't need merging: the keys of every layer and of their weights move together.</p>
+<h3>A lesson with its scene</h3>
+<p>The archive carries a lesson in English and Russian, "Slowing down a stunt on the avenue": a street scene with about a thousand animated objects and over twelve hundred curves, where a flying car falls and tumbles. One 1x - 0.3x - 1x curve slows the crash down together with the whole city. The lesson scene and the before and after videos are in the same folder.</p>
+<h3>What it does not do</h3>
+<p>Caches, simulations, Alembic and image planes with a sequence are not retimed: the Time Warp may move them in the preview, and after the bake they go back to the old timing. Sound is not taken into account. Driven keys and locked curves are left alone. Switches are worth a look after the bake: the tool keeps their length, but it can't guess how that moment should look in the new timing.</p>
+<h3>At a glance</h3>
+<ul><li>Autodesk Maya 2019-2026, Windows</li><li>free, MIT license, open source</li><li>install: drag one file into the Maya window, once for every version</li><li>22 MB archive, the lesson and its scene included</li><li>interface in English, manual and lesson in English and Russian</li><li>the same tool is part of the eov animation tools panel</li></ul>
+    </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Promo" data-ru="// Промо">// Promo</span></h2>
+    
+    
+    
+    
+    <div class="tuts">
+      
+      <figure class="tut" data-only="en">
+        <button class="tut-player" type="button" data-yt="hVKqvdKKV4I" aria-label="EOV Speed Retime 0.10 overview">
+          <img src="https://i.ytimg.com/vi/hVKqvdKKV4I/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="EOV Speed Retime 0.10 overview" data-ru="Обзор EOV Speed Retime 0.10">EOV Speed Retime 0.10 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/hVKqvdKKV4I" target="_blank" rel="noopener">YouTube · v0.10.0 ↗</a>
+        </figcaption>
+      </figure>
+      
+      <figure class="tut" data-only="ru">
+        <button class="tut-player" type="button" data-yt="BK2DGJkHrlQ" aria-label="EOV Speed Retime 0.10 overview">
+          <img src="https://i.ytimg.com/vi/BK2DGJkHrlQ/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="EOV Speed Retime 0.10 overview" data-ru="Обзор EOV Speed Retime 0.10">EOV Speed Retime 0.10 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/BK2DGJkHrlQ" target="_blank" rel="noopener">YouTube · v0.10.0 ↗</a>
+        </figcaption>
+      </figure>
+      
+    </div>
+    <div class="links">
+      
+    </div>
+  </div>
+  
+
+  <!-- ── Характеристики ── -->
+  
+  
+  <div class="section">
+    <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
+    <div class="specs">
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>0.10.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Autodesk Maya 2019–2026</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free (MIT)</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN</div></div>
+      
+      <div class="spec-row"><div class="spec-key"><span data-en="Installation" data-ru="Установка">Installation</span></div><div class="spec-val">Drag one file into Maya</div></div>
+    </div>
+  </div>
+  
+
+  <!-- ── Как это делалось ── -->
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
+    </div>
+
+    
+    <div class="versions" id="versions">
+      
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">0.10.0</span>
+          <span class="ver-date">2026-10-26</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOV_Speed_Retime/EOV_Speed_Retime-0.10.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            21.3 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;First public release.&lt;/p&gt;
+&lt;p&gt;The shot is nearly approved, and the note comes back: slow motion on the hit, then catch up. The scene has a stunt, traffic, people on the sidewalks and three cameras. That used to mean days of rescaling keys character by character - now it is one speed curve for the whole scene.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Draw the speed, see it at once.&lt;/strong&gt; A curve from 0.1x to 4x with presets; the viewport plays the new timing right away through Scene Time Warp, while your keys stay untouched.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bake in one undo step.&lt;/strong&gt; Bake Retime moves the keys where the preview played them: Move keys, Snap to whole frames or Resample every frame, Keep motion exact. In place or onto a new animation layer.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;The whole scene in one click.&lt;/strong&gt; Select Free Animated takes every free animated channel; or go by selection or selection sets - whole rigs at a time.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Nothing breaks.&lt;/strong&gt; Visibility and IK/FK switches keep their length, static channels are left alone, animation layers need no merging.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;References too.&lt;/strong&gt; Curves from referenced files are copied into the scene and baked - a referenced city slows down with the stunt.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;You see how long it takes.&lt;/strong&gt; A progress bar and the time left while it bakes; &quot;?&quot; in the title bar opens the manual and About with the version and build number.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;Installs by dropping one file into the Maya window - once for every Maya 2019-2026, checked in 2019, 2022 and 2025. The archive holds the manual and the lesson &quot;Slowing down a stunt on the avenue&quot; with its scene: about a thousand animated objects and 0.3x slow motion on the crash, in English and Russian. Free, MIT.&lt;/p&gt;" data-ru="&lt;p&gt;Первый публичный выпуск.&lt;/p&gt;
+&lt;p&gt;Шот почти принят, и тут правка: слоу-мо на ударе, а потом догнать. В сцене трюк, поток машин, люди на тротуарах и три камеры. Раньше это дни ручного масштабирования ключей по персонажу, теперь - одна кривая скорости на всю сцену.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Рисуете скорость - сразу видите результат.&lt;/strong&gt; Кривая от 0.1x до 4x с пресетами, вьюпорт тут же играет новый тайминг через Scene Time Warp, а ключи пока не тронуты.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Бейк в один шаг отмены.&lt;/strong&gt; Bake Retime переносит ключи туда, где их показал предпросмотр: Move keys, Snap to whole frames или Resample every frame, Keep motion exact. На месте или на новый слой анимации.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Вся сцена одним кликом.&lt;/strong&gt; Select Free Animated берёт все свободные анимированные каналы; можно и по выделению или наборам выделения - целыми ригами.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Ничего не ломается.&lt;/strong&gt; Переключатели видимости и IK/FK сохраняют длину, статичные каналы не трогаются, слои анимации сливать не нужно.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Референсы тоже.&lt;/strong&gt; Кривые из референсов копируются в сцену и запекаются - город из референса замедляется вместе с трюком.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Видно, сколько ждать.&lt;/strong&gt; Во время бейка - полоска прогресса и время до конца; «?» в заголовке окна открывает справку и About с версией и номером сборки.&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;Ставится перетаскиванием одного файла в окно Maya - сразу для всех версий 2019-2026, проверено в 2019, 2022 и 2025. В архиве справка и урок «Замедляем трюк на проспекте» со сценой: около тысячи анимированных объектов и слоу-мо 0.3x на аварии, на русском и английском. Бесплатно, MIT.&lt;/p&gt;"><p>First public release.</p>
+<p>The shot is nearly approved, and the note comes back: slow motion on the hit, then catch up. The scene has a stunt, traffic, people on the sidewalks and three cameras. That used to mean days of rescaling keys character by character - now it is one speed curve for the whole scene.</p>
+<ul><li><strong>Draw the speed, see it at once.</strong> A curve from 0.1x to 4x with presets; the viewport plays the new timing right away through Scene Time Warp, while your keys stay untouched.</li><li><strong>Bake in one undo step.</strong> Bake Retime moves the keys where the preview played them: Move keys, Snap to whole frames or Resample every frame, Keep motion exact. In place or onto a new animation layer.</li><li><strong>The whole scene in one click.</strong> Select Free Animated takes every free animated channel; or go by selection or selection sets - whole rigs at a time.</li><li><strong>Nothing breaks.</strong> Visibility and IK/FK switches keep their length, static channels are left alone, animation layers need no merging.</li><li><strong>References too.</strong> Curves from referenced files are copied into the scene and baked - a referenced city slows down with the stunt.</li><li><strong>You see how long it takes.</strong> A progress bar and the time left while it bakes; "?" in the title bar opens the manual and About with the version and build number.</li></ul>
+<p>Installs by dropping one file into the Maya window - once for every Maya 2019-2026, checked in 2019, 2022 and 2025. The archive holds the manual and the lesson "Slowing down a stunt on the avenue" with its scene: about a thousand animated objects and 0.3x slow motion on the crash, in English and Russian. Free, MIT.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+    </div>
+    
+    
+
+    
+    
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>EOV Speed Retime v0.10.0 · 2026-10-26</span>
+  </div>
+</footer>
+
+<script>
+/* ── уроки: по клику обложка меняется на плеер YouTube ── */
+document.querySelectorAll('.tut-player').forEach(function (box) {
+  box.addEventListener('click', function () {
+    var frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + box.dataset.yt + '?autoplay=1&rel=0';
+    frame.title = box.getAttribute('aria-label');
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    // YouTube не играет встроенный ролик без Referer (ошибка 153).
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    var live = document.createElement('div');
+    live.className = 'tut-player tut-live';
+    live.appendChild(frame);
+    live.cover = box;
+    box.replaceWith(live);
+  });
+});
+// Язык переключили во время просмотра: скрытый ролик не должен играть
+// дальше — возвращаем ему обложку.
+document.addEventListener('langchange', function () {
+  document.querySelectorAll('.tut-live').forEach(function (live) {
+    if (live.offsetParent === null) live.replaceWith(live.cover);
+  });
+});
+
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
+}
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+
+</body>
+</html>
