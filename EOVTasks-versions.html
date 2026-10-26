@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EOV Tasks | e.melnikov.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #0d0f14;
+    --bg2:    #13161e;
+    --bg3:    #1a1d28;
+    --border: #252836;
+    --accent: #00e5ff;
+    --accent2:#7c3aed;
+    --text:   #e2e8f0;
+    --muted:  #64748b;
+    --green:  #10b981;
+    --mono:   'JetBrains Mono', monospace;
+    --sans:   'Inter', sans-serif;
+
+    /* Две ширины: картинки — во всю колонку, текст — уже, чтобы строка читалась */
+    --col:      900px;
+    --text-col: 680px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.022) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+
+  /* ── nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,20,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 16px; }
+  .nav-logo {
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    color: var(--accent); text-decoration: none; letter-spacing: .04em;
+  }
+  .nav-logo span { color: var(--muted); font-weight: 400; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  @media (max-width: 560px) { .nav-about { display: none; } }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-back svg { width: 14px; height: 14px; }
+
+  /* ── hero ── */
+  .hero { padding: 72px 0 40px; }
+  .hero-meta {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: .06em; margin-bottom: 18px;
+  }
+  .hero-meta b { color: var(--accent); font-weight: 500; }
+  .hero-meta i { font-style: normal; color: var(--green); }
+  .hero-meta em { font-style: normal; opacity: .4; padding: 0 8px; }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 300; line-height: 1.08;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h1 strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  h1 .h1-ver { margin-left: .35em; }
+
+  .tagline {
+    font-size: 19px; color: var(--muted);
+    font-weight: 300; line-height: 1.6;
+    max-width: var(--text-col); margin-bottom: 34px;
+  }
+
+  /* ── кнопки ── */
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: .04em; padding: 12px 22px; border-radius: 8px;
+    text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--border); background: none; color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .btn svg { width: 15px; height: 15px; flex: none; }
+  .btn:hover { color: var(--text); border-color: var(--muted); }
+
+  .btn-main {
+    background: linear-gradient(135deg, rgba(0,229,255,.16), rgba(124,58,237,.16));
+    border-color: rgba(0,229,255,.42); color: var(--accent);
+  }
+  .btn-main:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,.26), rgba(124,58,237,.26));
+    border-color: rgba(0,229,255,.75); color: var(--accent);
+  }
+
+  .actions-note { font-family: var(--mono); font-size: 12px; color: var(--muted); opacity: .75; }
+
+  /* ── картинка и галерея ── */
+  .shot { margin: 48px 0 0; }
+  .shot-frame {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); position: relative;
+  }
+  .shot-frame > img { width: 100%; display: block; }
+
+  .gal-viewport { position: relative; overflow: hidden; }
+  .gal-track { display: flex; transition: transform .35s cubic-bezier(.4,0,.2,1); }
+  .gal-slide { min-width: 100%; flex: none; }
+  .gal-slide img { width: 100%; display: block; }
+
+  .shot-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,15,20,.7); backdrop-filter: blur(4px);
+    border: 1px solid var(--border); color: var(--text);
+    cursor: pointer; z-index: 2;
+    opacity: 0; transition: opacity .25s, color .2s, border-color .2s;
+  }
+  .shot-nav svg { width: 15px; height: 15px; }
+  .shot-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .shot-nav.prev { left: 12px; }
+  .shot-nav.next { right: 12px; }
+  .shot-frame:hover .shot-nav, .shot-nav:focus-visible { opacity: 1; }
+
+  .shot-caption { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; min-height: 20px; }
+  .shot-caption-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cap { display: none; }
+  .cap.active { display: inline; }
+  .shot-count {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  .thumbs { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .thumb {
+    width: 104px; height: 64px; padding: 0; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; background: var(--bg2);
+    opacity: .45; transition: opacity .2s, border-color .2s;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb:hover { opacity: .8; }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+
+  @media (max-width: 560px) { .shot-nav { opacity: 1; width: 34px; height: 34px; } }
+
+  /* ── секции ── */
+  .section { padding: 64px 0 0; }
+  .section > h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+
+  /* ── размеченный текст ── */
+  .prose { max-width: var(--text-col); }
+  .prose p { font-size: 16px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--text); font-weight: 500; }
+  .prose em { font-style: italic; }
+  .prose a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,.3); }
+  .prose a:hover { border-bottom-color: var(--accent); }
+
+  /* Заголовки внутри текста — моноширинные, акцентным цветом:
+     тот же приём, что и в блоке «как это делалось». */
+  .prose h3 {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--accent); letter-spacing: .05em; line-height: 1.4;
+    margin: 38px 0 10px;
+  }
+  .prose h4 {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin: 26px 0 8px;
+  }
+  .prose h3:first-child, .prose h4:first-child { margin-top: 0; }
+  .prose h3 + p, .prose h4 + p { margin-bottom: 0; }
+
+  .prose ul, .prose ol { list-style: none; margin: 0 0 18px; padding: 0; }
+  .prose ol { counter-reset: prose-ol; }
+  .prose li {
+    position: relative; padding-left: 22px; margin-bottom: 9px;
+    font-size: 16px; color: var(--muted); line-height: 1.75;
+  }
+  .prose ul > li::before {
+    content: ''; position: absolute; left: 3px; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: .6;
+  }
+  .prose ol > li { counter-increment: prose-ol; }
+  .prose ol > li::before {
+    content: counter(prose-ol) '.';
+    position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-size: 13px; color: var(--accent); opacity: .8;
+  }
+
+  /* ── уроки ── */
+  .links { max-width: var(--text-col); }
+  .link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: inherit;
+    transition: padding-left .2s;
+  }
+  .link-row:first-child { border-top: 1px solid var(--border); }
+  .link-row:hover { padding-left: 6px; }
+  .link-icon { width: 17px; height: 17px; flex: none; color: var(--muted); }
+  .link-row:hover .link-icon { color: var(--accent); }
+  .link-title { font-size: 15px; color: var(--text); }
+  /* метка промо-ролика, когда он стоит среди уроков */
+  .tut-tag {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--accent); border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 6px; margin-left: 6px; vertical-align: 2px;
+  }
+  .link-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    opacity: .6; margin-left: auto; white-space: nowrap;
+  }
+
+  /* Встроенные ролики: пока не нажали — обложка с кнопкой, плеер YouTube
+     грузится только по клику, иначе каждый ролик тянул бы мегабайт скриптов. */
+  .tuts { max-width: var(--text-col); display: flex; flex-direction: column; gap: 36px; }
+  .tut-player {
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 9;
+    padding: 0; border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; background: var(--bg2); cursor: pointer;
+  }
+  .tut { margin: 0; }
+  .tut-live { cursor: default; }
+  .tut-player img, .tut-player iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+  }
+  .tut-player img { object-fit: cover; opacity: .82; transition: opacity .2s; }
+  .tut-player:hover img { opacity: 1; }
+  .tut-play {
+    position: absolute; left: 50%; top: 50%; width: 64px; height: 64px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: rgba(13,15,20,.72); border: 1px solid rgba(0,229,255,.45);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, border-color .2s;
+  }
+  .tut-play svg { width: 22px; height: 22px; margin-left: 3px; }
+  .tut-player:hover .tut-play { transform: translate(-50%, -50%) scale(1.08); border-color: var(--accent); }
+  .tut-cap { display: flex; align-items: baseline; gap: 14px; margin-top: 12px; }
+  .tut-yt { text-decoration: none; }
+  .tut-yt:hover { color: var(--accent); opacity: 1; }
+
+  /* ── характеристики ── */
+  .specs { max-width: var(--text-col); }
+  .spec-row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 24px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .spec-row:first-child { border-top: 1px solid var(--border); }
+  .spec-key {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase; padding-top: 3px;
+  }
+  .spec-val { font-size: 15px; color: var(--text); line-height: 1.6; }
+  .spec-val span { color: var(--accent); }
+  @media (max-width: 600px) { .spec-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ── как это делалось ── */
+  .story { max-width: var(--text-col); }
+  .story summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    letter-spacing: .04em; transition: color .2s;
+  }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary:hover { color: var(--accent); }
+  .story summary svg { width: 13px; height: 13px; margin-left: auto; transition: transform .25s; }
+  .story[open] summary svg { transform: rotate(180deg); }
+  .story-content { padding: 28px 0 0; }
+
+  /* ── версии и скачивание ── */
+  .versions { max-width: var(--text-col); }
+  .ver-row { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .ver-row:first-child { border-top: 1px solid var(--border); }
+  .ver-row.is-old { display: none; }
+  .versions.show-all .ver-row.is-old { display: block; }
+
+  .ver-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .ver-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--text); letter-spacing: .02em;
+  }
+  .ver-row.latest .ver-num { color: var(--accent); }
+  .ver-date { font-family: var(--mono); font-size: 11px; color: var(--muted); opacity: .65; }
+  .ver-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+    color: var(--green); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .ver-get {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+  }
+  .ver-get svg { width: 13px; height: 13px; }
+  .ver-get:hover { color: var(--accent); border-color: rgba(0,229,255,.45); }
+  .ver-row.latest .ver-get { color: var(--accent); border-color: rgba(0,229,255,.35); }
+  .ver-row.latest .ver-get:hover { border-color: rgba(0,229,255,.75); }
+
+  /* Список изменений — та же разметка, что и в описании, но мельче: рядом
+     стоят номер версии и дата, и текст не должен их перевешивать. */
+  .ver-what { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 560px; }
+  .ver-what p, .ver-what li { font-size: 14px; line-height: 1.7; }
+  .ver-what p { margin-bottom: 14px; }
+  .ver-what ul, .ver-what ol { margin-bottom: 14px; }
+  .ver-what h3 { font-size: 12px; margin: 22px 0 8px; }
+  .ver-what h4 { font-size: 14px; margin: 16px 0 6px; }
+  .ver-what h3:first-child, .ver-what h4:first-child { margin-top: 0; }
+
+  /* Длинное описание не должно превращать страницу в простыню: подрезаем по
+     высоте и растворяем низ в фоне. Класс вешает скрипт — только там, где
+     текст правда не поместился, иначе кнопка врала бы о спрятанном.
+     Оба блока лежат на общем фоне страницы, отсюда --bg в градиенте. */
+  .prose.clampable { position: relative; }
+  .prose.clamped { max-height: 260px; overflow: hidden; }
+  .prose.clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px;
+    background: linear-gradient(to bottom, rgba(13, 15, 20, 0), var(--bg));
+    pointer-events: none;
+  }
+  .ver-what.clamped { max-height: 190px; }
+  .ver-what.clamped::after { height: 72px; }
+
+  .prose-more {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .prose-more[hidden] { display: none; }
+  .prose-more:hover { color: var(--accent); }
+  .prose-more svg { width: 12px; height: 12px; transition: transform .25s; }
+  .prose-more.open svg { transform: rotate(180deg); }
+  /* Обе подписи лежат в разметке — переключатель языка меняет их, как и всё
+     остальное, а показана всегда одна. */
+  .prose-more .on-open { display: none; }
+  .prose-more.open .on-closed { display: none; }
+  .prose-more.open .on-open { display: inline; }
+
+  .ver-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    color: var(--muted); padding: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .ver-toggle:hover { color: var(--accent); }
+  .ver-toggle svg { width: 12px; height: 12px; transition: transform .25s; }
+  .versions.show-all + .ver-toggle svg { transform: rotate(180deg); }
+  /* Подпись кнопки — две готовые надписи, видна нужная. Так переключатель
+     языка продолжает работать: скрипт не переписывает текст кнопки. */
+  .ver-toggle .on-open { display: none; }
+  .versions.show-all + .ver-toggle .on-open { display: inline; }
+  .versions.show-all + .ver-toggle .on-closed { display: none; }
+
+  @media (max-width: 560px) { .ver-get { margin-left: 0; } }
+
+  /* ── подвал ── */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 90px; padding: 30px 0 40px;
+    font-size: 12px; color: var(--muted); font-family: var(--mono);
+  }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── переключатель языка ── */
+  .langsw { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex: none; }
+  .langsw button {
+    background: transparent; border: none; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 5px 12px; cursor: pointer; letter-spacing: .04em; line-height: 1.4;
+  }
+  .langsw button.on { background: rgba(0,229,255,.14); color: var(--accent); }
+  .langsw button:hover:not(.on) { color: var(--text); }
+  /* то, что есть только на одном языке: ролик, русский постер */
+  html[lang="ru"] [data-only="en"], html:not([lang="ru"]) [data-only="ru"] { display: none; }
+
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="nav-logo">e.melnikov<span>.dev</span></a>
+    <div class="nav-right">
+      <a href="about.html" class="nav-back nav-about"><span data-en="About" data-ru="Обо мне">About</span></a>
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+        <span data-en="Back to all software" data-ru="Ко всем программам">Back to all software</span>
+      </a>
+      <div class="langsw">
+      <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+      <button type="button" id="lang-ru" onclick="setLang('ru')">RU</button>
+    </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-meta">
+      <b>v1.0.0</b><em>·</em>Windows<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>119 Mb
+    </div>
+
+    <h1><strong>EOV Tasks <span class="h1-ver">v1.0.0</span></strong></h1>
+
+    
+    <p class="tagline"><span data-en="A Jira-style task tracker: projects, a board and time tracking for a small team" data-ru="трекер задач, похожий на Jira: проекты, доска и учёт времени для небольшой команды">A Jira-style task tracker: projects, a board and time tracking for a small team</span></p>
+    
+
+    <div class="actions">
+      
+      <a class="btn btn-main" href="#download">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span>
+      </a>
+      
+      
+      <a class="btn" href="#tutorials">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="6.4"/><path d="M6.6 5.6l4 2.4-4 2.4z"/></svg>
+        <span data-en="PROMO" data-ru="ПРОМО">PROMO</span>
+      </a>
+      
+      
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-10-26</span>
+      
+    </div>
+  </div>
+
+  <!-- ── Скриншот / галерея ── -->
+  
+  
+  <div class="shot">
+    <div class="shot-frame">
+      
+      
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVTasks/EOVTasks_poster.jpg" alt="EOV Tasks" data-only="en">
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVTasks/EOVTasks_poster_ru.jpg" alt="EOV Tasks" data-only="ru">
+      
+      
+    </div>
+
+    
+    
+
+    
+  </div>
+  
+
+  <!-- ── Описание ── -->
+  
+  <div class="section">
+    <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
+    <div class="prose clampable" data-en="&lt;p&gt;EOV Tasks is a small Jira-style task tracker in the browser: projects, tasks with an assignee and a due date, a board, time tracking, comments and notifications. It is for a small team that Jira is too big for, and for one person who wants their own work in order. The server is set up once — on your own Windows computer or on your own Linux server — and everyone else just opens the site.&lt;/p&gt;
+&lt;h3&gt;A task on one page&lt;/h3&gt;
+&lt;p&gt;Summary, description, assignee, priority, type (task or bug), due date and estimate. Files and pictures go in by drag and drop, pictures get previews. Comments, watchers and the &lt;strong&gt;History&lt;/strong&gt; tab: who changed what, and when. There is no separate edit mode — click a field, change it, it is saved.&lt;/p&gt;
+&lt;h3&gt;Board and list&lt;/h3&gt;
+&lt;p&gt;Every project has two views. The &lt;strong&gt;Board&lt;/strong&gt; has To Do, In Progress, Review and Done columns, and cards are dragged between them. The &lt;strong&gt;List&lt;/strong&gt; is a table with filters by status, assignee, priority and due date, plus text search; a filtered list is a link you can send to a colleague.&lt;/p&gt;
+&lt;h3&gt;Familiar time tracking&lt;/h3&gt;
+&lt;p&gt;Estimate, logged and remaining — three bars on every task. When you log time you decide what happens to the remaining estimate: recalculate it, leave it, set a new one or reduce it by an amount. &lt;strong&gt;Your work&lt;/strong&gt; shows what is on you, what you finished this week or month, and where you logged time.&lt;/p&gt;
+&lt;h3&gt;The bell and watching&lt;/h3&gt;
+&lt;p&gt;A task assigned to you, a reply in the comments, a status change — you get a notification. You can watch someone else's task, and its news comes to you as well. Open the task, and the news counts as read.&lt;/p&gt;
+&lt;h3&gt;When two people edit the same thing&lt;/h3&gt;
+&lt;p&gt;Every field is checked. If a colleague changed the due date while you were editing it, you see what was changed and by whom — nobody's edit disappears silently. The board does the same: if a card has already been moved, it tells you so.&lt;/p&gt;
+&lt;h3&gt;Your computer or your server&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;No server needed:&lt;/strong&gt; EOVTasks.exe sits in the tray by the clock and runs the site right on your computer. One switch lets colleagues on your local network in. Nothing to install.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;For a team:&lt;/strong&gt; a server archive for a Linux server, for a team of up to 15–20 people. It comes with HTTPS through Caddy, nightly backups and step-by-step instructions. People join through an invite link from the admin.&lt;/p&gt;
+&lt;h3&gt;Apps made for Jira connect&lt;/h3&gt;
+&lt;p&gt;EOV Tasks has a programming interface in the style of Jira Server (/rest/api/2) with personal tokens. Programs and scripts that can work with Jira connect to it with no changes: they read tasks, log time and leave comments. A token is revoked in a second, without changing your password.&lt;/p&gt;
+&lt;h3&gt;Two languages, two themes&lt;/h3&gt;
+&lt;p&gt;English or Russian — everyone picks their own, and it is kept in the account: one person works in English, another in Russian, on the same tasks. Light and dark theme. An illustrated manual opens on &lt;strong&gt;F1&lt;/strong&gt;, and eight step-by-step lessons walk through everyday jobs: a task, a project, the bell, invitations, admin.&lt;/p&gt;
+&lt;h3&gt;What it does not do&lt;/h3&gt;
+&lt;p&gt;No sign-in with company accounts (SSO, LDAP, Google) — e-mail and password only. No e-mail is sent: notifications live in the bell, and invite links are passed on by hand. No subtasks, no links between tasks, no time reports for a period. The database is one SQLite file and one process: plenty for tens of people, not for hundreds. No import from Jira yet.&lt;/p&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;System: Windows 10 and 11 (tray); the team server runs on Linux&lt;/li&gt;&lt;li&gt;Installation: none, unpack and run EOVTasks.exe&lt;/li&gt;&lt;li&gt;Archive size: 119 MB (program and source code)&lt;/li&gt;&lt;li&gt;Languages: English and Russian&lt;/li&gt;&lt;li&gt;Data: stays with you — in %APPDATA%\EOVTasks or a folder on your server&lt;/li&gt;&lt;li&gt;License: free, open source (MIT)&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;EOV Tasks — маленький трекер задач в браузере, похожий на Jira: проекты, задачи с исполнителем и сроком, доска, учёт времени, комментарии и уведомления. Для небольшой команды, которой Jira велика, и для одного человека, которому нужен порядок в своих делах. Сервер ставится один раз — на свой компьютер с Windows или на свой Linux-сервер, остальные просто открывают сайт.&lt;/p&gt;
+&lt;h3&gt;Задача целиком на одной странице&lt;/h3&gt;
+&lt;p&gt;Тема, описание, исполнитель, приоритет, тип (задача или ошибка), срок и оценка. Файлы и картинки — перетаскиванием, у картинок превью. Комментарии, наблюдатели и вкладка &lt;strong&gt;История&lt;/strong&gt;: кто, когда и что поменял. Отдельного режима правки нет — щёлкнули по полю, поправили, сохранилось.&lt;/p&gt;
+&lt;h3&gt;Доска и список&lt;/h3&gt;
+&lt;p&gt;У каждого проекта два вида. &lt;strong&gt;Доска&lt;/strong&gt; — колонки «К выполнению», «В работе», «На проверке», «Готово», карточки перетаскиваются мышью. &lt;strong&gt;Список&lt;/strong&gt; — таблица с фильтрами по статусу, исполнителю, приоритету и сроку и поиском по тексту; ссылку с фильтром можно отправить коллеге.&lt;/p&gt;
+&lt;h3&gt;Привычный учёт времени&lt;/h3&gt;
+&lt;p&gt;Оценка, потрачено и осталось — три полосы у каждой задачи. При списании можно решить, что делать с остатком: пересчитать сам, не трогать, задать новый или уменьшить на сколько-то. На странице &lt;strong&gt;Моя работа&lt;/strong&gt; видно, что на вас, что вы сделали за неделю или месяц и где списывали время.&lt;/p&gt;
+&lt;h3&gt;Колокольчик и наблюдение&lt;/h3&gt;
+&lt;p&gt;Назначили задачу, ответили в комментарии, сменили статус — придёт уведомление. За чужой задачей можно следить: тогда новости по ней тоже приходят к вам. Открыли задачу — новость считается прочитанной.&lt;/p&gt;
+&lt;h3&gt;Если двое правили одно и то же&lt;/h3&gt;
+&lt;p&gt;Программа сверяет каждое поле. Если коллега успел поменять срок, пока вы его правили, вы увидите, что именно и кто поменял, — и ничья правка не пропадёт молча. То же на доске: если карточку уже передвинули, программа так и скажет.&lt;/p&gt;
+&lt;h3&gt;Свой компьютер или свой сервер&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Без сервера:&lt;/strong&gt; EOVTasks.exe живёт в трее у часов и поднимает сайт прямо на вашем компьютере. Одним переключателем можно пустить коллег из локальной сети. Установка не нужна.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Для команды:&lt;/strong&gt; серверный архив для Linux-сервера, команда до 15–20 человек. В комплекте — HTTPS через Caddy, ночные резервные копии и пошаговая инструкция. Люди заходят по приглашению-ссылке от админа.&lt;/p&gt;
+&lt;h3&gt;Подключаются программы для Jira&lt;/h3&gt;
+&lt;p&gt;У EOV Tasks есть программный интерфейс в духе Jira Server (/rest/api/2) с личными токенами. Программы и скрипты, которые умеют работать с Jira, подключаются к нему без переделок: читают задачи, списывают время, оставляют комментарии. Токен можно отозвать в одну секунду, не меняя пароль.&lt;/p&gt;
+&lt;h3&gt;Два языка и две темы&lt;/h3&gt;
+&lt;p&gt;Русский или английский интерфейс у каждого свой и хранится в учётной записи: один человек работает по-русски, другой по-английски, задачи общие. Светлая и тёмная тема. Справка с картинками открывается по &lt;strong&gt;F1&lt;/strong&gt;, а восемь пошаговых уроков проводят через обычные дела: задача, проект, колокольчик, приглашения, админка.&lt;/p&gt;
+&lt;h3&gt;Чего программа не делает&lt;/h3&gt;
+&lt;p&gt;Нет входа через корпоративные учётные записи (SSO, LDAP, Google) — только почта и пароль. Письма на почту не рассылаются: уведомления живут в колокольчике, ссылки-приглашения отправляются руками. Нет подзадач, связей между задачами и отчётов по времени за период. База — один файл SQLite и один процесс: десяткам людей хватает с запасом, сотням — нет. Импорта из Jira пока нет.&lt;/p&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Система: Windows 10 и 11 (трей), сервер для команды — Linux&lt;/li&gt;&lt;li&gt;Установка: не нужна, распаковать и запустить EOVTasks.exe&lt;/li&gt;&lt;li&gt;Размер архива: 119 МБ (программа и исходный код)&lt;/li&gt;&lt;li&gt;Языки: русский и английский&lt;/li&gt;&lt;li&gt;Данные: только у вас — %APPDATA%\EOVTasks или папка на вашем сервере&lt;/li&gt;&lt;li&gt;Лицензия: бесплатно, открытый код (MIT)&lt;/li&gt;&lt;/ul&gt;">
+      <p>EOV Tasks is a small Jira-style task tracker in the browser: projects, tasks with an assignee and a due date, a board, time tracking, comments and notifications. It is for a small team that Jira is too big for, and for one person who wants their own work in order. The server is set up once — on your own Windows computer or on your own Linux server — and everyone else just opens the site.</p>
+<h3>A task on one page</h3>
+<p>Summary, description, assignee, priority, type (task or bug), due date and estimate. Files and pictures go in by drag and drop, pictures get previews. Comments, watchers and the <strong>History</strong> tab: who changed what, and when. There is no separate edit mode — click a field, change it, it is saved.</p>
+<h3>Board and list</h3>
+<p>Every project has two views. The <strong>Board</strong> has To Do, In Progress, Review and Done columns, and cards are dragged between them. The <strong>List</strong> is a table with filters by status, assignee, priority and due date, plus text search; a filtered list is a link you can send to a colleague.</p>
+<h3>Familiar time tracking</h3>
+<p>Estimate, logged and remaining — three bars on every task. When you log time you decide what happens to the remaining estimate: recalculate it, leave it, set a new one or reduce it by an amount. <strong>Your work</strong> shows what is on you, what you finished this week or month, and where you logged time.</p>
+<h3>The bell and watching</h3>
+<p>A task assigned to you, a reply in the comments, a status change — you get a notification. You can watch someone else's task, and its news comes to you as well. Open the task, and the news counts as read.</p>
+<h3>When two people edit the same thing</h3>
+<p>Every field is checked. If a colleague changed the due date while you were editing it, you see what was changed and by whom — nobody's edit disappears silently. The board does the same: if a card has already been moved, it tells you so.</p>
+<h3>Your computer or your server</h3>
+<p><strong>No server needed:</strong> EOVTasks.exe sits in the tray by the clock and runs the site right on your computer. One switch lets colleagues on your local network in. Nothing to install.</p>
+<p><strong>For a team:</strong> a server archive for a Linux server, for a team of up to 15–20 people. It comes with HTTPS through Caddy, nightly backups and step-by-step instructions. People join through an invite link from the admin.</p>
+<h3>Apps made for Jira connect</h3>
+<p>EOV Tasks has a programming interface in the style of Jira Server (/rest/api/2) with personal tokens. Programs and scripts that can work with Jira connect to it with no changes: they read tasks, log time and leave comments. A token is revoked in a second, without changing your password.</p>
+<h3>Two languages, two themes</h3>
+<p>English or Russian — everyone picks their own, and it is kept in the account: one person works in English, another in Russian, on the same tasks. Light and dark theme. An illustrated manual opens on <strong>F1</strong>, and eight step-by-step lessons walk through everyday jobs: a task, a project, the bell, invitations, admin.</p>
+<h3>What it does not do</h3>
+<p>No sign-in with company accounts (SSO, LDAP, Google) — e-mail and password only. No e-mail is sent: notifications live in the bell, and invite links are passed on by hand. No subtasks, no links between tasks, no time reports for a period. The database is one SQLite file and one process: plenty for tens of people, not for hundreds. No import from Jira yet.</p>
+<h3>At a glance</h3>
+<ul><li>System: Windows 10 and 11 (tray); the team server runs on Linux</li><li>Installation: none, unpack and run EOVTasks.exe</li><li>Archive size: 119 MB (program and source code)</li><li>Languages: English and Russian</li><li>Data: stays with you — in %APPDATA%\EOVTasks or a folder on your server</li><li>License: free, open source (MIT)</li></ul>
+    </div>
+    
+    <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+      <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+      <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+    </button>
+  </div>
+  
+
+  <!-- ── Уроки ── -->
+  
+  <div class="section" id="tutorials">
+    <h2><span data-en="// Promo" data-ru="// Промо">// Promo</span></h2>
+    
+    
+    
+    
+    <div class="tuts">
+      
+      <figure class="tut" data-only="en">
+        <button class="tut-player" type="button" data-yt="Ve-x9U9XP-M" aria-label="EOV Tasks 1.0 overview">
+          <img src="https://i.ytimg.com/vi/Ve-x9U9XP-M/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="EOV Tasks 1.0 overview" data-ru="Обзор EOV Tasks 1.0">EOV Tasks 1.0 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/Ve-x9U9XP-M" target="_blank" rel="noopener">YouTube · v1.0.0 ↗</a>
+        </figcaption>
+      </figure>
+      
+      <figure class="tut" data-only="ru">
+        <button class="tut-player" type="button" data-yt="XeOKUPzaHKg" aria-label="EOV Tasks 1.0 overview">
+          <img src="https://i.ytimg.com/vi/XeOKUPzaHKg/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="EOV Tasks 1.0 overview" data-ru="Обзор EOV Tasks 1.0">EOV Tasks 1.0 overview</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/XeOKUPzaHKg" target="_blank" rel="noopener">YouTube · v1.0.0 ↗</a>
+        </figcaption>
+      </figure>
+      
+    </div>
+    <div class="links">
+      
+    </div>
+  </div>
+  
+
+  <!-- ── Характеристики ── -->
+  
+  
+  <div class="section">
+    <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
+    <div class="specs">
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>1.0.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Windows 10 / 11 (64-bit), team server: Linux</div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free (MIT)</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN / RU</div></div>
+      
+      <div class="spec-row"><div class="spec-key"><span data-en="Installation" data-ru="Установка">Installation</span></div><div class="spec-val">Unzip & run</div></div>
+    </div>
+  </div>
+  
+
+  <!-- ── Как это делалось ── -->
+  
+
+  <!-- ── Скачать и версии ── -->
+  <div class="section" id="download">
+    <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
+
+    <div class="prose" style="margin-bottom:28px">
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
+    </div>
+
+    
+    <div class="versions" id="versions">
+      
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">1.0.0</span>
+          <span class="ver-date">2026-10-26</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOVTasks/EOVTasks-1.0.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            119 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;The first release of EOV Tasks: a Jira-style task tracker in the browser — for your own Windows computer (tray) and your own Linux server, in English and Russian.&lt;/p&gt;" data-ru="&lt;p&gt;Первый выпуск EOV Tasks: трекер задач в браузере, похожий на Jira, — для своего компьютера с Windows (трей) и для своего Linux-сервера, на русском и английском.&lt;/p&gt;"><p>The first release of EOV Tasks: a Jira-style task tracker in the browser — for your own Windows computer (tray) and your own Linux server, in English and Russian.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+    </div>
+    
+    
+
+    
+    
+  </div>
+
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="wrap">
+    <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
+    <span>EOV Tasks v1.0.0 · 2026-10-26</span>
+  </div>
+</footer>
+
+<script>
+/* ── уроки: по клику обложка меняется на плеер YouTube ── */
+document.querySelectorAll('.tut-player').forEach(function (box) {
+  box.addEventListener('click', function () {
+    var frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + box.dataset.yt + '?autoplay=1&rel=0';
+    frame.title = box.getAttribute('aria-label');
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    // YouTube не играет встроенный ролик без Referer (ошибка 153).
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    var live = document.createElement('div');
+    live.className = 'tut-player tut-live';
+    live.appendChild(frame);
+    live.cover = box;
+    box.replaceWith(live);
+  });
+});
+// Язык переключили во время просмотра: скрытый ролик не должен играть
+// дальше — возвращаем ему обложку.
+document.addEventListener('langchange', function () {
+  document.querySelectorAll('.tut-live').forEach(function (live) {
+    if (live.offsetParent === null) live.replaceWith(live.cover);
+  });
+});
+
+/* ── галерея ── */
+var galIndex = 0;
+
+function galGo(index) {
+  var track = document.getElementById('gal-track');
+  if (!track) return;
+
+  var slides = track.children;
+  if (!slides.length) return;
+
+  // По кругу: с последней вперёд — на первую, и наоборот
+  galIndex = (index % slides.length + slides.length) % slides.length;
+  track.style.transform = 'translateX(-' + (galIndex * 100) + '%)';
+
+  var thumbs = document.querySelectorAll('#thumbs .thumb');
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].classList.toggle('active', i === galIndex);
+  }
+
+  // Подписи лежат в разметке все сразу — показываем нужную. Так переключатель
+  // языка продолжает работать: текст не собирается скриптом.
+  var caps = document.querySelectorAll('.shot-caption .cap');
+  for (var k = 0; k < caps.length; k++) {
+    caps[k].classList.toggle('active', k === galIndex);
+  }
+
+  var counter = document.getElementById('gal-current');
+  if (counter) counter.textContent = galIndex + 1;
+}
+
+function galMove(step) { galGo(galIndex + step); }
+
+document.addEventListener('keydown', function (e) {
+  if (!document.getElementById('gal-track')) return;
+  if (e.key === 'ArrowLeft') galMove(-1);
+  if (e.key === 'ArrowRight') galMove(1);
+});
+
+/* Свайп пальцем на телефоне */
+document.addEventListener('DOMContentLoaded', function () {
+  var viewport = document.querySelector('.gal-viewport');
+  if (!viewport) return;
+  var startX = null;
+  viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, {passive: true});
+  viewport.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var delta = e.changedTouches[0].clientX - startX;
+    if (Math.abs(delta) > 40) galMove(delta < 0 ? 1 : -1);
+    startX = null;
+  }, {passive: true});
+});
+
+/* ── старые версии ── */
+function toggleVersions(btn) {
+  var list = document.getElementById('versions');
+  if (list) list.classList.toggle('show-all');
+  // Пока версия лежала в display:none, её высота была нулевой и кнопка
+  // «развернуть» под ней появиться не могла. Теперь есть что мерить.
+  clampProse();
+}
+
+/* ── длинные описания ── */
+function toggleProse(button) {
+  var opened = !button.previousElementSibling.classList.toggle('clamped');
+  button.classList.toggle('open', opened);
+}
+
+// Меряем готовую страницу, а не считаем в шаблоне: высота текста зависит от
+// ширины окна, языка и подгруженного шрифта. Кнопка появляется только там,
+// где под ней правда что-то спрятано.
+function clampProse() {
+  document.querySelectorAll('.prose.clampable').forEach(function (block) {
+    var button = block.nextElementSibling;
+    if (!button || !button.classList.contains('prose-more')) return;
+
+    var opened = button.classList.contains('open');
+    block.classList.remove('clamped');
+    // Запас к пределу: текст, вылезающий на строку-другую, дешевле показать
+    // целиком, чем прятать за кнопкой ради двух строк.
+    var limit = block.classList.contains('ver-what') ? 230 : 310;
+    var tall = block.scrollHeight > limit;
+    button.hidden = !tall;
+    if (tall && !opened) block.classList.add('clamped');
+  });
+}
+
+window.addEventListener('load', clampProse);
+window.addEventListener('resize', clampProse);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(clampProse);
+// Переключение языка меняет текст — значит, и высоту: меряем заново.
+document.addEventListener('langchange', clampProse);
+</script>
+<script>
+/* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
+   поэтому переключение мгновенное и не требует второй копии страницы. */
+function setLang(lang) {
+  if (lang !== 'ru') lang = 'en';
+  document.documentElement.lang = lang;
+  var nodes = document.querySelectorAll('[data-' + lang + ']');
+  for (var i = 0; i < nodes.length; i++) {
+    var value = nodes[i].getAttribute('data-' + lang);
+    /* Пустой перевод — оставляем то, что уже показано (обычно английский),
+       чтобы недопереведённая страница не зияла дырами. */
+    if (value) nodes[i].innerHTML = value;
+  }
+  var en = document.getElementById('lang-en');
+  var ru = document.getElementById('lang-ru');
+  if (en) en.className = lang === 'en' ? 'on' : '';
+  if (ru) ru.className = lang === 'ru' ? 'on' : '';
+  try { localStorage.setItem('site-lang', lang); } catch (e) {}
+  /* Текст сменился — сменилась и высота блоков. Страницы, которые подрезают
+     длинные описания, меряют их заново по этому событию: сам переключатель
+     про них ничего не знает. */
+  document.dispatchEvent(new CustomEvent('langchange', {detail: lang}));
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  var browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  setLang(saved || (browser === 'ru' ? 'ru' : 'en'));
+})();
+</script>
+
+</body>
+</html>
