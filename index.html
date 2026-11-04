@@ -626,6 +626,67 @@
   .card[data-cat] { transition: opacity .2s, transform .2s; }
   .card.hidden { display: none; }
 
+  /* ── поиск и страницы каталога ── */
+  #software { scroll-margin-top: 56px; } /* высота липкого меню */
+  .catalog-search {
+    display: block;
+    width: 100%;
+    margin-bottom: 16px;
+    padding: 12px 18px;
+    font-family: inherit;
+    font-size: 16px; /* меньше 16px iOS приближает страницу при вводе */
+    color: var(--text);
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .catalog-search::placeholder { color: var(--muted); }
+  .catalog-search:hover { border-color: rgba(0,229,255,.4); }
+  .catalog-search:focus { border-color: rgba(0,229,255,.7); }
+  .catalog-search[hidden], .catalog-count[hidden], .catalog-empty[hidden], .pager[hidden] { display: none; }
+  .catalog-count {
+    margin-left: auto;
+    align-self: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: var(--muted);
+  }
+  .catalog-empty {
+    padding: 48px 0;
+    text-align: center;
+    color: var(--muted);
+  }
+  .pager {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+  .pager button {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 19px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .pager button:hover:not(:disabled) { border-color: rgba(0,229,255,.4); color: var(--text); }
+  .pager button[aria-current] {
+    background: rgba(0,229,255,.1);
+    border-color: rgba(0,229,255,.5);
+    color: var(--accent);
+  }
+  .pager button:disabled { opacity: .35; cursor: default; }
+
   /* ── footer ── */
   footer {
     border-top: 1px solid var(--border);
@@ -911,11 +972,20 @@ Free, MIT, open source. Maya 2019-2026.</span></p>
       <div class="section-line"></div>
     </div>
 
+    
+    <input type="search" class="catalog-search" id="catalog-search" hidden
+           autocomplete="off" enterkeyhint="search"
+           placeholder="Search the site..."
+           aria-label="Search the site..."
+           data-label-en="Search the site..."
+           data-label-ru="Поиск по сайту...">
+
     <div class="filters">
-        <button class="filter-btn active" onclick="filterCards('all', this)"><span data-en="ALL" data-ru="ВСЕ">ALL</span></button>
-        <button class="filter-btn" onclick="filterCards('windows', this)"><span data-en="WINDOWS" data-ru="WINDOWS">WINDOWS</span></button>
-        <button class="filter-btn" onclick="filterCards('macos', this)"><span data-en="macOS" data-ru="macOS">macOS</span></button>
-        <button class="filter-btn" onclick="filterCards('maya', this)"><span data-en="MAYA SCRIPTS" data-ru="СКРИПТЫ MAYA">MAYA SCRIPTS</span></button>
+        <button class="filter-btn active" data-filter="all"><span data-en="ALL" data-ru="ВСЕ">ALL</span></button>
+        <button class="filter-btn" data-filter="windows"><span data-en="WINDOWS" data-ru="WINDOWS">WINDOWS</span></button>
+        <button class="filter-btn" data-filter="macos"><span data-en="macOS" data-ru="macOS">macOS</span></button>
+        <button class="filter-btn" data-filter="maya"><span data-en="MAYA SCRIPTS" data-ru="СКРИПТЫ MAYA">MAYA SCRIPTS</span></button>
+        <span class="catalog-count" id="catalog-count" role="status" hidden><span data-en="Found:" data-ru="Найдено:">Found:</span> <span id="catalog-count-n"></span></span>
       </div>
       <div class="grid">
 
@@ -1378,7 +1448,7 @@ Free, MIT, open source. Maya 2019-2026.</span></div>
           
           
           
-          <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
+          
         </div>
         <div class="card-title">EOV Selection Display</div>
         <div class="card-desc"><span data-en="A window that lists everything selected in the Maya scene with a big count on top. Take the extra objects off with a click or a drag over the list, follow Shift- and Ctrl-clicks from the viewport, and keep the result as an EOV Selection Sets button, a Maya set or a shelf button.
@@ -1415,7 +1485,7 @@ Free, MIT, open source. Maya 2019–2026.</span></div>
           
           
           
-          <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
+          
         </div>
         <div class="card-title">EOV Selection Sets</div>
         <div class="card-desc"><span data-en="A slim floating panel over the Maya viewport where every button holds a saved selection: one click and the arm, the legs or the fingers are selected again. Modifier clicks add and isolate, one set of buttons drives several characters on the same rig, and the sets live in the scene.
@@ -1452,7 +1522,7 @@ Free, MIT, open source. Maya 2019–2026.</span></div>
           
           
           
-          <span class="card-badge new"><span data-en="New" data-ru="Новинка">New</span></span>
+          
         </div>
         <div class="card-title">EOV TimeZone Switcher</div>
         <div class="card-desc"><span data-en="Changes the Windows time zone in two clicks from the tray and puts it back just as fast. Favorite cities with live clocks, search across a hundred cities and resorts, one-button Restore. For trips without internet and for testing software across time zones. Free, no installer, English and Russian." data-ru="Меняет часовой пояс Windows в два клика из трея и так же быстро возвращает обратно. Избранные города с живыми часами, поиск по сотне городов и курортов, «Вернуть как было» одной кнопкой. Для поездок без интернета и для тестирования программ в разных поясах. Бесплатно, без установки, русский и английский.">Changes the Windows time zone in two clicks from the tray and puts it back just as fast. Favorite cities with live clocks, search across a hundred cities and resorts, one-button Restore. For trips without internet and for testing software across time zones. Free, no installer, English and Russian.</span></div>
@@ -2314,6 +2384,10 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
 
 
     </div>
+    <div class="catalog-empty" id="catalog-empty" hidden><span data-en="Nothing found. Try another word or filter." data-ru="Ничего не найдено. Попробуйте другое слово или фильтр.">Nothing found. Try another word or filter.</span></div>
+    <div class="pager" id="catalog-pager" hidden
+         data-prev-en="Previous page" data-prev-ru="Предыдущая страница"
+         data-next-en="Next page" data-next-ru="Следующая страница"></div>
   </div>
 </div>
 
@@ -2373,17 +2447,143 @@ Free, MIT, shipped as source. Nothing but Maya required.</span></div>
 <script data-goatcounter="https://eu-melnikov.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 <script>
-function filterCards(cat, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.card[data-cat]').forEach(card => {
-    if (cat === 'all' || card.dataset.cat.split(' ').indexOf(cat) !== -1) {
-      card.classList.remove('hidden');
-    } else {
-      card.classList.add('hidden');
-    }
+/* Каталог: поиск, фильтр и страницы. Все карточки лежат в этом файле, скрипт
+   только решает, какие показать: сначала отбор по фильтру и запросу, на
+   страницы делится уже результат. Состояние хранится в адресе (?q=&cat=&page=),
+   поэтому кнопка «Назад» со страницы программы возвращает к тем же результатам. */
+(function () {
+  var PER_PAGE = 24;
+  var section = document.getElementById('software');
+  var input = document.getElementById('catalog-search');
+  var count = document.getElementById('catalog-count');
+  var countN = document.getElementById('catalog-count-n');
+  var empty = document.getElementById('catalog-empty');
+  var pager = document.getElementById('catalog-pager');
+  var buttons = [].slice.call(section.querySelectorAll('.filter-btn'));
+
+  function norm(text) { return (text || '').toLowerCase().replace(/ё/g, 'е'); }
+
+  /* Ищем сразу на обоих языках, какой бы ни был включён. Текст берём из самой
+     карточки: оба варианта описания уже лежат в её data-атрибутах. */
+  var cards = [].slice.call(section.querySelectorAll('.card[data-cat]')).map(function (el) {
+    var desc = el.querySelector('.card-desc [data-en]');
+    return {
+      el: el,
+      cats: el.getAttribute('data-cat').split(' '),
+      text: norm([
+        el.querySelector('.card-title').textContent,
+        desc ? desc.getAttribute('data-en') : '',
+        desc ? desc.getAttribute('data-ru') : ''
+      ].join(' '))
+    };
   });
-}
+
+  var params = new URLSearchParams(location.search);
+  var state = {
+    q: params.get('q') || '',
+    cat: params.get('cat') || 'all',
+    page: parseInt(params.get('page'), 10) || 1
+  };
+  if (!buttons.some(function (b) { return b.getAttribute('data-filter') === state.cat; })) {
+    state.cat = 'all';
+  }
+
+  function writeUrl() {
+    var next = new URLSearchParams(location.search);
+    function put(key, value, isDefault) {
+      if (isDefault) next.delete(key); else next.set(key, value);
+    }
+    put('q', state.q, !state.q);
+    put('cat', state.cat, state.cat === 'all');
+    put('page', state.page, state.page === 1);
+    var query = next.toString();
+    history.replaceState(null, '', location.pathname + (query ? '?' + query : '') + location.hash);
+  }
+
+  function pagerButton(label, page, opts) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    if (opts.aria) b.setAttribute('aria-label', opts.aria);
+    if (opts.current) b.setAttribute('aria-current', 'page');
+    b.disabled = !!opts.disabled;
+    b.addEventListener('click', function () {
+      state.page = page;
+      render();
+      section.scrollIntoView();
+    });
+    return b;
+  }
+
+  function renderPager(pages) {
+    var lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
+    pager.innerHTML = '';
+    pager.hidden = pages < 2;
+    if (pages < 2) return;
+    pager.appendChild(pagerButton('‹', state.page - 1, {
+      disabled: state.page === 1, aria: pager.getAttribute('data-prev-' + lang)
+    }));
+    for (var i = 1; i <= pages; i++) {
+      pager.appendChild(pagerButton(String(i), i, { current: i === state.page }));
+    }
+    pager.appendChild(pagerButton('›', state.page + 1, {
+      disabled: state.page === pages, aria: pager.getAttribute('data-next-' + lang)
+    }));
+  }
+
+  var pageCount = 1;
+
+  function render() {
+    /* Несколько слов — все должны найтись, в любом порядке. */
+    var words = norm(state.q).split(/\s+/).filter(Boolean);
+    var found = cards.filter(function (card) {
+      if (state.cat !== 'all' && card.cats.indexOf(state.cat) === -1) return false;
+      return words.every(function (word) { return card.text.indexOf(word) !== -1; });
+    });
+
+    pageCount = Math.max(1, Math.ceil(found.length / PER_PAGE));
+    state.page = Math.min(Math.max(1, state.page), pageCount);
+    var start = (state.page - 1) * PER_PAGE;
+    var shown = found.slice(start, start + PER_PAGE);
+
+    cards.forEach(function (card) { card.el.classList.add('hidden'); });
+    shown.forEach(function (card) { card.el.classList.remove('hidden'); });
+
+    buttons.forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-filter') === state.cat);
+    });
+    countN.textContent = found.length;
+    count.hidden = !words.length && state.cat === 'all';
+    empty.hidden = found.length > 0;
+    renderPager(pageCount);
+    writeUrl();
+  }
+
+  input.addEventListener('input', function () {
+    state.q = input.value;
+    state.page = 1;
+    render();
+  });
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.cat = b.getAttribute('data-filter');
+      state.page = 1;
+      render();
+    });
+  });
+  /* Подпись строки и кнопок страниц не проходит через data-en/data-ru:
+     переключатель языка подменяет содержимое элемента, а не атрибуты. */
+  document.addEventListener('langchange', function (event) {
+    var label = input.getAttribute('data-label-' + event.detail);
+    input.placeholder = label;
+    input.setAttribute('aria-label', label);
+    renderPager(pageCount);
+  });
+
+  input.value = state.q;
+  input.hidden = false;
+  render();
+})();
 </script>
 <script>
 /* Переключение языка: оба варианта лежат в data-en / data-ru прямо в разметке,
