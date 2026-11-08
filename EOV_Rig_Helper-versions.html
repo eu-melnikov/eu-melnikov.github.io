@@ -452,10 +452,10 @@
   <!-- ── Hero ── -->
   <div class="hero">
     <div class="hero-meta">
-      <b>v0.1.0</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>2.9 Mb
+      <b>v0.1.1</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>2.9 Mb
     </div>
 
-    <h1><strong>EOV Rig Helper <span class="h1-ver">v0.1.0</span></strong></h1>
+    <h1><strong>EOV Rig Helper <span class="h1-ver">v0.1.1</span></strong></h1>
 
     
     <p class="tagline"><span data-en="a rig in a couple of minutes, on a clean character or over existing animation" data-ru="риг за пару минут на чистом персонаже или поверх готовой анимации">a rig in a couple of minutes, on a clean character or over existing animation</span></p>
@@ -475,7 +475,7 @@
       </a>
       
       
-      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-11-04</span>
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-11-08</span>
       
     </div>
   </div>
@@ -623,7 +623,7 @@
   <div class="section">
     <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
     <div class="specs">
-      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>0.1.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>0.1.1</span></div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Autodesk Maya 2019–2026</div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free (MIT)</span></div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN (hints and manual EN / RU)</div></div>
@@ -649,9 +649,43 @@
       
       <div class="ver-row latest">
         <div class="ver-head">
+          <span class="ver-num">0.1.1</span>
+          <span class="ver-date">2026-11-08</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOV_Rig_Helper/EOV_Rig_Helper-0.1.1.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            2.9 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;What changed since 0.1.0.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Swap in the Space row.&lt;/strong&gt; When a control rides on the wrong one, say the hand follows the magazine while you meant the magazine to ride in the hand, select the two and press Swap. They change places, both animations stay as they were on every frame, and one Ctrl+Z undoes it. To Selected the wrong way round no longer just refuses: it tells you to press Swap.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Fixed: Bake &amp;amp; Remove froze a riding control.&lt;/strong&gt; If a hand rode on a Proxy locator and Bake &amp;amp; Remove took all rigs, the locator could go first, and the hand froze in the pose of the current frame. Now controls that ride on a rig go back to the world before that rig is removed, with their animation kept. The order of the rigs no longer matters, and switching IK to FK under a riding control is safe as well.&lt;/p&gt;
+&lt;p&gt;The Space label has its own line now, so the name of what the controls ride on is readable again. The manual has a part on Swap.&lt;/p&gt;
+&lt;p&gt;Checked in Maya 2019, 2022 and 2025.&lt;/p&gt;" data-ru="&lt;p&gt;Что изменилось после 0.1.0.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Swap в ряду Space.&lt;/strong&gt; Если контрол поехал не на том, например рука ездит за магазином, а хотели, чтобы магазин ехал в руке, выделите оба и нажмите Swap. Они поменяются местами, анимация обоих останется какой была на каждом кадре, отменяется одним Ctrl+Z. To Selected в обратную сторону теперь не просто отказывает, а подсказывает нажать Swap.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Исправлено: Bake &amp;amp; Remove замораживал контрол, который на чём-то ехал.&lt;/strong&gt; Если рука ехала на локаторе Proxy, а Bake &amp;amp; Remove убирал все риги, локатор мог уйти первым, и рука застывала в позе текущего кадра. Теперь контролы, которые едут на риге, перед его удалением возвращаются в мир с сохранением анимации. Порядок ригов больше не важен, и переключение IK на FK под таким контролом тоже безопасно.&lt;/p&gt;
+&lt;p&gt;Надпись Space стоит теперь отдельной строкой, и имя того, на чём едут контролы, снова видно целиком. В справке появился раздел про Swap.&lt;/p&gt;
+&lt;p&gt;Проверено в Maya 2019, 2022 и 2025.&lt;/p&gt;"><p>What changed since 0.1.0.</p>
+<p><strong>Swap in the Space row.</strong> When a control rides on the wrong one, say the hand follows the magazine while you meant the magazine to ride in the hand, select the two and press Swap. They change places, both animations stay as they were on every frame, and one Ctrl+Z undoes it. To Selected the wrong way round no longer just refuses: it tells you to press Swap.</p>
+<p><strong>Fixed: Bake &amp; Remove froze a riding control.</strong> If a hand rode on a Proxy locator and Bake &amp; Remove took all rigs, the locator could go first, and the hand froze in the pose of the current frame. Now controls that ride on a rig go back to the world before that rig is removed, with their animation kept. The order of the rigs no longer matters, and switching IK to FK under a riding control is safe as well.</p>
+<p>The Space label has its own line now, so the name of what the controls ride on is readable again. The manual has a part on Swap.</p>
+<p>Checked in Maya 2019, 2022 and 2025.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+      <div class="ver-row">
+        <div class="ver-head">
           <span class="ver-num">0.1.0</span>
           <span class="ver-date">2026-11-04</span>
-          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
           
           <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOV_Rig_Helper/EOV_Rig_Helper-0.1.0.zip" download>
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
@@ -689,7 +723,7 @@
 <footer>
   <div class="wrap">
     <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
-    <span>EOV Rig Helper v0.1.0 · 2026-11-04</span>
+    <span>EOV Rig Helper v0.1.1 · 2026-11-08</span>
   </div>
 </footer>
 
