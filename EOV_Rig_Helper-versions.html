@@ -452,10 +452,10 @@
   <!-- ── Hero ── -->
   <div class="hero">
     <div class="hero-meta">
-      <b>v0.1.2</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>2.9 Mb
+      <b>v0.1.3</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>5.4 Mb
     </div>
 
-    <h1><strong>EOV Rig Helper <span class="h1-ver">v0.1.2</span></strong></h1>
+    <h1><strong>EOV Rig Helper <span class="h1-ver">v0.1.3</span></strong></h1>
 
     
     <p class="tagline"><span data-en="a rig in a couple of minutes, on a clean character or over existing animation" data-ru="риг за пару минут на чистом персонаже или поверх готовой анимации">a rig in a couple of minutes, on a clean character or over existing animation</span></p>
@@ -475,7 +475,7 @@
       </a>
       
       
-      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-11-08</span>
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-11-10</span>
       
     </div>
   </div>
@@ -512,6 +512,14 @@
 &lt;p&gt;Ctrl+click puts the rig on exactly the selected bones: just the neck and head, or a piece of the lower back. That rig rides on the joint above it, so nothing is left hanging in the air when the pelvis squats or tilts.&lt;/p&gt;
 &lt;h3&gt;Open Skeleton&lt;/h3&gt;
 &lt;p&gt;Riggers often hide the bones and lock their channels. Select a root and press &lt;strong&gt;Open Skeleton&lt;/strong&gt;: every joint under it shows up with its channels free. &lt;strong&gt;Close&lt;/strong&gt; puts everything back as it was. The rig's controls and geometry aren't touched unless they share the same layer.&lt;/p&gt;
+&lt;h3&gt;Centre of mass&lt;/h3&gt;
+&lt;p&gt;The &lt;strong&gt;Center of Mass&lt;/strong&gt; fold measures the character by its meshes and shows its centre of mass as a yellow ball right in the viewport. Its shadow on the ground takes the colour of the support: green while the centre is over the feet, red outside them, white in the air. You see at once whether the character stands or falls, and where a punch throws it off balance.&lt;/p&gt;
+&lt;p&gt;Things in the hands, a sword or a stone, pull the centre by their mass: select the thing and press &lt;strong&gt;Add Item&lt;/strong&gt;, and &lt;strong&gt;Drop&lt;/strong&gt; lets go of it on the frame you pick. &lt;strong&gt;Draw Trail&lt;/strong&gt; draws a live trail of the centre: a dot per frame, blue before the current frame and pink after it, redrawn by itself after every key you change. It checks a jump against real gravity, floaty or heavy. One scene can hold several characters, each with a centre of mass of its own. A scene with a centre of mass plays without the tool: it is built from Maya's own nodes.&lt;/p&gt;
+&lt;h3&gt;Centre of mass animation, as in Cascadeur&lt;/h3&gt;
+&lt;p&gt;Select the pelvis and press &lt;strong&gt;Animate Center of Mass&lt;/strong&gt;: magenta rings appear on the centre of mass. Move and turn them, key them, and the whole character follows as one piece, turning about its centre of mass. That is how a jump goes higher, a flip turns further, and the body moves aside without touching the pose.&lt;/p&gt;
+&lt;p&gt;A live trajectory of the centre redraws after every key, and its points can be dragged with the mouse. When you like the motion, &lt;strong&gt;To Pelvis&lt;/strong&gt; bakes it into the pelvis keys with any rigs on the character, and the spine, arms and legs are fine-tuned with the tool's rigs from there.&lt;/p&gt;
+&lt;h3&gt;A ballistic curve for jumps&lt;/h3&gt;
+&lt;p&gt;In the air only gravity acts on a body, so its centre of mass flies along an even parabola. Pick the jump's frames and press &lt;strong&gt;Ballistic Curve&lt;/strong&gt;: a curve of three points appears, take-off, top and landing. &lt;strong&gt;Snap&lt;/strong&gt; puts the centre of mass on it on every frame of the flight, and the pose doesn't change. Drag the top and the jump goes higher or lower; move the landing and the whole animation after the jump goes with it, with no foot sliding. The curve shows its own gravity, and &lt;strong&gt;Real g&lt;/strong&gt; puts the top where gravity is real, 9.8.&lt;/p&gt;
 &lt;h3&gt;IK and FK on arms and legs&lt;/h3&gt;
 &lt;p&gt;Select thigh, shin and foot (or upper arm, forearm and hand) and press &lt;strong&gt;Create IK&lt;/strong&gt;. Mocap bones, FBX joints and plain transforms all work, as long as they form a chain. &lt;strong&gt;Create FK&lt;/strong&gt; works the same way, and the same buttons switch a rig between IK and FK with the pose kept. &lt;strong&gt;Stretch&lt;/strong&gt; goes on and off for the whole animation without a jump. Character presets remember the chains, so one selected bone is enough from then on.&lt;/p&gt;
 &lt;h3&gt;Over someone else's rig, in any space&lt;/h3&gt;
@@ -522,9 +530,10 @@
 &lt;p&gt;&lt;strong&gt;Bake &amp;amp; Remove&lt;/strong&gt; writes the result back into the source objects: on every frame, or only where keys were before the rig, so the curves stay light. &lt;strong&gt;Discard Rig&lt;/strong&gt; takes the rig off without baking and returns the original animation. Every action undoes with one Ctrl+Z, and rigs live in the scene itself.&lt;/p&gt;
 &lt;h3&gt;What it doesn't do&lt;/h3&gt;
 &lt;p&gt;It doesn't remove the constraints of someone else's rig: Create IK won't take bones that rig drives, which is what Over a rig is for. It won't take a bone on an animation layer, and it tells you why. Create Spine refuses a bone with an animated length. The spine has no Space, because its points depend on each other. A rig from the pelvis (Hips) doesn't carry other rigs: for a squat, start it at the first vertebra.&lt;/p&gt;
+&lt;p&gt;The centre of mass rings go only on a character fully on FK: take our rigs off the pelvis and everything under it with Bake &amp;amp; Remove first. The body follows the rings as one piece, feet included: this is not a physics solver, balance and ground contacts are yours to set.&lt;/p&gt;
 &lt;p&gt;Baking &quot;keyed frames only&quot; doesn't keep edits between the source keys exactly. When you need exact, bake on every frame.&lt;/p&gt;
 &lt;h3&gt;At a glance&lt;/h3&gt;
-&lt;ul&gt;&lt;li&gt;System: Autodesk Maya 2019-2026, Windows; checked in 2019, 2022 and 2025&lt;/li&gt;&lt;li&gt;Install: drag one file into the Maya window, once for all versions&lt;/li&gt;&lt;li&gt;Archive size: 2.9 MB&lt;/li&gt;&lt;li&gt;Hints and messages: English and Russian; manual in both (F1)&lt;/li&gt;&lt;li&gt;License: free, MIT, open source&lt;/li&gt;&lt;li&gt;Version 0.1.0: the first one, still being tried out&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;EOV Rig Helper даёт риг за пару минут в двух случаях: на чистом персонаже, у которого рига нет вообще, и поверх готовой анимации, когда надо что-то поправить, а mocap, FBX или чужой риг этого не дают. Анимация переходит в контролы кадр в кадр, так что до первой правки ничего не сдвигается. Закончили, запекли обратно в кости, и рига больше нет.&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;System: Autodesk Maya 2019-2026, Windows; checked in 2019, 2022 and 2025&lt;/li&gt;&lt;li&gt;Install: drag one file into the Maya window, once for all versions&lt;/li&gt;&lt;li&gt;Archive size: 5.4 MB&lt;/li&gt;&lt;li&gt;Hints and messages: English and Russian; manual in both (F1)&lt;/li&gt;&lt;li&gt;License: free, MIT, open source&lt;/li&gt;&lt;li&gt;Version 0.1.3: the centre of mass, its animation and a ballistic curve; a video lesson in English and Russian&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;EOV Rig Helper даёт риг за пару минут в двух случаях: на чистом персонаже, у которого рига нет вообще, и поверх готовой анимации, когда надо что-то поправить, а mocap, FBX или чужой риг этого не дают. Анимация переходит в контролы кадр в кадр, так что до первой правки ничего не сдвигается. Закончили, запекли обратно в кости, и рига больше нет.&lt;/p&gt;
 &lt;h3&gt;Мягкие ключи и переключатель Hard / Soft&lt;/h3&gt;
 &lt;p&gt;Колени и локти перестают щёлкать. &lt;strong&gt;Mode&lt;/strong&gt; задаёт, какую анимацию вы делаете. &lt;strong&gt;Hard&lt;/strong&gt; подходит большинству работ: кадры жёсткие, контрол стоит точно на суставе, а отдельные кадры и диапазоны вы смягчаете сами кнопкой &lt;strong&gt;Soft frames&lt;/strong&gt;. &lt;strong&gt;Soft&lt;/strong&gt; для вязкой среды: гимнастические маты, Луна, всё заранее мягкое, жёсткими остаются только удары.&lt;/p&gt;
 &lt;h3&gt;Спина и цепочки костей&lt;/h3&gt;
@@ -532,6 +541,14 @@
 &lt;p&gt;Ctrl+клик ставит риг ровно на выделенные кости: только шея с головой или часть поясницы. Такой риг едет за суставом над ним, поэтому при приседе или наклоне таза ничего не повисает в воздухе.&lt;/p&gt;
 &lt;h3&gt;Open Skeleton&lt;/h3&gt;
 &lt;p&gt;Риггеры часто прячут кости и закрывают их каналы. Выделите корень и нажмите &lt;strong&gt;Open Skeleton&lt;/strong&gt;: все кости под ним станут видны, а каналы откроются. &lt;strong&gt;Close&lt;/strong&gt; вернёт всё как было. Контролы и геометрия рига не трогаются, если только не лежат в том же слое.&lt;/p&gt;
+&lt;h3&gt;Центр масс&lt;/h3&gt;
+&lt;p&gt;Свиток &lt;strong&gt;Center of Mass&lt;/strong&gt; меряет персонажа по его мешам и показывает центр масс жёлтым шаром прямо во вьюпорте. Его тень на земле окрашена по опоре: зелёная, когда центр над стопами, красная, когда снаружи, белая в воздухе. Сразу видно, стоит персонаж или падает, и где удар выбивает его из равновесия.&lt;/p&gt;
+&lt;p&gt;Предметы в руках, меч или камень, тянут центр своей массой: выделили предмет, нажали &lt;strong&gt;Add Item&lt;/strong&gt;, а &lt;strong&gt;Drop&lt;/strong&gt; отпускает его на нужном кадре. &lt;strong&gt;Draw Trail&lt;/strong&gt; рисует живую траекторию центра: точка на каждом кадре, синяя до текущего кадра и розовая после, и сама перерисовывается после каждого изменённого ключа. Прыжок она сверяет с настоящей гравитацией: «плывёт» он или «тяжёлый». В одной сцене может быть несколько персонажей, у каждого свой центр масс. Сцена с центром масс играет и без тула, он собран из штатных нод Maya.&lt;/p&gt;
+&lt;h3&gt;Анимация центра масс, как в Каскадёре&lt;/h3&gt;
+&lt;p&gt;Выделите таз и нажмите &lt;strong&gt;Animate Center of Mass&lt;/strong&gt;: на центре масс появятся сиреневые кольца. Двигаете и вращаете их, ставите ключи, и весь персонаж едет за ними целиком, а вращение идёт вокруг центра масс. Так прыжок поднимается выше, сальто докручивается, а тело уходит в сторону, не трогая позу.&lt;/p&gt;
+&lt;p&gt;Живая траектория центра масс перерисовывается после каждого ключа, её точки можно тянуть мышью. Когда движение нравится, &lt;strong&gt;To Pelvis&lt;/strong&gt; запекает его в ключи таза при любых ригах на персонаже, и дальше спина, руки и ноги правятся ригами тула.&lt;/p&gt;
+&lt;h3&gt;Баллистическая кривая для прыжков&lt;/h3&gt;
+&lt;p&gt;В воздухе на тело действует только гравитация, поэтому центр масс летит по ровной параболе. Выберите кадры прыжка и нажмите &lt;strong&gt;Ballistic Curve&lt;/strong&gt;: появится кривая из трёх точек - отрыв, вершина, приземление. &lt;strong&gt;Snap&lt;/strong&gt; сажает центр масс на неё на каждом кадре полёта, поза при этом не меняется. Тянете вершину - прыжок выше или ниже; двигаете приземление - вся анимация после прыжка едет следом, без скольжения стоп. Кривая показывает свою гравитацию, а &lt;strong&gt;Real g&lt;/strong&gt; ставит вершину туда, где она настоящая, 9,8.&lt;/p&gt;
 &lt;h3&gt;IK и FK на руки и ноги&lt;/h3&gt;
 &lt;p&gt;Выделите бедро, голень и стопу (или плечо, предплечье и кисть) и нажмите &lt;strong&gt;Create IK&lt;/strong&gt;. Подойдут кости mocap, джойнты из FBX и обычные трансформы, лишь бы они шли цепочкой. &lt;strong&gt;Create FK&lt;/strong&gt; работает так же, а те же кнопки переключают готовый риг IK ↔ FK с сохранением позы. &lt;strong&gt;Stretch&lt;/strong&gt; включается и выключается на всю анимацию без скачка. Пресеты персонажей запоминают цепочки, и дальше хватает одной выделенной кости.&lt;/p&gt;
 &lt;h3&gt;Поверх чужого рига и в чужом пространстве&lt;/h3&gt;
@@ -542,9 +559,10 @@
 &lt;p&gt;&lt;strong&gt;Bake &amp;amp; Remove&lt;/strong&gt; пишет результат обратно в исходные объекты: на каждом кадре или только там, где ключи были до рига, чтобы кривые остались редкими. &lt;strong&gt;Discard Rig&lt;/strong&gt; снимает риг без запекания и возвращает исходную анимацию. Каждое действие отменяется одним Ctrl+Z, а риги хранятся в самой сцене.&lt;/p&gt;
 &lt;h3&gt;Чего тул не делает&lt;/h3&gt;
 &lt;p&gt;Он не снимает констрейны чужого рига: кости, которые ведёт чужой риг, Create IK не возьмёт, для них есть Over a rig. Кость на слое анимации он не берёт и называет причину. Кости с анимированной длиной Create Spine не примет. У спины нет Space: её точки зависят друг от друга. Риг от таза (Hips) не везёт остальные риги: для приседа ставьте его от первого позвонка.&lt;/p&gt;
+&lt;p&gt;Кольца центра масс ставятся только на персонажа целиком на FK: наши риги на тазу и под ним сначала снимаются Bake &amp;amp; Remove. Тело едет за кольцами целиком, вместе со ступнями: это не физический солвер, баланс и контакты с землёй вы ставите сами.&lt;/p&gt;
 &lt;p&gt;При запекании «только по ключам» правки между исходными ключами сохраняются не точно: нужна точность, запекайте на каждом кадре.&lt;/p&gt;
 &lt;h3&gt;Коротко&lt;/h3&gt;
-&lt;ul&gt;&lt;li&gt;Система: Autodesk Maya 2019-2026, Windows; проверена в 2019, 2022 и 2025&lt;/li&gt;&lt;li&gt;Установка: перетащить один файл в окно Maya, сразу для всех версий&lt;/li&gt;&lt;li&gt;Размер архива: 2,9 МБ&lt;/li&gt;&lt;li&gt;Подсказки и сообщения: русский и английский; справка на обоих языках (F1)&lt;/li&gt;&lt;li&gt;Лицензия: бесплатно, MIT, открытый код&lt;/li&gt;&lt;li&gt;Версия 0.1.0: первая, она ещё обкатывается&lt;/li&gt;&lt;/ul&gt;">
+&lt;ul&gt;&lt;li&gt;Система: Autodesk Maya 2019-2026, Windows; проверена в 2019, 2022 и 2025&lt;/li&gt;&lt;li&gt;Установка: перетащить один файл в окно Maya, сразу для всех версий&lt;/li&gt;&lt;li&gt;Размер архива: 5,4 МБ&lt;/li&gt;&lt;li&gt;Подсказки и сообщения: русский и английский; справка на обоих языках (F1)&lt;/li&gt;&lt;li&gt;Лицензия: бесплатно, MIT, открытый код&lt;/li&gt;&lt;li&gt;Версия 0.1.3: центр масс, его анимация и баллистическая кривая; видеоурок на русском и английском&lt;/li&gt;&lt;/ul&gt;">
       <p>EOV Rig Helper gives you a rig in a couple of minutes, in two cases: a clean character with no rig at all, and existing animation that needs fixing when mocap, FBX or someone else's rig won't let you. The animation moves into the controls frame for frame, so nothing shifts until you change it. When you're done, bake it back onto the bones and the rig is gone.</p>
 <h3>Soft keys and the Hard / Soft switch</h3>
 <p>Knees and elbows stop popping. <strong>Mode</strong> says what kind of animation you're making. <strong>Hard</strong> suits most work: frames are hard, the control sits exactly on the joint, and you soften single frames and ranges yourself with <strong>Soft frames</strong>. <strong>Soft</strong> is for a viscous world, like gym mats or the Moon: everything is soft from the start and only the hits stay hard.</p>
@@ -553,6 +571,14 @@
 <p>Ctrl+click puts the rig on exactly the selected bones: just the neck and head, or a piece of the lower back. That rig rides on the joint above it, so nothing is left hanging in the air when the pelvis squats or tilts.</p>
 <h3>Open Skeleton</h3>
 <p>Riggers often hide the bones and lock their channels. Select a root and press <strong>Open Skeleton</strong>: every joint under it shows up with its channels free. <strong>Close</strong> puts everything back as it was. The rig's controls and geometry aren't touched unless they share the same layer.</p>
+<h3>Centre of mass</h3>
+<p>The <strong>Center of Mass</strong> fold measures the character by its meshes and shows its centre of mass as a yellow ball right in the viewport. Its shadow on the ground takes the colour of the support: green while the centre is over the feet, red outside them, white in the air. You see at once whether the character stands or falls, and where a punch throws it off balance.</p>
+<p>Things in the hands, a sword or a stone, pull the centre by their mass: select the thing and press <strong>Add Item</strong>, and <strong>Drop</strong> lets go of it on the frame you pick. <strong>Draw Trail</strong> draws a live trail of the centre: a dot per frame, blue before the current frame and pink after it, redrawn by itself after every key you change. It checks a jump against real gravity, floaty or heavy. One scene can hold several characters, each with a centre of mass of its own. A scene with a centre of mass plays without the tool: it is built from Maya's own nodes.</p>
+<h3>Centre of mass animation, as in Cascadeur</h3>
+<p>Select the pelvis and press <strong>Animate Center of Mass</strong>: magenta rings appear on the centre of mass. Move and turn them, key them, and the whole character follows as one piece, turning about its centre of mass. That is how a jump goes higher, a flip turns further, and the body moves aside without touching the pose.</p>
+<p>A live trajectory of the centre redraws after every key, and its points can be dragged with the mouse. When you like the motion, <strong>To Pelvis</strong> bakes it into the pelvis keys with any rigs on the character, and the spine, arms and legs are fine-tuned with the tool's rigs from there.</p>
+<h3>A ballistic curve for jumps</h3>
+<p>In the air only gravity acts on a body, so its centre of mass flies along an even parabola. Pick the jump's frames and press <strong>Ballistic Curve</strong>: a curve of three points appears, take-off, top and landing. <strong>Snap</strong> puts the centre of mass on it on every frame of the flight, and the pose doesn't change. Drag the top and the jump goes higher or lower; move the landing and the whole animation after the jump goes with it, with no foot sliding. The curve shows its own gravity, and <strong>Real g</strong> puts the top where gravity is real, 9.8.</p>
 <h3>IK and FK on arms and legs</h3>
 <p>Select thigh, shin and foot (or upper arm, forearm and hand) and press <strong>Create IK</strong>. Mocap bones, FBX joints and plain transforms all work, as long as they form a chain. <strong>Create FK</strong> works the same way, and the same buttons switch a rig between IK and FK with the pose kept. <strong>Stretch</strong> goes on and off for the whole animation without a jump. Character presets remember the chains, so one selected bone is enough from then on.</p>
 <h3>Over someone else's rig, in any space</h3>
@@ -563,9 +589,10 @@
 <p><strong>Bake &amp; Remove</strong> writes the result back into the source objects: on every frame, or only where keys were before the rig, so the curves stay light. <strong>Discard Rig</strong> takes the rig off without baking and returns the original animation. Every action undoes with one Ctrl+Z, and rigs live in the scene itself.</p>
 <h3>What it doesn't do</h3>
 <p>It doesn't remove the constraints of someone else's rig: Create IK won't take bones that rig drives, which is what Over a rig is for. It won't take a bone on an animation layer, and it tells you why. Create Spine refuses a bone with an animated length. The spine has no Space, because its points depend on each other. A rig from the pelvis (Hips) doesn't carry other rigs: for a squat, start it at the first vertebra.</p>
+<p>The centre of mass rings go only on a character fully on FK: take our rigs off the pelvis and everything under it with Bake &amp; Remove first. The body follows the rings as one piece, feet included: this is not a physics solver, balance and ground contacts are yours to set.</p>
 <p>Baking "keyed frames only" doesn't keep edits between the source keys exactly. When you need exact, bake on every frame.</p>
 <h3>At a glance</h3>
-<ul><li>System: Autodesk Maya 2019-2026, Windows; checked in 2019, 2022 and 2025</li><li>Install: drag one file into the Maya window, once for all versions</li><li>Archive size: 2.9 MB</li><li>Hints and messages: English and Russian; manual in both (F1)</li><li>License: free, MIT, open source</li><li>Version 0.1.0: the first one, still being tried out</li></ul>
+<ul><li>System: Autodesk Maya 2019-2026, Windows; checked in 2019, 2022 and 2025</li><li>Install: drag one file into the Maya window, once for all versions</li><li>Archive size: 5.4 MB</li><li>Hints and messages: English and Russian; manual in both (F1)</li><li>License: free, MIT, open source</li><li>Version 0.1.3: the centre of mass, its animation and a ballistic curve; a video lesson in English and Russian</li></ul>
     </div>
     
     <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
@@ -585,6 +612,30 @@
     
     
     <div class="tuts">
+      
+      <figure class="tut" data-only="en">
+        <button class="tut-player" type="button" data-yt="tM-ej-K9-zE" aria-label="Center of Mass in Maya - EOV Rig Helper Tutorial">
+          <img src="https://i.ytimg.com/vi/tM-ej-K9-zE/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="Center of Mass in Maya - EOV Rig Helper Tutorial" data-ru="Центр масс в Maya - урок EOV Rig Helper">Center of Mass in Maya - EOV Rig Helper Tutorial</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/tM-ej-K9-zE" target="_blank" rel="noopener">YouTube · v0.1.3 ↗</a>
+        </figcaption>
+      </figure>
+      
+      <figure class="tut" data-only="ru">
+        <button class="tut-player" type="button" data-yt="yEY4DkaNsMI" aria-label="Center of Mass in Maya - EOV Rig Helper Tutorial">
+          <img src="https://i.ytimg.com/vi/yEY4DkaNsMI/maxresdefault.jpg" alt="" loading="lazy"
+               onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
+          <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
+        </button>
+        <figcaption class="tut-cap">
+          <span class="link-title"><span data-en="Center of Mass in Maya - EOV Rig Helper Tutorial" data-ru="Центр масс в Maya - урок EOV Rig Helper">Center of Mass in Maya - EOV Rig Helper Tutorial</span></span>
+          <a class="link-meta tut-yt" href="https://youtu.be/yEY4DkaNsMI" target="_blank" rel="noopener">YouTube · v0.1.3 ↗</a>
+        </figcaption>
+      </figure>
       
       <figure class="tut" data-only="en">
         <button class="tut-player" type="button" data-yt="p9XOF4M_BNM" aria-label="A Rig in Maya in Minutes - EOV Rig Helper Tutorial">
@@ -623,7 +674,7 @@
   <div class="section">
     <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
     <div class="specs">
-      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>0.1.2</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>0.1.3</span></div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Autodesk Maya 2019–2026</div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free (MIT)</span></div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN (hints and manual EN / RU)</div></div>
@@ -649,9 +700,46 @@
       
       <div class="ver-row latest">
         <div class="ver-head">
+          <span class="ver-num">0.1.3</span>
+          <span class="ver-date">2026-11-10</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOV_Rig_Helper/EOV_Rig_Helper-0.1.3.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            5.4 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;What's new since 0.1.2.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Centre of mass.&lt;/strong&gt; The Center of Mass fold measures the character by its meshes and shows its centre of mass as a yellow ball, with a shadow on the ground in the colour of the support: green over the feet, red outside them, white in the air. Things in the hands pull the centre by their mass, and Drop lets go of them on the frame you pick. Draw Trail draws a live trail of the centre: a dot per frame, blue before the current frame and pink after, redrawn by itself after key edits; a jump is checked against real gravity. Several characters in one scene, each with its own centre. The Setup window keeps the body mass, the up axis, the ground height, the materials of things and presets.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Centre of mass animation, as in Cascadeur.&lt;/strong&gt; Select the pelvis and press Animate Center of Mass: magenta rings appear on the centre of mass. Move and turn them, key them, and the whole character follows, turning about its centre of mass. A live trajectory of the centre redraws after every key, and its points can be dragged with the mouse. To Pelvis bakes the motion into the pelvis keys with any rigs on the character, Discard removes the rings without baking.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;A ballistic curve for jumps, as in Cascadeur.&lt;/strong&gt; Pick the jump's frames and press Ballistic Curve: take-off, top and landing. Snap puts the centre of mass on the curve on every frame of the flight. Drag the top and the jump goes higher or lower; move the landing and the animation after the jump goes with it, no foot sliding. The curve shows its own gravity, Real g makes it real.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Manual and lesson.&lt;/strong&gt; New step-by-step sections, &quot;Center of mass animation&quot; and &quot;Ballistic curve&quot;: what to select, what to press, what you get, with screenshots and diagrams. Window screenshots are now shown at their real size. A video lesson, &quot;Center of mass&quot;, in English and Russian.&lt;/p&gt;
+&lt;p&gt;Checked in Maya 2019, 2022 and 2025.&lt;/p&gt;" data-ru="&lt;p&gt;Что нового после 0.1.2.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Центр масс.&lt;/strong&gt; Свиток Center of Mass меряет персонажа по мешам и показывает его центр масс жёлтым шаром, а тень на земле - цветом опоры: зелёная над стопами, красная снаружи, белая в воздухе. Предметы в руках тянут центр своей массой, Drop отпускает их на нужном кадре. Draw Trail рисует живую траекторию центра: точка на каждом кадре, синяя до текущего кадра и розовая после, сама перерисовывается после правки ключей; прыжок сверяется с настоящей гравитацией. Несколько персонажей в одной сцене, у каждого свой центр. Окно Setup хранит массу тела, ось вверх, высоту земли, материалы предметов и пресеты.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Анимация центра масс, как в Каскадёре.&lt;/strong&gt; Выделите таз и нажмите Animate Center of Mass: на центре масс появятся сиреневые кольца. Двигаете и вращаете их, ставите ключи, и весь персонаж едет за ними, вращение идёт вокруг центра масс. Живая траектория центра масс перерисовывается после каждого ключа, её точки тянутся мышью. To Pelvis запекает движение в ключи таза при любых ригах на персонаже, Discard убирает кольца без запекания.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Баллистическая кривая для прыжков, как в Каскадёре.&lt;/strong&gt; Выберите кадры прыжка и нажмите Ballistic Curve: отрыв, вершина и приземление. Snap сажает центр масс на кривую на каждом кадре полёта. Тянете вершину - прыжок выше или ниже, двигаете приземление - анимация после прыжка едет следом без скольжения стоп. Кривая показывает свою гравитацию, Real g делает её настоящей.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Справка и урок.&lt;/strong&gt; Новые разделы «Анимация центра масс» и «Баллистическая кривая» по шагам: что выделить, что нажать, что получится, со снимками и схемами. Снимки окон теперь в натуральную величину. Видеоурок «Центр масс» на русском и английском.&lt;/p&gt;
+&lt;p&gt;Проверено в Maya 2019, 2022 и 2025.&lt;/p&gt;"><p>What's new since 0.1.2.</p>
+<p><strong>Centre of mass.</strong> The Center of Mass fold measures the character by its meshes and shows its centre of mass as a yellow ball, with a shadow on the ground in the colour of the support: green over the feet, red outside them, white in the air. Things in the hands pull the centre by their mass, and Drop lets go of them on the frame you pick. Draw Trail draws a live trail of the centre: a dot per frame, blue before the current frame and pink after, redrawn by itself after key edits; a jump is checked against real gravity. Several characters in one scene, each with its own centre. The Setup window keeps the body mass, the up axis, the ground height, the materials of things and presets.</p>
+<p><strong>Centre of mass animation, as in Cascadeur.</strong> Select the pelvis and press Animate Center of Mass: magenta rings appear on the centre of mass. Move and turn them, key them, and the whole character follows, turning about its centre of mass. A live trajectory of the centre redraws after every key, and its points can be dragged with the mouse. To Pelvis bakes the motion into the pelvis keys with any rigs on the character, Discard removes the rings without baking.</p>
+<p><strong>A ballistic curve for jumps, as in Cascadeur.</strong> Pick the jump's frames and press Ballistic Curve: take-off, top and landing. Snap puts the centre of mass on the curve on every frame of the flight. Drag the top and the jump goes higher or lower; move the landing and the animation after the jump goes with it, no foot sliding. The curve shows its own gravity, Real g makes it real.</p>
+<p><strong>Manual and lesson.</strong> New step-by-step sections, "Center of mass animation" and "Ballistic curve": what to select, what to press, what you get, with screenshots and diagrams. Window screenshots are now shown at their real size. A video lesson, "Center of mass", in English and Russian.</p>
+<p>Checked in Maya 2019, 2022 and 2025.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+      <div class="ver-row">
+        <div class="ver-head">
           <span class="ver-num">0.1.2</span>
           <span class="ver-date">2026-11-08</span>
-          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
           
           <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/EOV_Rig_Helper/EOV_Rig_Helper-0.1.2.zip" download>
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
@@ -751,7 +839,7 @@
 <footer>
   <div class="wrap">
     <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
-    <span>EOV Rig Helper v0.1.2 · 2026-11-08</span>
+    <span>EOV Rig Helper v0.1.3 · 2026-11-10</span>
   </div>
 </footer>
 
