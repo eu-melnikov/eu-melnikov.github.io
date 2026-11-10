@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Motion Trail 1.4 Public Beta | e.melnikov.dev</title>
+<title>Free Motion Trail | e.melnikov.dev</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -452,13 +452,13 @@
   <!-- ── Hero ── -->
   <div class="hero">
     <div class="hero-meta">
-      <b>v1.4</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>2 Mb
+      <b>v2.0.0</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>0.3 Mb
     </div>
 
-    <h1><strong>Free Motion Trail 1.4 Public Beta <span class="h1-ver">v1.4</span></strong></h1>
+    <h1><strong>Free Motion Trail <span class="h1-ver">v2.0.0</span></strong></h1>
 
     
-    <p class="tagline"><span data-en="A free Maya plugin that shows an object's motion path right in the viewport." data-ru="Бесплатный плагин для Maya, показывающий траекторию движения объекта прямо во вьюпорте.">A free Maya plugin that shows an object's motion path right in the viewport.</span></p>
+    <p class="tagline"><span data-en="the motion trail of eov animation tools, on its own - the grown-up Free Motion Trail beta" data-ru="траектория из eov animation tools отдельно - повзрослевшая бета Free Motion Trail">the motion trail of eov animation tools, on its own - the grown-up Free Motion Trail beta</span></p>
     
 
     <div class="actions">
@@ -475,7 +475,7 @@
       </a>
       
       
-      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-04-02</span>
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-11-10</span>
       
     </div>
   </div>
@@ -487,7 +487,8 @@
     <div class="shot-frame">
       
       
-      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_poster1.jpg" alt="Free Motion Trail 1.4 Public Beta">
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_poster2.jpg" alt="Free Motion Trail" data-only="en">
+      <img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_poster2_ru.jpg" alt="Free Motion Trail" data-only="ru">
       
       
     </div>
@@ -503,20 +504,65 @@
   
   <div class="section">
     <h2><span data-en="// About" data-ru="// Описание">// About</span></h2>
-    <div class="prose clampable" data-en="&lt;p&gt;EU FreeMotionTrail is a free Maya plugin for visualizing object motion paths. It displays the animation trajectory in real-time directly in the viewport.&lt;/p&gt;
-&lt;h3&gt;What you can tune&lt;/h3&gt;
-&lt;p&gt;Customizable colors, line styles, orientation frets, and velocity-based temperature coloring. Supports Animation Layers.&lt;/p&gt;
-&lt;h3&gt;Public beta&lt;/h3&gt;
-&lt;p&gt;Works in Maya 2019–2026. This is a public beta — your feedback, bug reports, and feature ideas are very welcome.&lt;/p&gt;" data-ru="&lt;p&gt;EU FreeMotionTrail — бесплатный плагин для Maya, показывающий траекторию движения объекта. Отображает путь анимации в реальном времени прямо во вьюпорте.&lt;/p&gt;
-&lt;h3&gt;Что настраивается&lt;/h3&gt;
-&lt;p&gt;Цвета, стили линий, метки ориентации и раскраска «по температуре» в зависимости от скорости. Поддерживает Animation Layers.&lt;/p&gt;
-&lt;h3&gt;Публичная бета&lt;/h3&gt;
-&lt;p&gt;Работает в Maya 2019–2026. Это публичная бета — отзывы, баг-репорты и идеи очень приветствуются.&lt;/p&gt;">
-      <p>EU FreeMotionTrail is a free Maya plugin for visualizing object motion paths. It displays the animation trajectory in real-time directly in the viewport.</p>
-<h3>What you can tune</h3>
-<p>Customizable colors, line styles, orientation frets, and velocity-based temperature coloring. Supports Animation Layers.</p>
-<h3>Public beta</h3>
-<p>Works in Maya 2019–2026. This is a public beta — your feedback, bug reports, and feature ideas are very welcome.</p>
+    <div class="prose clampable" data-en="&lt;h3&gt;EOV Motion Trail&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;(formerly Free Motion Trail)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;EOV Motion Trail is a free Maya plugin that draws an object's path through the frames right in the viewport: the past in one colour, the future in another. Edit the keys and the line rebuilds at once, so you see the arc, the spacing and the gimbal lock while you animate.&lt;/p&gt;
+&lt;p&gt;This is the updated version of the motion trail that is part of &lt;strong&gt;&lt;a href=&quot;https://eu-melnikov.github.io/EOV_Animation_Tools-versions.html&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;eov animation tools&lt;/a&gt;&lt;/strong&gt;. It started here as Free Motion Trail, a public beta compiled for each Maya version. Since then it grew up inside eov animation tools: many bugs fixed, the code open, one install for every Maya. It is published here on its own to support everyone who downloaded the beta - install it over the beta, the installer clears the old files away.&lt;/p&gt;
+&lt;h3&gt;One click on and off&lt;/h3&gt;
+&lt;p&gt;Trail On / Off removes every trail of the scene and remembers where they were; the next time it brings them back, or puts new ones on the selection. Vertices and CVs work too: the trail starts from the vertex, not from the object's center. One command is one undo step, and it fits on a hotkey.&lt;/p&gt;
+&lt;h3&gt;A menu that stays open&lt;/h3&gt;
+&lt;p&gt;The shelf button opens a small menu window that does not close after a pick, so you can click through several settings in a row: Create, Remove, Set Range from the Time Slider, Style, Frames Before and After, Transparency Falloff.&lt;/p&gt;
+&lt;h3&gt;Temperature&lt;/h3&gt;
+&lt;p&gt;The line can be coloured from green to red by speed (spacing), by how close the rotation is to gimbal lock, by jitter, or by distance to the camera. Where the object speeds up and slows down is visible at a glance.&lt;/p&gt;
+&lt;h3&gt;Orientation and space&lt;/h3&gt;
+&lt;p&gt;Orientation Tracking draws the rotation axes on every frame. Object space shows the path relative to another object - the hand relative to the body, not across the whole scene.&lt;/p&gt;
+&lt;h3&gt;Animation layers&lt;/h3&gt;
+&lt;p&gt;The trail follows animation layers: weights (animated too), mute, solo, Override mode, layers on parents. Change a layer and the line rebuilds at once.&lt;/p&gt;
+&lt;h3&gt;Your own style&lt;/h3&gt;
+&lt;p&gt;Dashed, dots or a thick line, or your own width, dot sizes and past and future colours. Your choices survive a Maya restart, and scenes with trails open with their trails.&lt;/p&gt;
+&lt;h3&gt;Coming from the beta&lt;/h3&gt;
+&lt;p&gt;The plugin and its node are the same, so scenes with beta trails open with the new one. The installer moves the beta's files out of plug-ins and scripts into a backup folder and turns the beta's shelf buttons into the new one.&lt;/p&gt;
+&lt;h3&gt;At a glance&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Autodesk Maya 2019-2026, Windows&lt;/li&gt;&lt;li&gt;free, MIT license, open source&lt;/li&gt;&lt;li&gt;install: drag one file into the Maya window, once for every version&lt;/li&gt;&lt;li&gt;interface in English, manual in English and Russian&lt;/li&gt;&lt;li&gt;the same tool is the Trail button of the eov animation tools panel&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;h3&gt;EOV Motion Trail&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;(раньше — Free Motion Trail)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;EOV Motion Trail — бесплатный плагин для Maya, который рисует путь объекта по кадрам прямо во вьюпорте: прошлое одним цветом, будущее другим. Правите ключи — линия сразу перестраивается, и дуга, спейсинг и гимбал-лок видны прямо в работе.&lt;/p&gt;
+&lt;p&gt;Это обновлённая версия траектории, которая входит в &lt;strong&gt;&lt;a href=&quot;https://eu-melnikov.github.io/EOV_Animation_Tools-versions.html&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;eov animation tools&lt;/a&gt;&lt;/strong&gt;. Начиналась она здесь как Free Motion Trail — публичная бета, скомпилированная под каждую версию Maya. С тех пор она выросла внутри eov animation tools: исправлено много ошибок, код открыт, одна установка на все версии Maya. Здесь она выложена отдельно, чтобы поддержать всех, кто скачал бету: ставьте поверх беты, установщик сам уберёт старые файлы.&lt;/p&gt;
+&lt;h3&gt;Вкл и выкл одной командой&lt;/h3&gt;
+&lt;p&gt;Trail On / Off убирает все траектории сцены и запоминает, где они были; в следующий раз возвращает их или ставит новые на выделенное. Работает и с вершинами и CV: траектория идёт от вершины, а не от центра объекта. Одна команда — один шаг отмены, и её удобно повесить на клавишу.&lt;/p&gt;
+&lt;h3&gt;Меню, которое не закрывается&lt;/h3&gt;
+&lt;p&gt;Кнопка на полке открывает маленькое окно-меню, которое не закрывается после выбора пункта, — можно перещёлкать несколько настроек подряд: Create, Remove, Set Range с таймлайна, Style, Frames Before and After, Transparency Falloff.&lt;/p&gt;
+&lt;h3&gt;Temperature&lt;/h3&gt;
+&lt;p&gt;Линию можно раскрасить от зелёного к красному по скорости (спейсингу), по близости поворота к гимбал-локу, по дрожанию или по расстоянию до камеры. Где объект разгоняется и тормозит — видно сразу.&lt;/p&gt;
+&lt;h3&gt;Оси и пространство&lt;/h3&gt;
+&lt;p&gt;Orientation Tracking рисует оси поворота на каждом кадре. Пространство Object показывает путь относительно другого объекта — кисть относительно тела, а не по всей сцене.&lt;/p&gt;
+&lt;h3&gt;Слои анимации&lt;/h3&gt;
+&lt;p&gt;Траектория учитывает слои анимации: веса (и анимированные), mute, solo, режим Override, слои на родителях. Переключили слой — линия перестраивается сразу.&lt;/p&gt;
+&lt;h3&gt;Свой стиль&lt;/h3&gt;
+&lt;p&gt;Пунктир, точки или толстая линия — или свои толщина, размер точек и цвета прошлого и будущего. Выбор переживает перезапуск Maya, а сцены с траекториями открываются с ними же.&lt;/p&gt;
+&lt;h3&gt;Если стояла бета&lt;/h3&gt;
+&lt;p&gt;Плагин и его нода те же, так что сцены с траекториями беты открываются с новым. Установщик переносит файлы беты из plug-ins и scripts в резервную папку и превращает кнопки беты на полках в новую.&lt;/p&gt;
+&lt;h3&gt;Коротко&lt;/h3&gt;
+&lt;ul&gt;&lt;li&gt;Autodesk Maya 2019-2026, Windows&lt;/li&gt;&lt;li&gt;бесплатно, лицензия MIT, открытый код&lt;/li&gt;&lt;li&gt;установка: перетащить один файл в окно Maya, один раз на все версии&lt;/li&gt;&lt;li&gt;интерфейс на английском, справка на английском и русском&lt;/li&gt;&lt;li&gt;тот же инструмент — кнопка Trail на панели eov animation tools&lt;/li&gt;&lt;/ul&gt;">
+      <h3>EOV Motion Trail</h3>
+<p><em>(formerly Free Motion Trail)</em></p>
+<p>EOV Motion Trail is a free Maya plugin that draws an object's path through the frames right in the viewport: the past in one colour, the future in another. Edit the keys and the line rebuilds at once, so you see the arc, the spacing and the gimbal lock while you animate.</p>
+<p>This is the updated version of the motion trail that is part of <strong><a href="https://eu-melnikov.github.io/EOV_Animation_Tools-versions.html" target="_blank" rel="noopener">eov animation tools</a></strong>. It started here as Free Motion Trail, a public beta compiled for each Maya version. Since then it grew up inside eov animation tools: many bugs fixed, the code open, one install for every Maya. It is published here on its own to support everyone who downloaded the beta - install it over the beta, the installer clears the old files away.</p>
+<h3>One click on and off</h3>
+<p>Trail On / Off removes every trail of the scene and remembers where they were; the next time it brings them back, or puts new ones on the selection. Vertices and CVs work too: the trail starts from the vertex, not from the object's center. One command is one undo step, and it fits on a hotkey.</p>
+<h3>A menu that stays open</h3>
+<p>The shelf button opens a small menu window that does not close after a pick, so you can click through several settings in a row: Create, Remove, Set Range from the Time Slider, Style, Frames Before and After, Transparency Falloff.</p>
+<h3>Temperature</h3>
+<p>The line can be coloured from green to red by speed (spacing), by how close the rotation is to gimbal lock, by jitter, or by distance to the camera. Where the object speeds up and slows down is visible at a glance.</p>
+<h3>Orientation and space</h3>
+<p>Orientation Tracking draws the rotation axes on every frame. Object space shows the path relative to another object - the hand relative to the body, not across the whole scene.</p>
+<h3>Animation layers</h3>
+<p>The trail follows animation layers: weights (animated too), mute, solo, Override mode, layers on parents. Change a layer and the line rebuilds at once.</p>
+<h3>Your own style</h3>
+<p>Dashed, dots or a thick line, or your own width, dot sizes and past and future colours. Your choices survive a Maya restart, and scenes with trails open with their trails.</p>
+<h3>Coming from the beta</h3>
+<p>The plugin and its node are the same, so scenes with beta trails open with the new one. The installer moves the beta's files out of plug-ins and scripts into a backup folder and turns the beta's shelf buttons into the new one.</p>
+<h3>At a glance</h3>
+<ul><li>Autodesk Maya 2019-2026, Windows</li><li>free, MIT license, open source</li><li>install: drag one file into the Maya window, once for every version</li><li>interface in English, manual in English and Russian</li><li>the same tool is the Trail button of the eov animation tools panel</li></ul>
     </div>
     
     <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
@@ -538,7 +584,7 @@
     <div class="tuts">
       
       <figure class="tut">
-        <button class="tut-player" type="button" data-yt="uPMs79yk_5c" aria-label="Free Motion Trail 1.4 Public Beta">
+        <button class="tut-player" type="button" data-yt="uPMs79yk_5c" aria-label="Free Motion Trail">
           <img src="https://i.ytimg.com/vi/uPMs79yk_5c/maxresdefault.jpg" alt="" loading="lazy"
                onload="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])" onerror="var q=['maxresdefault','sddefault','hqdefault'],i=q.findIndex(function(x){return this.src.indexOf(x)>0},this);if(i>=0&&i<2&&(event.type=='error'||this.naturalWidth<=120))this.src=this.src.replace(q[i],q[i+1])">
           <span class="tut-play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5z"/></svg></span>
@@ -567,23 +613,67 @@
     <h2><span data-en="// Download &amp; versions" data-ru="// Скачать и версии">// Download &amp; versions</span></h2>
 
     <div class="prose" style="margin-bottom:28px">
-      <p><span data-en="Free for personal and commercial use. No registration required." data-ru="Бесплатно для личного и коммерческого использования. Регистрация не нужна.">Free for personal and commercial use. No registration required.</span></p>
+      <p><span data-en="Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build." data-ru="Бесплатно для личного и коммерческого использования: ни регистрации, ни ограничений, ни рекламы. Все выпуски остаются доступными — к старой сборке всегда можно вернуться.">Free for personal and commercial use. No registration, no limits, no ads. Every release stays available, so you can always go back to an older build.</span></p>
     </div>
 
     
-
-    
-    
-    <div class="actions" style="margin-top:0">
+    <div class="versions" id="versions">
       
-      <a class="btn btn-main" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_maya_1_4_2019_2026.zip" download>
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
-        <span data-en="DOWNLOAD FREE" data-ru="СКАЧАТЬ БЕСПЛАТНО">DOWNLOAD FREE</span> · 2 Mb
-      </a>
+      <div class="ver-row latest">
+        <div class="ver-head">
+          <span class="ver-num">2.0.0</span>
+          <span class="ver-date">2026-11-10</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/EOV_Motion_Trail-2.0.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            0.3 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;EOV Motion Trail 2.0.0 - the updated Free Motion Trail.&lt;/p&gt;
+&lt;p&gt;The 1.4 public beta grew up inside eov animation tools and comes here on its own, for everyone who downloaded the beta:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;open code, one install&lt;/strong&gt; for every Maya 2019-2026 by drag-and-drop, no per-version compiled files;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;the installer clears the beta away&lt;/strong&gt;: its files go to a backup folder, its shelf buttons become the new one, scenes with beta trails open with the new plugin;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;many fixes&lt;/strong&gt;: animation layers (weights, Override), a fresh Maya without the plugin loaded, Set Range one frame too long, menus on a second monitor, a new trail inheriting an old one's cache;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Trail On / Off&lt;/strong&gt; in one command and on a hotkey, a menu that stays open, a settings window for your own style;&lt;/li&gt;&lt;li&gt;manual in English and Russian.&lt;/li&gt;&lt;/ul&gt;" data-ru="&lt;p&gt;EOV Motion Trail 2.0.0 — обновлённый Free Motion Trail.&lt;/p&gt;
+&lt;p&gt;Публичная бета 1.4 выросла внутри eov animation tools и выложена здесь отдельно — для всех, кто скачал бету:&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;&lt;strong&gt;открытый код, одна установка&lt;/strong&gt; на все Maya 2019-2026 перетаскиванием, без скомпилированных файлов под каждую версию;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;установщик убирает бету&lt;/strong&gt;: её файлы уходят в резервную папку, кнопки на полках становятся новыми, сцены с траекториями беты открываются с новым плагином;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;много исправлений&lt;/strong&gt;: слои анимации (веса, Override), свежая Maya без загруженного плагина, Set Range на кадр длиннее, меню на втором мониторе, новая траектория с кэшем старой;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Trail On / Off&lt;/strong&gt; одной командой и на клавишу, меню, которое не закрывается, окно настроек для своего стиля;&lt;/li&gt;&lt;li&gt;справка на английском и русском.&lt;/li&gt;&lt;/ul&gt;"><p>EOV Motion Trail 2.0.0 - the updated Free Motion Trail.</p>
+<p>The 1.4 public beta grew up inside eov animation tools and comes here on its own, for everyone who downloaded the beta:</p>
+<ul><li><strong>open code, one install</strong> for every Maya 2019-2026 by drag-and-drop, no per-version compiled files;</li><li><strong>the installer clears the beta away</strong>: its files go to a backup folder, its shelf buttons become the new one, scenes with beta trails open with the new plugin;</li><li><strong>many fixes</strong>: animation layers (weights, Override), a fresh Maya without the plugin loaded, Set Range one frame too long, menus on a second monitor, a new trail inheriting an old one's cache;</li><li><strong>Trail On / Off</strong> in one command and on a hotkey, a menu that stays open, a settings window for your own style;</li><li>manual in English and Russian.</li></ul></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
       
-      
+      <div class="ver-row">
+        <div class="ver-head">
+          <span class="ver-num">1.4</span>
+          <span class="ver-date">2026-04-02</span>
+          
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/fmt/FreeMotionTrail_maya_1_4_2019_2026.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            2 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;EU FreeMotionTrail 1.4 Public Beta - the first public version, compiled for each Maya version 2019-2026 and installed by hand into plug-ins and scripts. Kept here for history: install 2.0.0 instead, its installer clears the beta away.&lt;/p&gt;" data-ru="&lt;p&gt;EU FreeMotionTrail 1.4 Public Beta — первая публичная версия, скомпилированная под каждую Maya 2019–2026, ставилась руками в plug-ins и scripts. Оставлена для истории: ставьте 2.0.0, его установщик сам уберёт бету.&lt;/p&gt;"><p>EU FreeMotionTrail 1.4 Public Beta - the first public version, compiled for each Maya version 2019-2026 and installed by hand into plug-ins and scripts. Kept here for history: install 2.0.0 instead, its installer clears the beta away.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
       
     </div>
+    
+    
+
+    
     
   </div>
 
@@ -593,7 +683,7 @@
 <footer>
   <div class="wrap">
     <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
-    <span>Free Motion Trail 1.4 Public Beta v1.4 · 2026-04-02</span>
+    <span>Free Motion Trail v2.0.0 · 2026-11-10</span>
   </div>
 </footer>
 
