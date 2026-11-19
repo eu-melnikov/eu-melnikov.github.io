@@ -381,6 +381,82 @@
       
       
       
+      <div class="news-item is-update">
+        <div class="news-card clickable" data-href="MirrorAction-versions.html">
+          <div class="news-body">
+          <div class="news-top">
+            <span class="news-icon">🪞</span>
+            <span class="news-title"><span data-en="MirrorAction" data-ru="MirrorAction">MirrorAction</span><span class="ver">v0.18.0</span></span>
+            <span class="type-badge update"><span data-en="Update" data-ru="Обновление">Update</span></span>
+            <span class="news-date">2026-11-19</span>
+          </div>
+          
+          <div class="news-desc" data-en="&lt;p&gt;A release about AdvancedSkeleton rigs.&lt;/p&gt;
+&lt;h3&gt;AdvancedSkeleton rigs.&lt;/h3&gt;
+&lt;p&gt;The root of such a rig, Main, is a circle with no joints under it. The tool used to look for the skeleton under the root only, and on such a character it got the sides wrong: the mirror could flip the character upside down, and the T-pose and pole checks reported false numbers. Now the skeleton is found next to the root, and mirroring, the T-pose, Cycle and the copy pictures work as on any other character. Nothing changes for rigs with the joints under the root.&lt;/p&gt;
+&lt;h3&gt;Forgotten controls.&lt;/h3&gt;
+&lt;p&gt;After Mirror animation the tool names the controls that move in the scene but are not part of the character - the whole-body control such as RootX_M comes first. Undo, add them and run it again.&lt;/p&gt;
+&lt;h3&gt;Old presets.&lt;/h3&gt;
+&lt;p&gt;A preset saved by 0.17.0 for a rig with no joints under its root is rebuilt from the scene's controls when it loads; the tool says so and asks you to press Save.&lt;/p&gt;
+&lt;h3&gt;Manual.&lt;/h3&gt;
+&lt;p&gt;An AdvancedSkeleton part in lesson 6. A link to the video lesson on YouTube; a time in the chapter table opens the video at that point.&lt;/p&gt;
+&lt;h3&gt;Fixed.&lt;/h3&gt;
+&lt;p&gt;Anchor holds on a control the anchor already holds no longer lists it twice on its side.&lt;/p&gt;" data-ru="&lt;p&gt;Версия про риги AdvancedSkeleton.&lt;/p&gt;
+&lt;h3&gt;Риг AdvancedSkeleton.&lt;/h3&gt;
+&lt;p&gt;Корень Main у такого рига - кружок, под которым нет костей. Раньше тул искал скелет только под корнем и на таком персонаже ошибался в стороне: зеркало могло перевернуть персонажа сверху вниз, а проверка T-позы и полюсов давала ложные цифры. Теперь скелет находится рядом с корнем, и зеркало, T-поза, Cycle и картинки копий работают как на обычном персонаже. Для ригов с костями под корнем ничего не меняется.&lt;/p&gt;
+&lt;h3&gt;Забытые контролы.&lt;/h3&gt;
+&lt;p&gt;После Mirror animation тул называет контролы, которые двигаются в сцене, но не входят в персонажа, - первым контрол всего тела вроде RootX_M. Достаточно отменить, добавить их и повторить.&lt;/p&gt;
+&lt;h3&gt;Старые пресеты.&lt;/h3&gt;
+&lt;p&gt;Пресет, сохранённый в 0.17.0 для рига без костей под корнем, при загрузке пересобирается по контролам сцены; тул говорит об этом и просит нажать Save.&lt;/p&gt;
+&lt;h3&gt;Справка.&lt;/h3&gt;
+&lt;p&gt;Раздел про AdvancedSkeleton в уроке 6. Ссылка на видеоурок на YouTube, время в таблице глав открывает ролик с нужного места.&lt;/p&gt;
+&lt;h3&gt;Исправлено.&lt;/h3&gt;
+&lt;p&gt;Anchor holds на контроле, который якорь и так держит, больше не дублирует его в списке стороны.&lt;/p&gt;"><p>A release about AdvancedSkeleton rigs.</p>
+<h3>AdvancedSkeleton rigs.</h3>
+<p>The root of such a rig, Main, is a circle with no joints under it. The tool used to look for the skeleton under the root only, and on such a character it got the sides wrong: the mirror could flip the character upside down, and the T-pose and pole checks reported false numbers. Now the skeleton is found next to the root, and mirroring, the T-pose, Cycle and the copy pictures work as on any other character. Nothing changes for rigs with the joints under the root.</p>
+<h3>Forgotten controls.</h3>
+<p>After Mirror animation the tool names the controls that move in the scene but are not part of the character - the whole-body control such as RootX_M comes first. Undo, add them and run it again.</p>
+<h3>Old presets.</h3>
+<p>A preset saved by 0.17.0 for a rig with no joints under its root is rebuilt from the scene's controls when it loads; the tool says so and asks you to press Save.</p>
+<h3>Manual.</h3>
+<p>An AdvancedSkeleton part in lesson 6. A link to the video lesson on YouTube; a time in the chapter table opens the video at that point.</p>
+<h3>Fixed.</h3>
+<p>Anchor holds on a control the anchor already holds no longer lists it twice on its side.</p></div>
+          
+          <button class="news-more" type="button" onclick="toggleNewsDesc(this)" hidden>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+            <span class="on-closed"><span data-en="Read more" data-ru="Читать дальше">Read more</span></span>
+            <span class="on-open"><span data-en="Collapse" data-ru="Свернуть">Collapse</span></span>
+          </button>
+          
+          <div class="news-actions">
+            
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MirrorAction/MirrorAction-0.18.0.zip" download>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+                <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
+              </a>
+              
+              <a class="btn-news secondary" href="MirrorAction-versions.html">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+                <span data-en="DETAILS" data-ru="ПОДРОБНЕЕ">DETAILS</span>
+              </a>
+              
+              
+            
+          </div>
+          </div>
+          
+          <div class="news-thumb"><img src="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MirrorAction/MirrorAction_poster.jpg" alt="MirrorAction"></div>
+          
+        </div>
+      </div>
+      
+      
+      
+      
+      
+      
+      
       <div class="news-item is-new">
         <div class="news-card clickable" data-href="EOV_Loco_Speed-versions.html">
           <div class="news-body">
@@ -493,7 +569,7 @@
           
           <div class="news-actions">
             
-              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MirrorAction/MirrorAction-0.17.0.zip" download>
+              <a class="btn-news primary" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MirrorAction/MirrorAction-0.18.0.zip" download>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
                 <span data-en="DOWNLOAD" data-ru="СКАЧАТЬ">DOWNLOAD</span>
               </a>

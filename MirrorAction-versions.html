@@ -452,10 +452,10 @@
   <!-- ── Hero ── -->
   <div class="hero">
     <div class="hero-meta">
-      <b>v0.17.0</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>4 Mb
+      <b>v0.18.0</b><em>·</em>Windows / Maya 2019+<em>·</em><i><span data-en="Free" data-ru="Бесплатно">Free</span></i><em>·</em>4 Mb
     </div>
 
-    <h1><strong>MirrorAction <span class="h1-ver">v0.17.0</span></strong></h1>
+    <h1><strong>MirrorAction <span class="h1-ver">v0.18.0</span></strong></h1>
 
     
     <p class="tagline"><span data-en="Animation mirroring for Maya: a pose, a stretch or the whole take, on any rig" data-ru="зеркало анимации в Maya: поза, кусок анимации или весь дубль на любом риге">Animation mirroring for Maya: a pose, a stretch or the whole take, on any rig</span></p>
@@ -475,7 +475,7 @@
       </a>
       
       
-      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-11-15</span>
+      <span class="actions-note"><span data-en="updated" data-ru="обновлено">updated</span> 2026-11-19</span>
       
     </div>
   </div>
@@ -512,6 +512,7 @@
 &lt;p&gt;The setup is three steps: the root of the skeleton, a frame where the character stands symmetrically, and what to mirror. &lt;strong&gt;Find&lt;/strong&gt; looks for a symmetric frame in the take; if the character never stops, the tool keys the bind pose on a free frame before the take, and the animation stays as it was. You select the left-side joints and the right-side pairs are found by name. Then &lt;strong&gt;Save&lt;/strong&gt;, and the next scene with this character picks the preset up by itself. The tool measures every pair on the rest pose instead of guessing from axis names, so rigs with non-zero channels are fine too.&lt;/p&gt;
 &lt;h3&gt;A character on controls&lt;/h3&gt;
 &lt;p&gt;For a rigged character there is a stick figure instead of a joint list: a ball for each arm and leg, Hips for the pelvis and Spine for the spine, neck and head. Select the controls of one side, click the ball, done. The preset remembers the controls' T-pose and keys it on a free frame in the next scene. &lt;strong&gt;+ Arms&lt;/strong&gt; and &lt;strong&gt;+ Legs&lt;/strong&gt; add another pair of limbs - four arms, a horse, a spider. Clavicles, fingers and toes keyed by hand stay on the joints page, and both pages work together.&lt;/p&gt;
+&lt;p&gt;AdvancedSkeleton rigs work too: their root &lt;strong&gt;Main&lt;/strong&gt; is a circle with no joints under it, and the tool finds the skeleton next to it by itself. &lt;strong&gt;RootX_M&lt;/strong&gt;, the control that carries the whole body, goes into Hips. And if after Mirror animation some controls that move in the scene are not part of the character, the tool names them, so nothing is left unmirrored.&lt;/p&gt;
 &lt;h3&gt;Cycle: the other leg, half a cycle later&lt;/h3&gt;
 &lt;p&gt;The right leg of the walk is done. The left one is the same leg, mirrored and half a cycle later. Type in one cycle, press &lt;strong&gt;½&lt;/strong&gt; and &lt;strong&gt;Mirror with offset&lt;/strong&gt;: the other leg is built over the whole playback range, on an animation layer of its own. Do not like it - delete the layer; like it - merge it down. IK feet are placed along the line the character travels, so the sway of the pelvis does not make them slide.&lt;/p&gt;
 &lt;h3&gt;Anchors without frame numbers&lt;/h3&gt;
@@ -530,6 +531,7 @@
 &lt;p&gt;Настройка - три шага: корень скелета, кадр, где персонаж стоит симметрично, и что зеркалить. &lt;strong&gt;Find&lt;/strong&gt; ищет симметричный кадр в дубле; если персонаж не останавливается ни разу, тул сам ставит ключом бинд-позу на свободный кадр перед дублем, анимация не меняется. Вы выделяете кости левой стороны - пары справа находятся по именам. Потом &lt;strong&gt;Save&lt;/strong&gt;, и следующая сцена с этим персонажем подхватит пресет сама. Тул меряет каждую пару на позе покоя, а не угадывает по именам осей, поэтому подходят и риги с ненулевыми каналами.&lt;/p&gt;
 &lt;h3&gt;Персонаж на контролах&lt;/h3&gt;
 &lt;p&gt;Для персонажа с ригом вместо списка костей - человечек: по шарику на каждую руку и ногу, Hips на таз и Spine на позвоночник, шею и голову. Выделили контролы одной стороны, кликнули шарик - готово. Пресет запоминает T-позу контролов и в следующей сцене сам ставит её ключом на свободный кадр. &lt;strong&gt;+ Arms&lt;/strong&gt; и &lt;strong&gt;+ Legs&lt;/strong&gt; добавляют ещё пару конечностей - четыре руки, лошадь, паук. Ключицы и пальцы рук и ног, которые анимируются руками, остаются на странице костей, и обе страницы работают вместе.&lt;/p&gt;
+&lt;p&gt;Риг AdvancedSkeleton тоже подходит: его корень &lt;strong&gt;Main&lt;/strong&gt; - кружок, под которым нет костей, и тул сам находит скелет рядом с ним. Контрол &lt;strong&gt;RootX_M&lt;/strong&gt;, который носит всё тело, кладётся в Hips. А если после Mirror animation в сцене двигаются контролы, которых нет в персонаже, тул назовёт их по именам, чтобы ничего не осталось неотражённым.&lt;/p&gt;
 &lt;h3&gt;Cycle: вторая нога на полцикла позже&lt;/h3&gt;
 &lt;p&gt;Правая нога в походке готова. Левая - это та же нога, отражённая и на полцикла позже. Впишите один цикл, нажмите &lt;strong&gt;½&lt;/strong&gt; и &lt;strong&gt;Mirror with offset&lt;/strong&gt;: вторая нога построится на весь диапазон проигрывания, на отдельном слое анимации. Не понравилось - удалите слой, понравилось - смерджите вниз. IK-стопы ставятся по линии движения персонажа, поэтому раскачка таза не заставляет их скользить.&lt;/p&gt;
 &lt;h3&gt;Якоря без номеров кадров&lt;/h3&gt;
@@ -549,6 +551,7 @@
 <p>The setup is three steps: the root of the skeleton, a frame where the character stands symmetrically, and what to mirror. <strong>Find</strong> looks for a symmetric frame in the take; if the character never stops, the tool keys the bind pose on a free frame before the take, and the animation stays as it was. You select the left-side joints and the right-side pairs are found by name. Then <strong>Save</strong>, and the next scene with this character picks the preset up by itself. The tool measures every pair on the rest pose instead of guessing from axis names, so rigs with non-zero channels are fine too.</p>
 <h3>A character on controls</h3>
 <p>For a rigged character there is a stick figure instead of a joint list: a ball for each arm and leg, Hips for the pelvis and Spine for the spine, neck and head. Select the controls of one side, click the ball, done. The preset remembers the controls' T-pose and keys it on a free frame in the next scene. <strong>+ Arms</strong> and <strong>+ Legs</strong> add another pair of limbs - four arms, a horse, a spider. Clavicles, fingers and toes keyed by hand stay on the joints page, and both pages work together.</p>
+<p>AdvancedSkeleton rigs work too: their root <strong>Main</strong> is a circle with no joints under it, and the tool finds the skeleton next to it by itself. <strong>RootX_M</strong>, the control that carries the whole body, goes into Hips. And if after Mirror animation some controls that move in the scene are not part of the character, the tool names them, so nothing is left unmirrored.</p>
 <h3>Cycle: the other leg, half a cycle later</h3>
 <p>The right leg of the walk is done. The left one is the same leg, mirrored and half a cycle later. Type in one cycle, press <strong>½</strong> and <strong>Mirror with offset</strong>: the other leg is built over the whole playback range, on an animation layer of its own. Do not like it - delete the layer; like it - merge it down. IK feet are placed along the line the character travels, so the sway of the pelvis does not make them slide.</p>
 <h3>Anchors without frame numbers</h3>
@@ -604,7 +607,7 @@
   <div class="section">
     <h2><span data-en="// Specs" data-ru="// Характеристики">// Specs</span></h2>
     <div class="specs">
-      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>0.17.0</span></div></div>
+      <div class="spec-row"><div class="spec-key"><span data-en="Version" data-ru="Версия">Version</span></div><div class="spec-val"><span>0.18.0</span></div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Platform" data-ru="Платформа">Platform</span></div><div class="spec-val">Autodesk Maya 2019–2026</div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Price" data-ru="Цена">Price</span></div><div class="spec-val"><span>Free (MIT)</span></div></div>
       <div class="spec-row"><div class="spec-key"><span data-en="Interface" data-ru="Язык интерфейса">Interface</span></div><div class="spec-val">EN labels; hints and manual EN / RU</div></div>
@@ -630,9 +633,61 @@
       
       <div class="ver-row latest">
         <div class="ver-head">
+          <span class="ver-num">0.18.0</span>
+          <span class="ver-date">2026-11-19</span>
+          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
+          <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MirrorAction/MirrorAction-0.18.0.zip" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
+            4 Mb
+          </a>
+          
+        </div>
+        
+        <div class="ver-what prose clampable" data-en="&lt;p&gt;A release about AdvancedSkeleton rigs.&lt;/p&gt;
+&lt;h3&gt;AdvancedSkeleton rigs.&lt;/h3&gt;
+&lt;p&gt;The root of such a rig, Main, is a circle with no joints under it. The tool used to look for the skeleton under the root only, and on such a character it got the sides wrong: the mirror could flip the character upside down, and the T-pose and pole checks reported false numbers. Now the skeleton is found next to the root, and mirroring, the T-pose, Cycle and the copy pictures work as on any other character. Nothing changes for rigs with the joints under the root.&lt;/p&gt;
+&lt;h3&gt;Forgotten controls.&lt;/h3&gt;
+&lt;p&gt;After Mirror animation the tool names the controls that move in the scene but are not part of the character - the whole-body control such as RootX_M comes first. Undo, add them and run it again.&lt;/p&gt;
+&lt;h3&gt;Old presets.&lt;/h3&gt;
+&lt;p&gt;A preset saved by 0.17.0 for a rig with no joints under its root is rebuilt from the scene's controls when it loads; the tool says so and asks you to press Save.&lt;/p&gt;
+&lt;h3&gt;Manual.&lt;/h3&gt;
+&lt;p&gt;An AdvancedSkeleton part in lesson 6. A link to the video lesson on YouTube; a time in the chapter table opens the video at that point.&lt;/p&gt;
+&lt;h3&gt;Fixed.&lt;/h3&gt;
+&lt;p&gt;Anchor holds on a control the anchor already holds no longer lists it twice on its side.&lt;/p&gt;" data-ru="&lt;p&gt;Версия про риги AdvancedSkeleton.&lt;/p&gt;
+&lt;h3&gt;Риг AdvancedSkeleton.&lt;/h3&gt;
+&lt;p&gt;Корень Main у такого рига - кружок, под которым нет костей. Раньше тул искал скелет только под корнем и на таком персонаже ошибался в стороне: зеркало могло перевернуть персонажа сверху вниз, а проверка T-позы и полюсов давала ложные цифры. Теперь скелет находится рядом с корнем, и зеркало, T-поза, Cycle и картинки копий работают как на обычном персонаже. Для ригов с костями под корнем ничего не меняется.&lt;/p&gt;
+&lt;h3&gt;Забытые контролы.&lt;/h3&gt;
+&lt;p&gt;После Mirror animation тул называет контролы, которые двигаются в сцене, но не входят в персонажа, - первым контрол всего тела вроде RootX_M. Достаточно отменить, добавить их и повторить.&lt;/p&gt;
+&lt;h3&gt;Старые пресеты.&lt;/h3&gt;
+&lt;p&gt;Пресет, сохранённый в 0.17.0 для рига без костей под корнем, при загрузке пересобирается по контролам сцены; тул говорит об этом и просит нажать Save.&lt;/p&gt;
+&lt;h3&gt;Справка.&lt;/h3&gt;
+&lt;p&gt;Раздел про AdvancedSkeleton в уроке 6. Ссылка на видеоурок на YouTube, время в таблице глав открывает ролик с нужного места.&lt;/p&gt;
+&lt;h3&gt;Исправлено.&lt;/h3&gt;
+&lt;p&gt;Anchor holds на контроле, который якорь и так держит, больше не дублирует его в списке стороны.&lt;/p&gt;"><p>A release about AdvancedSkeleton rigs.</p>
+<h3>AdvancedSkeleton rigs.</h3>
+<p>The root of such a rig, Main, is a circle with no joints under it. The tool used to look for the skeleton under the root only, and on such a character it got the sides wrong: the mirror could flip the character upside down, and the T-pose and pole checks reported false numbers. Now the skeleton is found next to the root, and mirroring, the T-pose, Cycle and the copy pictures work as on any other character. Nothing changes for rigs with the joints under the root.</p>
+<h3>Forgotten controls.</h3>
+<p>After Mirror animation the tool names the controls that move in the scene but are not part of the character - the whole-body control such as RootX_M comes first. Undo, add them and run it again.</p>
+<h3>Old presets.</h3>
+<p>A preset saved by 0.17.0 for a rig with no joints under its root is rebuilt from the scene's controls when it loads; the tool says so and asks you to press Save.</p>
+<h3>Manual.</h3>
+<p>An AdvancedSkeleton part in lesson 6. A link to the video lesson on YouTube; a time in the chapter table opens the video at that point.</p>
+<h3>Fixed.</h3>
+<p>Anchor holds on a control the anchor already holds no longer lists it twice on its side.</p></div>
+        <button class="prose-more" type="button" onclick="toggleProse(this)" hidden>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+          <span class="on-closed"><span data-en="Read more" data-ru="Развернуть">Read more</span></span>
+          <span class="on-open"><span data-en="Show less" data-ru="Свернуть">Show less</span></span>
+        </button>
+        
+      </div>
+      
+      <div class="ver-row">
+        <div class="ver-head">
           <span class="ver-num">0.17.0</span>
           <span class="ver-date">2026-11-15</span>
-          <span class="ver-tag"><span data-en="LATEST" data-ru="АКТУАЛЬНАЯ">LATEST</span></span>
+          
           
           <a class="ver-get" href="https://github.com/eu-melnikov/eu-melnikov.github.io/releases/download/MirrorAction/MirrorAction-0.17.0.zip" download>
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>
@@ -664,7 +719,7 @@
 <footer>
   <div class="wrap">
     <span><a href="index.html">e.melnikov.dev</a> <span data-en="— free software, no catch" data-ru="— бесплатные программы, без подвоха">— free software, no catch</span></span>
-    <span>MirrorAction v0.17.0 · 2026-11-15</span>
+    <span>MirrorAction v0.18.0 · 2026-11-19</span>
   </div>
 </footer>
 
